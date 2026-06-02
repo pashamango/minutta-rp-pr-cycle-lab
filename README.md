@@ -17,6 +17,14 @@ Use this repo to test the full cycle:
 
 - [RP-2026-06-02-self-maintenance-smoke](rps/RP-2026-06-02-self-maintenance-smoke.md)
 
+## Daily Self-Maintenance
+
+Run this metadata-only smoke check once per workday from a repository checkout:
+
+```sh
+tools/minutta-self-maintenance-check.sh --repo .
+```
+
 ## Safety
 
 - Do not commit tokens, SSH keys, browser cookies, raw household logs or private
