@@ -1,0 +1,25 @@
+# Minutta RP/PR Cycle Lab
+
+This private repository is a clean rehearsal surface for the Minutta RP/PR
+workflow. It contains no household data, secrets, model logs or credentials.
+
+## Purpose
+
+Use this repo to test the full cycle:
+
+1. write a Request for Proposals;
+2. let `codex@minutta` produce a narrow implementation;
+3. publish a GitHub pull request;
+4. record PR acceptance and bonus accrual in the RP/PR Pool;
+5. let the Release Committee merge the selected PR to `main`.
+
+## Current RP
+
+- [RP-2026-06-02-self-maintenance-smoke](rps/RP-2026-06-02-self-maintenance-smoke.md)
+
+## Safety
+
+- Do not commit tokens, SSH keys, browser cookies, raw household logs or private
+  files.
+- Keep checks metadata-only.
+- Keep PRs small enough to review in one sitting.
