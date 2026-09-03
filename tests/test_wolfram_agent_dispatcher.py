@@ -85,17 +85,18 @@ class DispatcherTests(unittest.TestCase):
         path = next((self.state / "runs").glob("*/*/result.json"))
         return json.loads(path.read_text()), path.parent
 
-    def test_admitted_task_creates_one_claim_and_completed_receipt(self):
+    def test_exit_zero_without_outcome_is_only_execution_finished(self):
         record, item = self.admit()
-        self.assertEqual(self.dispatch(record, item), "completed")
+        self.assertEqual(self.dispatch(record, item), "execution_finished")
         self.assertEqual(len(list((self.state / "claims").glob("*.json"))), 1)
         result, run_dir = self.result()
-        self.assertEqual(result["terminal_state"], "completed")
+        self.assertEqual(result["terminal_state"], "execution_finished")
+        self.assertFalse((run_dir / "task-outcome.json").exists())
         self.assertTrue((run_dir / "envelope.json").exists())
 
     def test_same_digest_twice_invokes_codex_once(self):
         record, item = self.admit()
-        self.assertEqual(self.dispatch(record, item), "completed")
+        self.assertEqual(self.dispatch(record, item), "execution_finished")
         self.assertEqual(self.dispatch(record, item), "already_claimed")
         self.assertEqual(len(list(self.calls.glob("*"))), 1)
 
@@ -113,7 +114,7 @@ class DispatcherTests(unittest.TestCase):
             thread.start()
         for thread in threads:
             thread.join()
-        self.assertCountEqual(outcomes, ["completed", "already_claimed"])
+        self.assertCountEqual(outcomes, ["execution_finished", "already_claimed"])
         self.assertEqual(len(list(self.calls.glob("*"))), 1)
 
     def test_wrong_trust_fields_never_reach_dispatcher(self):
@@ -125,7 +126,7 @@ class DispatcherTests(unittest.TestCase):
     def test_shell_syntax_is_data_and_never_executed(self):
         target = self.root / "PWNED"
         record, item = self.admit(issue(body_extra=f"$(touch {target})"))
-        self.assertEqual(self.dispatch(record, item), "completed")
+        self.assertEqual(self.dispatch(record, item), "execution_finished")
         self.assertFalse(target.exists())
         prompt = next(self.calls.glob("*")).read_text()
         self.assertIn(f"$(touch {target})", prompt)
@@ -141,7 +142,7 @@ class DispatcherTests(unittest.TestCase):
     def test_codex_failure_is_terminal_and_not_retried(self):
         os.environ["FAKE_EXIT"] = "7"
         record, item = self.admit()
-        self.assertEqual(self.dispatch(record, item), "failed")
+        self.assertEqual(self.dispatch(record, item), "execution_failed")
         self.assertEqual(self.result()[0]["process_exit_status"], 7)
         self.assertEqual(self.dispatch(record, item), "already_claimed")
         self.assertEqual(len(list(self.calls.glob("*"))), 1)
@@ -159,7 +160,7 @@ class DispatcherTests(unittest.TestCase):
 
     def test_changed_digest_same_task_is_pending(self):
         record, item = self.admit()
-        self.assertEqual(self.dispatch(record, item), "completed")
+        self.assertEqual(self.dispatch(record, item), "execution_finished")
         changed = issue(body_extra="revision", updated="2026-09-03T00:01:00Z")
         changed_record, _ = self.admit(changed)
         self.assertEqual(self.dispatch(changed_record, changed), "revision_pending")
