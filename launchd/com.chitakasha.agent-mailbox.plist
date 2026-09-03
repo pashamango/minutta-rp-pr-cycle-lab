@@ -6,9 +6,7 @@
   <string>com.chitakasha.agent-mailbox</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/Users/pavelcherkashin/ChitAkasha-Wolfram/agent-mailbox/bin/wolfram-agent-watcher</string>
-    <string>--config</string>
-    <string>/Users/pavelcherkashin/ChitAkasha-Wolfram/agent-mailbox/config/policy.yaml</string>
+    <string>/Users/pavelcherkashin/ChitAkasha-Wolfram/agent-mailbox/bin/wolfram-agent-mailbox-cycle</string>
   </array>
   <key>EnvironmentVariables</key>
   <dict>

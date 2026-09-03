@@ -1,54 +1,60 @@
-# Wolfram read-only agent mailbox
+# Wolfram agent mailbox
 
-This is the MAILBOX-0001 watcher for `pashamango/minutta-rp-pr-cycle-lab`. It polls open Issues over outbound HTTPS with the already-authenticated GitHub CLI, validates a fixed envelope, and writes immutable, content-digested local observations. Issue bodies are inert data: the watcher does not invoke a shell, AppleScript, Python evaluation, templates, Codex, or another LLM with Issue content.
+MAILBOX-0001 polls open Issues in `pashamango/minutta-rp-pr-cycle-lab` over outbound HTTPS, validates a fixed envelope, and writes immutable content-digested observations. MAILBOX-0002 separately re-fetches admitted sources, verifies their digests, obtains an atomic local CLAIM, and wakes the installed Codex CLI. Raw Issue text remains data: it is sent only on standard input after a fixed local policy preamble and is never interpolated into a command.
 
-## Repository files
+## Repository and installed files
 
-- `tools/wolfram-agent-watcher`: standard-library Python watcher
+- `tools/wolfram-agent-watcher`: standard-library admission watcher
+- `tools/wolfram-agent-dispatcher`: standard-library CLAIM, verification, wake, and receipt logic
+- `tools/wolfram-agent-mailbox-cycle`: sequential watcher/dispatcher process coordinator
 - `config/wolfram-agent-mailbox-policy.yaml`: fixed repository policy
-- `tests/test_wolfram_agent_watcher.py`: deterministic admission and inert-data tests
+- `tests/`: deterministic watcher and dispatcher tests
 - `launchd/com.chitakasha.agent-mailbox.plist`: one-minute user LaunchAgent
+- `launchd/com.chitakasha.agent-mailbox.mailbox-0001.plist`: read-only rollback LaunchAgent
 
-## Installed files on Wolfram
+The installed tree is:
 
 ```text
-~/ChitAkasha-Wolfram/agent-mailbox/bin/wolfram-agent-watcher
+~/ChitAkasha-Wolfram/agent-mailbox/bin/{wolfram-agent-watcher,wolfram-agent-dispatcher,wolfram-agent-mailbox-cycle}
 ~/ChitAkasha-Wolfram/agent-mailbox/config/policy.yaml
-~/ChitAkasha-Wolfram/agent-mailbox/state/{seen,inbox}/
+~/ChitAkasha-Wolfram/agent-mailbox/state/{seen,inbox,claims,runs,revisions,control}/
 ~/ChitAkasha-Wolfram/agent-mailbox/logs/
 ~/Library/LaunchAgents/com.chitakasha.agent-mailbox.plist
 ```
 
-The policy repository must match the repository compiled into the program. Records contain only the required Issue identity, timestamps, parsed mailbox metadata, digest, and first-seen time; credentials, headers, environment variables, and raw Issue bodies are not recorded.
+Inbox records do not contain raw bodies, credentials, headers, or environment variables. Run directories contain immutable envelope and CLAIM snapshots, bounded stdout/stderr logs, and a terminal result with output digests. Failed and timed-out CLAIMs are not retried. A changed digest for an already-claimed task id is recorded under `revisions/` for manual review.
+
+Automatic scanning is fail-closed until `state/control/dispatcher-activation.json` exists. Its UTC `activated_at` watermark excludes older bootstrap records and permits only records admitted at or after activation. An explicitly named `--record` is reserved for controlled diagnosis and smoke testing.
 
 ## Test and install
 
 ```sh
 python3 -m unittest discover -s tests -v
-install -d "$HOME/ChitAkasha-Wolfram/agent-mailbox/"{bin,config,state/seen,state/inbox,logs}
+install -d "$HOME/ChitAkasha-Wolfram/agent-mailbox/"{bin,config,state/seen,state/inbox,state/claims,state/runs,state/revisions,state/control,logs}
 install -m 0755 tools/wolfram-agent-watcher "$HOME/ChitAkasha-Wolfram/agent-mailbox/bin/wolfram-agent-watcher"
+install -m 0755 tools/wolfram-agent-dispatcher "$HOME/ChitAkasha-Wolfram/agent-mailbox/bin/wolfram-agent-dispatcher"
+install -m 0755 tools/wolfram-agent-mailbox-cycle "$HOME/ChitAkasha-Wolfram/agent-mailbox/bin/wolfram-agent-mailbox-cycle"
 install -m 0644 config/wolfram-agent-mailbox-policy.yaml "$HOME/ChitAkasha-Wolfram/agent-mailbox/config/policy.yaml"
+install -m 0644 launchd/com.chitakasha.agent-mailbox.mailbox-0001.plist "$HOME/ChitAkasha-Wolfram/agent-mailbox/config/mailbox-0001.plist"
 install -m 0644 launchd/com.chitakasha.agent-mailbox.plist "$HOME/Library/LaunchAgents/com.chitakasha.agent-mailbox.plist"
+"$HOME/ChitAkasha-Wolfram/agent-mailbox/bin/wolfram-agent-dispatcher" --activate
 launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.chitakasha.agent-mailbox.plist"
 ```
 
-`launchctl print gui/$(id -u)/com.chitakasha.agent-mailbox` shows its status. A manual live read-only poll is:
+If MAILBOX-0001 is already loaded, use `launchctl bootout` before replacing and bootstrapping it. `launchctl print gui/$(id -u)/com.chitakasha.agent-mailbox` shows current status.
 
-```sh
-"$HOME/ChitAkasha-Wolfram/agent-mailbox/bin/wolfram-agent-watcher" --config "$HOME/ChitAkasha-Wolfram/agent-mailbox/config/policy.yaml"
-```
-
-Authentication or API failures preserve state, append a bounded non-secret diagnostic, exit cleanly, and wait for the next scheduled invocation.
+The dispatcher invokes `codex exec --ephemeral --skip-git-repo-check --color never --cd <workdir> -`, preserving the installed CLI's configured model, authentication, approval, and sandbox behavior while permitting a bounded task rooted outside Git. It uses no inbound listener, administrator privilege, new secret, or environment dump. The default timeout is 900 seconds; stdout and stderr go directly to task-specific files.
 
 ## Rollback
 
-No administrator rights are needed. Disable and remove the watcher with:
+Return to merged MAILBOX-0001 read-only polling without deleting historical receipts:
 
 ```sh
 launchctl bootout "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.chitakasha.agent-mailbox.plist"
-rm "$HOME/Library/LaunchAgents/com.chitakasha.agent-mailbox.plist"
+chmod u+w "$HOME/ChitAkasha-Wolfram/agent-mailbox/state/control/dispatcher-activation.json"
+rm "$HOME/ChitAkasha-Wolfram/agent-mailbox/state/control/dispatcher-activation.json"
+install -m 0644 "$HOME/ChitAkasha-Wolfram/agent-mailbox/config/mailbox-0001.plist" "$HOME/Library/LaunchAgents/com.chitakasha.agent-mailbox.plist"
+launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.chitakasha.agent-mailbox.plist"
 ```
 
-This fully stops polling. The `~/ChitAkasha-Wolfram/agent-mailbox` directory may then be archived or removed separately if its immutable observation history is no longer needed.
-
-The watcher opens no listener and does not alter Issues, branches, repository settings, Tailscale, PentAGI, Ollama, Colima, Forgejo, Darwin, or any GitHub credential. It does not claim work, create pull requests, or execute Codex.
+This leaves `state/inbox`, `state/claims`, `state/runs`, and `state/revisions` intact. Neither process opens a listener or alters Issues, labels, repository settings, Tailscale, PentAGI, Ollama, Colima, Forgejo, Darwin, privileges, or GitHub credentials. GitHub write-back, remote/distributed CLAIMs, retries, and risks above R1 remain out of scope.
