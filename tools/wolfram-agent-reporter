@@ -1,0 +1,218 @@
+#!/usr/bin/env python3
+"""Bounded GitHub status reporter for verified Wolfram mailbox runs."""
+
+import argparse
+import hashlib
+import importlib.machinery
+import importlib.util
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+import uuid
+
+EXPECTED_REPOSITORY = "pashamango/minutta-rp-pr-cycle-lab"
+EXPECTED_AGENT = "codex@wolfram.local"
+ALLOWED_RISKS = {"R0", "R1"}
+TERMINAL_STATES = {"completed": "COMPLETED", "blocked": "BLOCKED",
+                   "failed": "FAILED", "timed_out": "TIMED_OUT"}
+COMMON_FIELDS = ("task_id", "agent", "source_sha256", "lease_id")
+TERMINAL_FIELDS = ("started_at", "finished_at", "exit_status", "stdout_sha256",
+                   "stderr_sha256", "result_sha256")
+
+
+def load_watcher(path=None):
+    path = path or Path(__file__).with_name("wolfram-agent-watcher")
+    loader = importlib.machinery.SourceFileLoader("wolfram_agent_watcher_reporter", str(path))
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
+def file_sha256(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def write_exclusive(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.parent / f".{path.name}.{os.getpid()}.{uuid.uuid4().hex}.tmp"
+    try:
+        fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            json.dump(value, stream, indent=2, sort_keys=True)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.chmod(temporary, 0o444)
+        os.link(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+class GhClient:
+    def __init__(self, executable=None):
+        self.executable = executable or shutil.which("gh")
+        if not self.executable:
+            raise RuntimeError("GitHub CLI is unavailable")
+
+    def _run(self, args, input_text=None):
+        result = subprocess.run([self.executable, *args], input=input_text, capture_output=True,
+                                text=True, timeout=45)
+        if result.returncode:
+            raise RuntimeError("GitHub CLI request failed")
+        return json.loads(result.stdout) if result.stdout.strip() else None
+
+    def issue(self, repository, number):
+        raw = self._run(["api", f"repos/{repository}/issues/{number}"])
+        return {"number": raw["number"], "title": raw["title"],
+                "author": {"login": raw["user"]["login"]}, "url": raw["html_url"],
+                "createdAt": raw["created_at"], "updatedAt": raw["updated_at"],
+                "state": raw["state"].upper(), "body": raw.get("body") or ""}
+
+    def comments(self, repository, number):
+        return self._run(["api", "--paginate", f"repos/{repository}/issues/{number}/comments"])
+
+    def post(self, repository, number, body):
+        return self._run(["api", "--method", "POST", f"repos/{repository}/issues/{number}/comments",
+                          "--input", "-"], json.dumps({"body": body}))
+
+
+def validate_scalar(name, value, pattern=r"[A-Za-z0-9][A-Za-z0-9._:@+-]{0,127}"):
+    if not isinstance(value, str) or not re.fullmatch(pattern, value):
+        raise ValueError(f"invalid {name}")
+    return value
+
+
+def load_bound_run(run_dir, state):
+    envelope = json.loads((run_dir / "envelope.json").read_text(encoding="utf-8"))
+    claim = json.loads((run_dir / "claim.json").read_text(encoding="utf-8"))
+    repository = envelope.get("source_repository")
+    issue_number = envelope.get("source_issue")
+    task_id = validate_scalar("task_id", envelope.get("task_id"))
+    lease_id = validate_scalar("lease_id", envelope.get("lease_id"), r"[a-f0-9]{32}")
+    digest = validate_scalar("source_sha256", envelope.get("source_sha256"), r"[a-f0-9]{64}")
+    if repository != EXPECTED_REPOSITORY or envelope.get("agent") != EXPECTED_AGENT:
+        raise ValueError("run outside reporter trust boundary")
+    if envelope.get("risk") not in ALLOWED_RISKS or not isinstance(issue_number, int):
+        raise ValueError("unauthorized risk or issue")
+    bindings = {"task_id": task_id, "lease_id": lease_id, "source_digest": digest,
+                "agent": EXPECTED_AGENT, "issue_number": issue_number}
+    if any(claim.get(key) != value for key, value in bindings.items()):
+        raise ValueError("claim does not match run envelope")
+    result = None
+    if state != "CLAIMED":
+        result_path = run_dir / "result.json"
+        result = json.loads(result_path.read_text(encoding="utf-8"))
+        expected_state = TERMINAL_STATES.get(result.get("terminal_state"))
+        if expected_state != state or result.get("task_id") != task_id or result.get("lease_id") != lease_id:
+            raise ValueError("result does not match requested run state")
+        if result.get("source_digest") != digest:
+            raise ValueError("result digest does not match run envelope")
+    return envelope, claim, result
+
+
+def admitted_record(run_dir, envelope):
+    state_dir = run_dir.parents[2]
+    matches = list((state_dir / "inbox").glob(f"*__{envelope['source_issue']}__{envelope['source_sha256']}.json"))
+    if len(matches) != 1:
+        raise ValueError("immutable inbox admission record missing")
+    record = json.loads(matches[0].read_text(encoding="utf-8"))
+    expected = {"repository": envelope["source_repository"],
+                "issue_number": envelope["source_issue"],
+                "source_sha256": envelope["source_sha256"],
+                "author_login": envelope["author"]}
+    if any(record.get(key) != value for key, value in expected.items()):
+        raise ValueError("inbox admission record mismatch")
+    return record
+
+
+def verify_source(envelope, issue, watcher, record):
+    metadata, rejection = watcher.validate(envelope["source_repository"], issue)
+    if rejection:
+        raise ValueError(f"source no longer authorized: {rejection}")
+    # GitHub may advance Issue.updatedAt when this reporter appends a comment. The admitted
+    # timestamp is therefore restored before hashing; every content-bearing source field is
+    # still taken from the fresh fetch and must remain byte-for-byte bound to admission.
+    digest_issue = dict(issue)
+    digest_issue["updatedAt"] = record["updated_at"]
+    normalized = watcher.normalized_payload(envelope["source_repository"], digest_issue)
+    digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+    if digest != envelope["source_sha256"] or issue["number"] != envelope["source_issue"]:
+        raise ValueError("source digest or issue mismatch")
+    if metadata.get("id") != envelope["task_id"] or metadata.get("agent") != envelope["agent"]:
+        raise ValueError("source metadata mismatch")
+
+
+def receipt_payload(state, envelope, claim, result, run_dir):
+    values = {"task_id": envelope["task_id"], "agent": envelope["agent"],
+              "source_sha256": envelope["source_sha256"], "lease_id": envelope["lease_id"]}
+    if state == "CLAIMED":
+        values["claimed_at"] = claim["claimed_at"]
+        fields = (*COMMON_FIELDS, "claimed_at")
+    else:
+        values.update({"started_at": result["started_at"], "finished_at": result["finished_at"],
+                       "exit_status": result.get("process_exit_status"),
+                       "stdout_sha256": result["stdout_sha256"],
+                       "stderr_sha256": result["stderr_sha256"],
+                       "result_sha256": file_sha256(run_dir / "result.json")})
+        fields = (*COMMON_FIELDS, *TERMINAL_FIELDS)
+    key_source = f"{values['source_sha256']}\n{values['lease_id']}\n{state}"
+    receipt_key = "sha256:" + hashlib.sha256(key_source.encode("ascii")).hexdigest()
+    lines = ["<!-- chitakasha-receipt:v1 -->", state, ""]
+    for field in fields:
+        value = values[field]
+        lines.append(f"{field}: {'null' if value is None else value}")
+    lines.append(f"receipt_key: {receipt_key}")
+    return "\n".join(lines) + "\n", receipt_key
+
+
+def report(run_dir, state, client=None, watcher=None):
+    if state not in {"CLAIMED", *TERMINAL_STATES.values()}:
+        raise ValueError("unsupported receipt state")
+    client = client or GhClient()
+    watcher = watcher or load_watcher()
+    envelope, claim, result = load_bound_run(run_dir, state)
+    record = admitted_record(run_dir, envelope)
+    issue = client.issue(envelope["source_repository"], envelope["source_issue"])
+    verify_source(envelope, issue, watcher, record)
+    body, receipt_key = receipt_payload(state, envelope, claim, result, run_dir)
+    marker = run_dir / "writeback" / f"{state.lower()}.json"
+    if marker.exists():
+        return "already_reported"
+    comments = client.comments(envelope["source_repository"], envelope["source_issue"])
+    if any(receipt_key in (comment.get("body") or "") for comment in comments):
+        write_exclusive(marker, {"receipt_key": receipt_key, "state": state, "remote": "existing"})
+        return "already_reported"
+    client.post(envelope["source_repository"], envelope["source_issue"], body)
+    write_exclusive(marker, {"receipt_key": receipt_key, "state": state, "remote": "posted"})
+    return "posted"
+
+
+def record_failure(run_dir, state, exc):
+    path = run_dir / "writeback" / f"{state.lower()}.failure.json"
+    try:
+        write_exclusive(path, {"state": state, "error_type": type(exc).__name__})
+    except FileExistsError:
+        pass
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--run-dir", type=Path, required=True)
+    parser.add_argument("--state", required=True)
+    args = parser.parse_args()
+    try:
+        print(report(args.run_dir, args.state))
+        return 0
+    except Exception as exc:
+        record_failure(args.run_dir, args.state, exc)
+        print(f"reporter: {type(exc).__name__}", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
