@@ -140,6 +140,14 @@ def run_codex(command, prompt, stdout_path, stderr_path, timeout):
     return started, utc_now(), process.returncode, timed_out
 
 
+def run_reporter(run_dir, state):
+    reporter = Path(__file__).with_name("wolfram-agent-reporter")
+    if reporter.exists():
+        subprocess.run([str(reporter), "--run-dir", str(run_dir), "--state", state],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60,
+                       check=False)
+
+
 def record_revision(state_dir, task_id, record):
     path = state_dir / "revisions" / task_id / f"{record['source_sha256']}.json"
     revision = {"task_id": task_id, "source_digest": record["source_sha256"],
@@ -190,6 +198,7 @@ def dispatch_record(record_path, state_dir, work_dir, timeout=900, codex=None,
                 "risk": metadata["risk"], "claimed_at": claimed_at, "lease_id": lease_id}
     write_json(run_dir / "envelope.json", envelope)
     write_json(run_dir / "claim.json", claim)
+    run_reporter(run_dir, "CLAIMED")
     stdout_path, stderr_path = run_dir / "codex.stdout.log", run_dir / "codex.stderr.log"
     terminal = "failed"
     started = finished = utc_now()
@@ -214,6 +223,7 @@ def dispatch_record(record_path, state_dir, work_dir, timeout=900, codex=None,
     os.chmod(stdout_path, 0o444)
     os.chmod(stderr_path, 0o444)
     write_json(run_dir / "result.json", result)
+    run_reporter(run_dir, terminal.upper())
     return terminal
 
 
