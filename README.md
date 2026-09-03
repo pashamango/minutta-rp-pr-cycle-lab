@@ -25,6 +25,10 @@ Run this metadata-only smoke check once per workday from a repository checkout:
 tools/minutta-self-maintenance-check.sh --repo .
 ```
 
+## Wolfram mailbox
+
+New ChatGPT sessions should start with the canonical [ChatGPT mailbox runbook](CHATGPT-MAILBOX-RUNBOOK.md). A reusable Issue envelope is available in [the mailbox task template](templates/mailbox-task-v1.md).
+
 ## Safety
 
 - Do not commit tokens, SSH keys, browser cookies, raw household logs or private
