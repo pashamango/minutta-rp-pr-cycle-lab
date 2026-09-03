@@ -1,0 +1,189 @@
+#!/usr/bin/env python3
+"""Read-only GitHub Issue mailbox watcher for Wolfram.
+
+Issue bodies are parsed as data and are never evaluated or passed to a shell.
+"""
+
+import argparse
+import datetime as dt
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+
+EXPECTED_REPOSITORY = "pashamango/minutta-rp-pr-cycle-lab"
+MARKER = "<!-- chitakasha-mailbox:v1 -->"
+REQUIRED_AGENT = "codex@wolfram.local"
+ALLOWED_RISKS = {"R0", "R1"}
+FIELDS = ("agent", "status", "risk")
+
+
+def utc_now():
+    return dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def append_log(log_dir, message):
+    log_dir.mkdir(parents=True, exist_ok=True)
+    with (log_dir / "watcher.log").open("a", encoding="utf-8") as stream:
+        stream.write(f"{utc_now()} {message}\n")
+
+
+def load_policy(path):
+    values = {}
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        match = re.fullmatch(r"([a-z_]+):\s*([^#]+?)\s*", line)
+        if match:
+            values[match.group(1)] = match.group(2).strip("\"'")
+    repository = values.get("repository")
+    if repository != EXPECTED_REPOSITORY:
+        raise ValueError("policy repository is not the compiled trust boundary")
+    return repository
+
+
+def mailbox_metadata(body):
+    if MARKER not in body:
+        return None, "missing-marker"
+    blocks = re.findall(r"```(?:yaml)?\s*\n(.*?)\n```", body, re.DOTALL)
+    for block in blocks:
+        parsed = {}
+        duplicate = False
+        for line in block.splitlines():
+            match = re.fullmatch(r"\s*([A-Za-z0-9_-]+)\s*:\s*([^#\r\n]+?)\s*", line)
+            if not match:
+                continue
+            key, value = match.group(1), match.group(2).strip("\"'")
+            if key in parsed:
+                duplicate = True
+                break
+            parsed[key] = value
+        if not duplicate and all(key in parsed for key in FIELDS):
+            return parsed, None
+    return None, "missing-metadata"
+
+
+def validate(repository, issue):
+    if repository != EXPECTED_REPOSITORY:
+        return None, "wrong-repository"
+    if issue.get("state") != "OPEN":
+        return None, "not-open"
+    author = issue.get("author") or {}
+    if author.get("login") != "pashamango":
+        return None, "wrong-author"
+    metadata, error = mailbox_metadata(issue.get("body") or "")
+    if error:
+        return None, error
+    if metadata["agent"] != REQUIRED_AGENT:
+        return None, "wrong-agent"
+    if metadata["status"] != "ready":
+        return None, "not-ready"
+    if metadata["risk"] not in ALLOWED_RISKS:
+        return None, "unsupported-risk"
+    return metadata, None
+
+
+def normalized_payload(repository, issue):
+    source = {
+        "repository": repository,
+        "number": issue.get("number"),
+        "title": issue.get("title"),
+        "author": (issue.get("author") or {}).get("login"),
+        "url": issue.get("url"),
+        "createdAt": issue.get("createdAt"),
+        "updatedAt": issue.get("updatedAt"),
+        "state": issue.get("state"),
+        "body": issue.get("body") or "",
+    }
+    return json.dumps(source, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def admit(repository, issue, state_dir):
+    metadata, rejection = validate(repository, issue)
+    if rejection:
+        return "rejected", rejection
+    normalized = normalized_payload(repository, issue)
+    digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+    number = int(issue["number"])
+    name = f"{repository.replace('/', '__')}__{number}__{digest}"
+    inbox = state_dir / "inbox"
+    seen = state_dir / "seen"
+    inbox.mkdir(parents=True, exist_ok=True)
+    seen.mkdir(parents=True, exist_ok=True)
+    record_path = inbox / f"{name}.json"
+    if record_path.exists():
+        return "unchanged", digest
+    record = {
+        "repository": repository,
+        "issue_number": number,
+        "title": issue.get("title"),
+        "author_login": (issue.get("author") or {}).get("login"),
+        "issue_url": issue.get("url"),
+        "created_at": issue.get("createdAt"),
+        "updated_at": issue.get("updatedAt"),
+        "mailbox_metadata": metadata,
+        "source_sha256": digest,
+        "first_seen_at": utc_now(),
+        "idempotent_key": f"{repository}/{number}/{digest}",
+    }
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    fd = os.open(record_path, flags, 0o444)
+    with os.fdopen(fd, "w", encoding="utf-8") as stream:
+        json.dump(record, stream, indent=2, sort_keys=True, ensure_ascii=False)
+        stream.write("\n")
+    marker = seen / name
+    marker.touch(mode=0o444, exist_ok=True)
+    return "accepted", digest
+
+
+def fetch_issues(repository):
+    gh = shutil.which("gh")
+    if not gh:
+        raise RuntimeError("GitHub CLI is unavailable")
+    command = [
+        gh, "issue", "list", "--repo", repository, "--state", "open",
+        "--limit", "100", "--json",
+        "number,title,author,url,createdAt,updatedAt,state,body",
+    ]
+    result = subprocess.run(command, capture_output=True, text=True, timeout=45)
+    if result.returncode:
+        raise RuntimeError("GitHub CLI request failed")
+    return json.loads(result.stdout)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument("--state-dir", type=Path)
+    parser.add_argument("--log-dir", type=Path)
+    parser.add_argument("--fixture", type=Path, help="read deterministic test data instead of GitHub")
+    args = parser.parse_args()
+    base = Path.home() / "ChitAkasha-Wolfram" / "agent-mailbox"
+    state_dir = args.state_dir or base / "state"
+    log_dir = args.log_dir or base / "logs"
+    try:
+        repository = load_policy(args.config)
+        issues = json.loads(args.fixture.read_text(encoding="utf-8")) if args.fixture else fetch_issues(repository)
+        counts = {"accepted": 0, "unchanged": 0, "rejected": 0}
+        for issue in issues:
+            outcome, detail = admit(repository, issue, state_dir)
+            counts[outcome] += 1
+            if outcome == "rejected":
+                append_log(log_dir, f"issue={issue.get('number', 'unknown')} rejected={detail}")
+        append_log(log_dir, "poll " + " ".join(f"{key}={value}" for key, value in counts.items()))
+        print(json.dumps(counts, sort_keys=True))
+        return 0
+    except Exception as exc:
+        # Never include subprocess output, environment values, or issue content.
+        append_log(log_dir, f"poll failed={type(exc).__name__}: {str(exc)[:160]}")
+        print("watcher: poll failed; see local log", file=sys.stderr)
+        return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
