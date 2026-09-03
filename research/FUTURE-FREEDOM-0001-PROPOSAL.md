@@ -302,7 +302,7 @@ intergenerational principle: FORMALIZED
 thermodynamic correspondence: LIMITED
 minimal falsification experiment: READY
 proposal file: PASS
-PR: pending
+PR: 35
 auto-merge: NO
 ```
 
