@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+"""Run mailbox admission, then bounded dispatch, as separate processes."""
+
+from pathlib import Path
+import subprocess
+import sys
+
+
+def main():
+    base = Path.home() / "ChitAkasha-Wolfram" / "agent-mailbox"
+    commands = [
+        ([base / "bin/wolfram-agent-watcher", "--config", base / "config/policy.yaml"], 60),
+        ([base / "bin/wolfram-agent-dispatcher"], None),
+    ]
+    for command, timeout in commands:
+        try:
+            subprocess.run([str(item) for item in command], timeout=timeout, check=False)
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            print(f"mailbox-cycle: {type(exc).__name__}", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
