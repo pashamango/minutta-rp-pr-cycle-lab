@@ -195,12 +195,13 @@ def dispatch_record(record_path, state_dir, work_dir, timeout=900, codex=None,
                 "source_repository": record["repository"], "source_issue": int(issue["number"]),
                 "source_url": issue["url"], "source_sha256": digest,
                 "author": issue["author"]["login"], "agent": metadata["agent"],
-                "risk": metadata["risk"], "claimed_at": claimed_at, "lease_id": lease_id}
+                "risk": metadata["risk"], "claimed_at": claimed_at, "lease_id": lease_id,
+                "task_outcome_path": str(run_dir / "task-outcome.json")}
     write_json(run_dir / "envelope.json", envelope)
     write_json(run_dir / "claim.json", claim)
     run_reporter(run_dir, "CLAIMED")
     stdout_path, stderr_path = run_dir / "codex.stdout.log", run_dir / "codex.stderr.log"
-    terminal = "failed"
+    terminal = "execution_failed"
     started = finished = utc_now()
     exit_status = None
     try:
@@ -210,7 +211,8 @@ def dispatch_record(record_path, state_dir, work_dir, timeout=900, codex=None,
         started, finished, exit_status, timed_out = run_codex(
             codex_command(executable, work_dir), make_prompt(envelope, issue.get("body") or ""),
             stdout_path, stderr_path, timeout)
-        terminal = "timed_out" if timed_out else ("completed" if exit_status == 0 else "failed")
+        terminal = "timed_out" if timed_out else (
+            "execution_finished" if exit_status == 0 else "execution_failed")
     except Exception as exc:
         stdout_path.touch(exist_ok=True)
         with stderr_path.open("a", encoding="utf-8") as stream:
@@ -224,6 +226,8 @@ def dispatch_record(record_path, state_dir, work_dir, timeout=900, codex=None,
     os.chmod(stderr_path, 0o444)
     write_json(run_dir / "result.json", result)
     run_reporter(run_dir, terminal.upper())
+    if terminal == "execution_finished" and (run_dir / "task-outcome.json").exists():
+        run_reporter(run_dir, "TASK_OUTCOME")
     return terminal
 
 
