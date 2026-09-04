@@ -189,6 +189,28 @@ class DispatcherTests(unittest.TestCase):
         self.assertIn("--skip-git-repo-check", command)
         self.assertEqual(command[-1], "-")
 
+    def test_default_task_workspace_is_bounded_and_idempotent(self):
+        root = self.root / "storage"
+        first = dispatcher.task_workspace(root, "TASK-1", "lease_1")
+        second = dispatcher.task_workspace(root, "TASK-1", "lease_1")
+        self.assertEqual(first, second)
+        self.assertEqual(first, (root / "workspaces/tasks/TASK-1/lease_1").resolve())
+
+    def test_workspace_rejects_path_and_symlink_escape(self):
+        root = self.root / "storage"
+        with self.assertRaisesRegex(ValueError, "invalid task id"):
+            dispatcher.task_workspace(root, "../escape", "lease")
+        tasks = root / "workspaces/tasks"
+        tasks.mkdir(parents=True)
+        (tasks / "TASK-1").symlink_to(self.root / "outside", target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, "symlink"):
+            dispatcher.task_workspace(root, "TASK-1", "lease")
+
+    def test_git_workspace_location_is_provider_neutral(self):
+        root = self.root / "storage"
+        value = dispatcher.git_workspace_root(root, "owner/repository", "TASK-1")
+        self.assertEqual(value, (root / "workspaces/git/repository/TASK-1").resolve())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -93,6 +93,44 @@ def safe_task_id(value):
     return value
 
 
+def safe_component(value, label):
+    if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", value):
+        raise ValueError(f"invalid {label}")
+    return value
+
+
+def ensure_contained_directory(root, *components):
+    """Create a directory below root without following pre-existing symlinks."""
+    root = root.expanduser().resolve()
+    root.mkdir(parents=True, exist_ok=True)
+    current = root
+    for component in components:
+        safe_component(component, "workspace path component")
+        current = current / component
+        try:
+            if current.is_symlink():
+                raise ValueError("workspace path contains symlink")
+            current.mkdir(mode=0o700)
+        except FileExistsError:
+            if current.is_symlink() or not current.is_dir():
+                raise ValueError("workspace path is not a real directory")
+    if current.resolve() != current or root not in current.parents:
+        raise ValueError("workspace path escapes root")
+    return current
+
+
+def task_workspace(storage_root, task_id, lease_id):
+    return ensure_contained_directory(storage_root / "workspaces" / "tasks",
+                                      safe_task_id(task_id),
+                                      safe_component(lease_id, "lease id"))
+
+
+def git_workspace_root(storage_root, repository, task_id):
+    repo = safe_component(repository.rsplit("/", 1)[-1], "repository name")
+    root = storage_root.expanduser().resolve() / "workspaces" / "git"
+    return root / repo / safe_task_id(task_id)
+
+
 def verify_record(record, issue, watcher):
     repository = record.get("repository")
     metadata, rejection = watcher.validate(repository, issue)
@@ -160,7 +198,7 @@ def record_revision(state_dir, task_id, record):
     return "revision_pending"
 
 
-def dispatch_record(record_path, state_dir, work_dir, timeout=900, codex=None,
+def dispatch_record(record_path, state_dir, work_dir=None, timeout=900, codex=None,
                     issue_fetcher=fetch_issue, watcher=None):
     watcher = watcher or load_watcher()
     record = json.loads(record_path.read_text(encoding="utf-8"))
@@ -197,8 +235,14 @@ def dispatch_record(record_path, state_dir, work_dir, timeout=900, codex=None,
                 "author": issue["author"]["login"], "agent": metadata["agent"],
                 "risk": metadata["risk"], "claimed_at": claimed_at, "lease_id": lease_id,
                 "task_outcome_path": str(run_dir / "task-outcome.json")}
-    write_json(run_dir / "envelope.json", envelope)
     write_json(run_dir / "claim.json", claim)
+    storage_root = Path.home() / "ChitAkasha-Storage"
+    execution_dir = Path(work_dir) if work_dir is not None else task_workspace(
+        storage_root, task_id, lease_id)
+    envelope["work_dir"] = str(execution_dir)
+    envelope["git_worktree_root"] = str(git_workspace_root(
+        storage_root, record["repository"], task_id))
+    write_json(run_dir / "envelope.json", envelope)
     run_reporter(run_dir, "CLAIMED")
     stdout_path, stderr_path = run_dir / "codex.stdout.log", run_dir / "codex.stderr.log"
     terminal = "execution_failed"
@@ -209,7 +253,7 @@ def dispatch_record(record_path, state_dir, work_dir, timeout=900, codex=None,
         if not executable:
             raise RuntimeError("Codex CLI is unavailable")
         started, finished, exit_status, timed_out = run_codex(
-            codex_command(executable, work_dir), make_prompt(envelope, issue.get("body") or ""),
+            codex_command(executable, execution_dir), make_prompt(envelope, issue.get("body") or ""),
             stdout_path, stderr_path, timeout)
         terminal = "timed_out" if timed_out else (
             "execution_finished" if exit_status == 0 else "execution_failed")
@@ -235,7 +279,7 @@ def main():
     parser = argparse.ArgumentParser()
     base = Path.home() / "ChitAkasha-Wolfram" / "agent-mailbox"
     parser.add_argument("--state-dir", type=Path, default=base / "state")
-    parser.add_argument("--work-dir", type=Path, default=Path.home())
+    parser.add_argument("--work-dir", type=Path, help="rollback override for the former work directory")
     parser.add_argument("--timeout", type=int, default=900)
     parser.add_argument("--record", type=Path)
     parser.add_argument("--activate", action="store_true")
