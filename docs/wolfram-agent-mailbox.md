@@ -45,11 +45,15 @@ launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.chitakasha.ag
 
 If MAILBOX-0001 is already loaded, use `launchctl bootout` before replacing and bootstrapping it. `launchctl print gui/$(id -u)/com.chitakasha.agent-mailbox` shows current status.
 
-The dispatcher invokes `codex exec --ephemeral --skip-git-repo-check --color never --cd <workdir> -`, preserving the installed CLI's configured model, authentication, approval, and sandbox behavior while permitting a bounded task rooted outside Git. It uses no inbound listener, administrator privilege, new secret, or environment dump. The default timeout is 900 seconds; stdout and stderr go directly to task-specific files.
+The dispatcher invokes `codex exec --ephemeral --skip-git-repo-check --color never --cd <workdir> -`. By default, `<workdir>` is the symlink-checked per-run directory `~/ChitAkasha-Storage/workspaces/tasks/<task-id>/<lease-id>/`; the envelope also supplies the controlled Git root `~/ChitAkasha-Storage/workspaces/git/<repository>/<task-id>/`. This preserves the installed CLI's configured model, authentication, approval, and sandbox behavior. It uses no inbound listener, administrator privilege, new secret, or environment dump. The default timeout is 900 seconds; stdout and stderr go directly to task-specific files.
 
 After the immutable claim is written, and again after the immutable result is written, the dispatcher calls the reporter. The reporter requires the immutable inbox admission, re-fetches the same Issue, repeats watcher authorization and digest verification, checks the run/claim/result lease binding, and appends only an allowlisted machine receipt. For digest verification it restores the admitted `updatedAt` value because GitHub can advance that timestamp when the reporter itself comments; all content-bearing fields still come from the fresh fetch, so title/body/state/author changes fail closed. Its idempotency key binds `source_sha256 + lease_id + state`; existing comments are inspected before any post. GitHub failures create one bounded local `writeback/*.failure.json` record without changing the authoritative claim/result or triggering an automatic retry loop.
 
 ## Rollback
+
+To restore the former execution-directory behavior while retaining the current dispatcher, invoke it with `--work-dir "$HOME"`. Remove that override to resume the provider-neutral per-run default. This does not move or delete any workspace data.
+
+## Full mailbox rollback
 
 Return to merged MAILBOX-0001 read-only polling without deleting historical receipts:
 

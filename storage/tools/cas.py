@@ -49,6 +49,46 @@ def ingest(namespace, source):
     return {"sha256": sha, "size": len(data), "deduplicated": existed}
 
 
+def publish(namespace, source, name, ref):
+    source = source.resolve(strict=True)
+    files = [source] if source.is_file() else sorted(p for p in source.rglob("*") if p.is_file())
+    entries = []
+    for path in files:
+        if path.is_symlink():
+            raise RuntimeError("symlinks are not publishable")
+        result = ingest(namespace, path)
+        logical = path.name if source.is_file() else path.relative_to(source).as_posix()
+        entries.append({"path": logical, "sha256": result["sha256"], "size": result["size"]})
+    manifest = canonical({"schema": "chitakasha-manifest/v1", "name": name,
+                          "entries": entries})
+    manifest_sha = digest(manifest)
+    atomic_write(namespace / "manifests/sha256" / f"{manifest_sha}.json", manifest)
+    root = canonical({"schema": "chitakasha-root/v1", "manifests": [manifest_sha],
+                      "previous_root": None})
+    root_sha = digest(root)
+    atomic_write(namespace / "roots/sha256" / f"{root_sha}.json", root)
+    if digest((namespace / "manifests/sha256" / f"{manifest_sha}.json").read_bytes()) != manifest_sha:
+        raise RuntimeError("manifest verification failed")
+    if digest((namespace / "roots/sha256" / f"{root_sha}.json").read_bytes()) != root_sha:
+        raise RuntimeError("root verification failed")
+    if not ref or ref.startswith("/") or any(part in ("", ".", "..") for part in Path(ref).parts):
+        raise RuntimeError("invalid ref")
+    ref_path = namespace / "refs" / ref
+    ref_path.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix=".tmp-", dir=ref_path.parent)
+    try:
+        with os.fdopen(fd, "w", encoding="ascii") as stream:
+            stream.write(root_sha + "\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(tmp, ref_path)
+    finally:
+        if os.path.exists(tmp):
+            os.unlink(tmp)
+    return {"manifest_sha256": manifest_sha, "root_sha256": root_sha,
+            "ref": ref, "files": len(entries)}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--namespace", type=Path, required=True)
@@ -57,10 +97,13 @@ def main():
     p = sub.add_parser("manifest"); p.add_argument("--name", required=True); p.add_argument("entries", nargs="+")
     p = sub.add_parser("root"); p.add_argument("manifest_sha256"); p.add_argument("--previous-root")
     p = sub.add_parser("reconstruct"); p.add_argument("manifest_sha256"); p.add_argument("destination", type=Path)
+    p = sub.add_parser("publish"); p.add_argument("--name", required=True); p.add_argument("--ref", required=True); p.add_argument("source", type=Path)
     args = parser.parse_args(); ns = args.namespace
 
     if args.command == "ingest":
         print(json.dumps(ingest(ns, args.source), sort_keys=True)); return
+    if args.command == "publish":
+        print(json.dumps(publish(ns, args.source, args.name, args.ref), sort_keys=True)); return
     if args.command == "manifest":
         entries = []
         for item in args.entries:
