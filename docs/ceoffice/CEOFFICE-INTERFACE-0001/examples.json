@@ -1,0 +1,357 @@
+[
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-001",
+    "task_id": "SYNTHETIC-001",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-001",
+    "occurred_at": "2026-09-05T12:01:00Z",
+    "observed_at": "2026-09-05T12:01:01Z",
+    "event_type": "claimed",
+    "severity": "info",
+    "evidence": [
+      {
+        "kind": "receipt",
+        "ref": "urn:ceoffice:synthetic:record-001",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "verification": "bound_local_receipt"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "idempotency_key": "sha256:1e41f3c592166247d332c24c95d488e555de85113b929ceadbaf5ab75ba85995"
+  },
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-002",
+    "task_id": "SYNTHETIC-001",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-002",
+    "occurred_at": "2026-09-05T12:02:00Z",
+    "observed_at": "2026-09-05T12:02:01Z",
+    "event_type": "execution_finished",
+    "severity": "info",
+    "evidence": [
+      {
+        "kind": "receipt",
+        "ref": "urn:ceoffice:synthetic:record-002",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "verification": "bound_local_receipt"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "idempotency_key": "sha256:48e980cb4630da9fb2cdce351dad794fb984852ba923f3d44bf41256cdd6988f"
+  },
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-003",
+    "task_id": "SYNTHETIC-001",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-003",
+    "occurred_at": "2026-09-05T12:03:00Z",
+    "observed_at": "2026-09-05T12:03:01Z",
+    "event_type": "task_blocked",
+    "severity": "warning",
+    "evidence": [
+      {
+        "kind": "receipt",
+        "ref": "urn:ceoffice:synthetic:record-003",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "verification": "bound_local_receipt"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "decision_id": "decision-route-001",
+    "idempotency_key": "sha256:8f69001478dd5311fde85950dcb76a001f0cfff819ea3962bca40ce07bca99a1"
+  },
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-004",
+    "task_id": "SYNTHETIC-001",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-004",
+    "occurred_at": "2026-09-05T12:04:00Z",
+    "observed_at": "2026-09-05T12:04:01Z",
+    "event_type": "draft",
+    "severity": "info",
+    "evidence": [
+      {
+        "kind": "pr",
+        "ref": "https://example.invalid/specification/pull/7",
+        "sha256": null,
+        "verification": "forge_snapshot"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "pr": {
+      "repository": "example/specification",
+      "number": 7,
+      "head_sha": "cccccccccccccccccccccccccccccccccccccccc",
+      "base_sha": "dddddddddddddddddddddddddddddddddddddddd",
+      "base_ref": "main",
+      "state": "draft"
+    },
+    "idempotency_key": "sha256:5d8a188cd2bbaabdf5f75a82b5db68ae0ff3b13837e0766e7150cde2086cae89"
+  },
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-005",
+    "task_id": "SYNTHETIC-NO-PR-002",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-005",
+    "occurred_at": "2026-09-05T12:05:00Z",
+    "observed_at": "2026-09-05T12:05:01Z",
+    "event_type": "task_completed",
+    "severity": "info",
+    "evidence": [
+      {
+        "kind": "receipt",
+        "ref": "urn:ceoffice:synthetic:record-005",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "verification": "bound_local_receipt"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "idempotency_key": "sha256:7e07fbec21406bcc2505079cbc20df9b24c02397428b5bcc4fff5c49a443f4b8"
+  },
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-006",
+    "task_id": "SYNTHETIC-REVIEW-003",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-006",
+    "occurred_at": "2026-09-05T12:06:00Z",
+    "observed_at": "2026-09-05T12:06:01Z",
+    "event_type": "ready_for_review",
+    "severity": "notice",
+    "evidence": [
+      {
+        "kind": "pr",
+        "ref": "https://example.invalid/specification/pull/7",
+        "sha256": null,
+        "verification": "forge_snapshot"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "decision_id": "decision-review-003",
+    "pr": {
+      "repository": "example/specification",
+      "number": 7,
+      "head_sha": "cccccccccccccccccccccccccccccccccccccccc",
+      "base_sha": "dddddddddddddddddddddddddddddddddddddddd",
+      "base_ref": "main",
+      "state": "ready_for_review"
+    },
+    "idempotency_key": "sha256:1363ca47156781ba9de47707af5abf2a0fb69f1d773d9ab11a68c1beb5eccde6"
+  },
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-007",
+    "task_id": "SYNTHETIC-REVIEW-003",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-007",
+    "occurred_at": "2026-09-05T12:07:00Z",
+    "observed_at": "2026-09-05T12:07:01Z",
+    "event_type": "persisted",
+    "severity": "info",
+    "evidence": [
+      {
+        "kind": "delivery",
+        "ref": "urn:ceoffice:synthetic:delivery-7",
+        "sha256": null,
+        "verification": "unverified"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "related_event_id": "event-006",
+    "delivery": {
+      "channel": "web_push",
+      "subscription_id": "subscription-synthetic-001",
+      "attempt": 0,
+      "state": "persisted",
+      "provider_request_id": null
+    },
+    "idempotency_key": "sha256:69bf48fbe18bf12a5f646460d0f10b6886596d0a3892bd67bc64f46d7cc43db2"
+  },
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-008",
+    "task_id": "SYNTHETIC-REVIEW-003",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-008",
+    "occurred_at": "2026-09-05T12:08:00Z",
+    "observed_at": "2026-09-05T12:08:01Z",
+    "event_type": "submitted",
+    "severity": "info",
+    "evidence": [
+      {
+        "kind": "delivery",
+        "ref": "urn:ceoffice:synthetic:delivery-8",
+        "sha256": null,
+        "verification": "unverified"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "related_event_id": "event-006",
+    "delivery": {
+      "channel": "web_push",
+      "subscription_id": "subscription-synthetic-001",
+      "attempt": 1,
+      "state": "submitted",
+      "provider_request_id": null
+    },
+    "idempotency_key": "sha256:6cdc5dc42396b38a4c9f7a96072e4c1d303e892248aa9ac38e50c30a5dbe3817"
+  },
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-009",
+    "task_id": "SYNTHETIC-REVIEW-003",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-009",
+    "occurred_at": "2026-09-05T12:09:00Z",
+    "observed_at": "2026-09-05T12:09:01Z",
+    "event_type": "provider_accepted",
+    "severity": "info",
+    "evidence": [
+      {
+        "kind": "delivery",
+        "ref": "urn:ceoffice:synthetic:delivery-9",
+        "sha256": null,
+        "verification": "unverified"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "related_event_id": "event-006",
+    "delivery": {
+      "channel": "web_push",
+      "subscription_id": "subscription-synthetic-001",
+      "attempt": 1,
+      "state": "provider_accepted",
+      "provider_request_id": "request-synthetic-001"
+    },
+    "idempotency_key": "sha256:e0b061ac7f2d01af5c46bdb33639fff107edeb740dd0c5eb46de6cd04a4cd546"
+  },
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-010",
+    "task_id": "SYNTHETIC-REVIEW-003",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-010",
+    "occurred_at": "2026-09-05T12:10:00Z",
+    "observed_at": "2026-09-05T12:10:01Z",
+    "event_type": "client_observed",
+    "severity": "info",
+    "evidence": [
+      {
+        "kind": "delivery",
+        "ref": "urn:ceoffice:synthetic:delivery-10",
+        "sha256": null,
+        "verification": "client_assertion"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "related_event_id": "event-006",
+    "delivery": {
+      "channel": "web_push",
+      "subscription_id": "subscription-synthetic-001",
+      "attempt": 1,
+      "state": "client_observed",
+      "provider_request_id": null
+    },
+    "idempotency_key": "sha256:7d122f12bf3cc3b805f3ef1890fb3f75fd42b559958daa1535ae0107f0b3a054"
+  },
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-011",
+    "task_id": "SYNTHETIC-REVIEW-003",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-011",
+    "occurred_at": "2026-09-05T12:11:00Z",
+    "observed_at": "2026-09-05T12:11:01Z",
+    "event_type": "human_read",
+    "severity": "info",
+    "evidence": [
+      {
+        "kind": "delivery",
+        "ref": "urn:ceoffice:synthetic:delivery-11",
+        "sha256": null,
+        "verification": "client_assertion"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "related_event_id": "event-006",
+    "delivery": {
+      "channel": "inbox",
+      "subscription_id": "subscription-synthetic-001",
+      "attempt": 1,
+      "state": "human_read",
+      "provider_request_id": null
+    },
+    "idempotency_key": "sha256:dbec3d6ccb0b7c1f07a5181285ba649b89730849ccbfdbb40790ad291ebcdd91"
+  },
+  {
+    "protocol": "ceoffice.notification-event/v1",
+    "event_id": "event-012",
+    "task_id": "SYNTHETIC-REVIEW-003",
+    "attempt": 1,
+    "lease_id": "11111111111111111111111111111111",
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "producer_id": "adapter:synthetic",
+    "source_record_id": "record-012",
+    "occurred_at": "2026-09-05T12:12:00Z",
+    "observed_at": "2026-09-05T12:12:01Z",
+    "event_type": "decision_recorded",
+    "severity": "info",
+    "evidence": [
+      {
+        "kind": "delivery",
+        "ref": "urn:ceoffice:synthetic:delivery-12",
+        "sha256": null,
+        "verification": "client_assertion"
+      }
+    ],
+    "expires_at": "2026-09-06T12:00:00Z",
+    "related_event_id": "event-006",
+    "delivery": {
+      "channel": "inbox",
+      "subscription_id": "subscription-synthetic-001",
+      "attempt": 1,
+      "state": "decision_recorded",
+      "provider_request_id": null
+    },
+    "decision_id": "decision-review-003",
+    "idempotency_key": "sha256:53e7c6fedde6a11fa05f793b43c136f2cd0dca4a4fa42b3d22c002de867fcba9"
+  }
+]
