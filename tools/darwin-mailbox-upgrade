@@ -244,7 +244,10 @@ def upgrade(pr, head, base=BASE, plist=PLIST):
         journal_path = control / 'upgrade.json'
         if journal_path.exists():
             raise ValueError('previous upgrade journal requires a new reviewed upgrade')
-        manager.put(journal_path, json.dumps(journal, sort_keys=True).encode())
+        journal_bytes = json.dumps(journal, sort_keys=True).encode()
+        if len(journal_bytes) > m.LOG_LIMIT - 16384:
+            raise ValueError('history journal exceeds safe recovery bound; installation unchanged')
+        manager.put(journal_path, journal_bytes)
         manager.put(control / 'disabled.json', b'{"disabled":true}\n')
         domain = 'gui/' + str(os.getuid())
         try:

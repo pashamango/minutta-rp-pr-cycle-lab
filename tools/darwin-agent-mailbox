@@ -261,7 +261,7 @@ Exit zero alone is not task completion. Report blockers honestly. Never publish 
         context["envelope"] = dict(envelope)
         return original_prompt(envelope, body)
     dispatcher.make_prompt = prompt
-    def run(command, prompt, out, err, timeout):
+    def run_checked(command, prompt, out, err, timeout):
         envelope = context["envelope"]
         caps = envelope.get("capabilities", [])
         base = out.parents[4]
@@ -293,6 +293,16 @@ Exit zero alone is not task completion. Report blockers honestly. Never publish 
                     "source_sha256": envelope["source_sha256"], "lease_id": envelope["lease_id"],
                     "capabilities": caps, "capability_scope": envelope["capability_scope"], "checks": checks})
         return result
+    def run(command, prompt, out, err, timeout):
+        try:
+            return run_checked(command, prompt, out, err, timeout)
+        except Exception:
+            # Shared dispatcher appends a bounded diagnostic on exceptions. Reserve room
+            # when a post-execution guard/broker fails after the worker filled its log.
+            if err.exists() and err.stat().st_size > LOG_LIMIT - 512:
+                with err.open("r+b") as stream:
+                    stream.truncate(LOG_LIMIT - 512)
+            raise
     dispatcher.run_codex = run
     original_source = reporter.verify_source
     def verify_source(envelope, issue, active_watcher, record):

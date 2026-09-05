@@ -191,6 +191,12 @@ class CapabilityIntegrationTests(unittest.TestCase):
             self.f.cycle(items=[original], fresh=self.f.item)
         self.assertFalse((self.f.base / 'state/claims').exists())
 
+    def test_post_execution_broker_error_retains_log_bounds(self):
+        self.f.fake.write_text(self.f.fake.read_text() + '\nsys.stderr.write("x"*2000000)\n')
+        with patch.object(self.module, 'apply', side_effect=ValueError('broker refused')):
+            self.assertEqual(self.f.cycle(), {'execution_failed': 1})
+        self.assertLessEqual((self.f.run_dir() / 'codex.stderr.log').stat().st_size, m.LOG_LIMIT)
+
     def test_failed_worker_check_cannot_trigger_broker(self):
         self.f.fake.write_text(self.f.fake.read_text().replace('"name":"identity","status":"pass"',
                                                               '"name":"identity","status":"fail"'))
