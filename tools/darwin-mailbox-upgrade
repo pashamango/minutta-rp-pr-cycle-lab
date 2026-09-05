@@ -15,7 +15,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-BRANCH = 'agent/wolfram/DARWIN-MAILBOX-0002-BOOTSTRAP-01'
+BRANCH = 'agent/wolfram/DARWIN-MAILBOX-0002-HOTFIX-01'
 REPO = 'pashamango/minutta-rp-pr-cycle-lab'
 BASE = Path.home() / 'ChitAkasha-Darwin/agent-mailbox'
 LABEL = 'com.chitakasha.darwin-agent-mailbox'
@@ -40,13 +40,46 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def local_host():
+def local_host(base=BASE, plist=PLIST):
     if platform.system() != 'Darwin' or os.getuid() == 0:
         raise ValueError('run locally as the existing non-root Darwin user')
-    name = subprocess.run(['/usr/sbin/scutil', '--get', 'ComputerName'], capture_output=True,
-                          text=True, timeout=10, check=True).stdout.strip().lower()
-    if name != 'darwin':
-        raise ValueError('ComputerName must be Darwin; no cross-host upgrade')
+    # Logical agent/host policy is not a hardware identity. Require the existing
+    # account-owned installation as well as the exact observed compatibility names.
+    safe_path = load('darwin-mailbox-capabilities').safe_path
+    for path in (base, plist, base / 'state/control/installation.json',
+                 base / 'state/control/activation.json', base / 'config/policy.yaml'):
+        safe_path(path)
+        if path.stat().st_uid != os.getuid():
+            raise ValueError('Darwin installation must belong to the current user')
+    m.check_policy(base / 'config/policy.yaml')  # Compiled agent/host/repository identity.
+    installation = m.strict_json(base / 'state/control/installation.json')
+    if (not re.fullmatch('[a-f0-9]{40}', installation.get('merged_commit', ''))
+            or set(installation.get('files', {})) != set(manager.FILES)):
+        raise ValueError('valid existing Darwin installation manifest required')
+    activation = m.strict_json(base / 'state/control/activation.json')
+    if (activation.get('mode') != 'normal' or not activation.get('smoke_verified_at')
+            or type(activation.get('last_existing_issue')) is not int
+            or activation['last_existing_issue'] < 0 or not activation.get('smoke_task_id')):
+        raise ValueError('valid existing Darwin activation required')
+    m.timestamp(activation['activated_at'])
+    m.timestamp(activation['smoke_verified_at'])
+    value = plistlib.loads(plist.read_bytes())
+    args = value.get('ProgramArguments', [])
+    if (value.get('Label') != LABEL or value.get('WorkingDirectory') != str(base)
+            or not isinstance(args, list) or len(args) != 2 or not isinstance(args[1], str)):
+        raise ValueError('expected Darwin LaunchAgent required')
+    runtime = Path(args[1])
+    if (runtime.parent.parent.parent != base / 'releases'
+            or not re.fullmatch('[a-f0-9]{40}', runtime.parent.parent.name)
+            or runtime.parts[-2:] != ('tools', 'darwin-agent-mailbox')):
+        raise ValueError('copied or foreign Darwin runtime path')
+    # owned()/rollback() additionally verify installed bytes and the exact runtime
+    # pointer before mutation. Neither names nor portable policy alone grant access.
+    names = tuple(subprocess.run(['/usr/sbin/scutil', '--get', key], capture_output=True,
+                  text=True, timeout=10, check=True).stdout.strip()
+                  for key in ('ComputerName', 'LocalHostName'))
+    if names not in {('Darwin-on-MacBookPro3', 'Darwin-on-MacBookPro3'), ('Darwin', 'Darwin')}:
+        raise ValueError('unrecognized Darwin host name pair; no cross-host upgrade')
 
 
 def checked(pr, head, api):
@@ -212,7 +245,7 @@ def launch(*args):
 
 
 def upgrade(pr, head, base=BASE, plist=PLIST):
-    local_host()
+    local_host(base, plist)
     os.umask(0o077)
     # No installation mutation until remote merge/head checks and all payload bytes pass.
     merged, files = verified(pr, head)
@@ -285,7 +318,7 @@ def upgrade(pr, head, base=BASE, plist=PLIST):
 
 
 def rollback(base=BASE, plist=PLIST):
-    local_host()
+    local_host(base, plist)
     control = base / 'state/control'
     with m.locked(control / 'install.lock') as a, m.locked(control / 'cycle.lock') as b:
         if not a or not b:

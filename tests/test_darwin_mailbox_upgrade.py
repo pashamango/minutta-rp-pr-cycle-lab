@@ -178,5 +178,92 @@ class UpgradeIdentityTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             u.checked(59, head, lambda args: {'status': 'diverged'} if '/compare/' in args[-1] else valid)
 
+class LocalHostTests(unittest.TestCase):
+    def setUp(self):
+        self.host_guard = u.local_host
+        self.fixture = UpgradeTests()
+        self.fixture.setUp()
+        self.f = self.fixture
+        self.names = {'ComputerName': 'Darwin-on-MacBookPro3',
+                      'LocalHostName': 'Darwin-on-MacBookPro3'}
+        self.platform = patch.object(u.platform, 'system', return_value='Darwin')
+        self.platform.start()
+        self.scutil = patch.object(u.subprocess, 'run', side_effect=self.name)
+        self.scutil.start()
+
+    def tearDown(self):
+        self.scutil.stop()
+        self.platform.stop()
+        self.fixture.tearDown()
+
+    def name(self, args, **kwargs):
+        self.assertEqual(args[:2], ['/usr/sbin/scutil', '--get'])
+        return type('Result', (), {'stdout': self.names[args[-1]] + '\n'})()
+
+    def check(self):
+        self.host_guard(self.f.base, self.f.plist)
+        return u.owned(self.f.base, self.f.plist)  # Actual upgrade's installed-byte preflight.
+
+    def test_observed_host_accepted_without_changes(self):
+        self.check()
+        self.assertEqual(u.history(self.f.base), self.f.before)
+        self.assertEqual(self.f.plist.read_bytes(), self.f.old_plist)
+        self.assertEqual(self.f.calls, [])
+        self.assertFalse((self.f.control / 'upgrade.json').exists())
+
+    def test_legacy_exact_pair_accepted(self):
+        self.names = dict.fromkeys(self.names, 'Darwin')
+        self.check()
+
+    def test_unrelated_and_prefix_lookalikes_rejected(self):
+        for name in ('Wolfram', 'Darwin-on-MacBookPro3-copy', 'Darwin-Other', 'darwin'):
+            self.names = dict.fromkeys(self.names, name)
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, 'name pair'):
+                self.check()
+
+    def test_mixed_name_pair_rejected(self):
+        self.names['LocalHostName'] = 'Wolfram'
+        with self.assertRaisesRegex(ValueError, 'name pair'):
+            self.check()
+
+    def test_linux_and_root_rejected_before_files_or_scutil(self):
+        for system, uid in (('Linux', 501), ('Darwin', 0)):
+            with patch.object(u.platform, 'system', return_value=system), \
+                 patch.object(u.os, 'getuid', return_value=uid), \
+                 patch.object(u.subprocess, 'run') as command, self.assertRaisesRegex(ValueError, 'non-root'):
+                self.host_guard(Path('/absent'), Path('/absent.plist'))
+            command.assert_not_called()
+
+    def test_copied_absolute_runtime_path_rejected(self):
+        value = dict(self.f.value, ProgramArguments=['/usr/bin/python3',
+            '/Users/other/ChitAkasha-Darwin/agent-mailbox/releases/' + self.f.old + '/tools/darwin-agent-mailbox'])
+        self.f.plist.write_bytes(plistlib.dumps(value))
+        with self.assertRaisesRegex(ValueError, 'copied or foreign'):
+            self.check()
+
+    def test_incomplete_installation_rejected(self):
+        (self.f.control / 'installation.json').unlink()
+        with self.assertRaises(FileNotFoundError):
+            self.check()
+
+    def test_same_names_do_not_authorize_wrong_label_or_drifted_bytes(self):
+        self.f.plist.write_bytes(plistlib.dumps(dict(self.f.value, Label='com.foreign.agent')))
+        with self.assertRaisesRegex(ValueError, 'LaunchAgent'):
+            self.check()
+        self.f.plist.write_bytes(self.f.old_plist)
+        (self.f.base / 'releases' / self.f.old / 'tools/darwin-agent-mailbox').write_text('drift')
+        with self.assertRaisesRegex(ValueError, 'installed bytes'):
+            self.check()
+
+    def test_invalid_activation_and_wrong_owner_rejected(self):
+        with patch.object(u.os, 'getuid', return_value=987654), self.assertRaisesRegex(ValueError, 'current user'):
+            self.check()
+        value = json.loads((self.f.control / 'activation.json').read_text())
+        value['last_existing_issue'] = -1
+        (self.f.control / 'activation.json').write_text(json.dumps(value))
+        with self.assertRaisesRegex(ValueError, 'activation'):
+            self.check()
+
+
 if __name__ == '__main__':
     unittest.main()
