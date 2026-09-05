@@ -133,3 +133,11 @@ fake Codex/GitHub and temporary homes; they are not live
 smoke evidence. The only real smoke is initiated after manual merge by the command above.
 Machine receipts in GitHub and notification delivery to the owner are different events;
 no phone push is asserted.
+
+## DARWIN-MAILBOX-0002 trusted local upgrade
+
+The original activation instructions above describe MAILBOX-0001 only. Existing installations
+use the [bounded capability and manual upgrade runbook](darwin-mailbox-capabilities.md).
+Do not rerun initial activation to upgrade, change its watermark, or clear any claims.
+Only the reviewed PR's pinned `darwin-mailbox-upgrade upgrade` command changes the runtime.
+The capability adapter permanently excludes issues #55, #56, #57 and #58.

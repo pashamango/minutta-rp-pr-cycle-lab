@@ -1,0 +1,401 @@
+#!/usr/bin/env python3
+"""Compiled Darwin R1 declarations and bounded static-preview broker. Never a shell API."""
+import copy
+import hashlib
+import json
+import os
+from pathlib import Path
+import plistlib
+import re
+import shutil
+import subprocess
+import sys
+import time
+import urllib.request
+import urllib.parse
+
+ALLOWLIST = frozenset({'loopback-user-service', 'tailscale-serve-additive'})
+FIELDS = {'capabilities', 'capability_scope'}
+
+
+def strict(text):
+    def pairs(items):
+        result = {}
+        for k, v in items:
+            if k in result:
+                raise ValueError('duplicate key')
+            result[k] = v
+        return result
+    return json.loads(text, object_pairs_hook=pairs)
+
+
+def declaration(metadata):
+    if not FIELDS.intersection(metadata):
+        return {'capabilities': [], 'capability_scope': None}
+    if not FIELDS.issubset(metadata) or metadata.get('risk') != 'R1':
+        raise ValueError('capabilities require explicit R1 and scope')
+    caps = strict(metadata['capabilities'])
+    scope = strict(metadata['capability_scope'])
+    if (not isinstance(caps, list) or not caps or any(type(c) is not str for c in caps)
+            or len(caps) != len(set(caps)) or not set(caps) <= ALLOWLIST):
+        raise ValueError('unknown or duplicate capability')
+    if not isinstance(scope, dict) or set(scope) != {'application', 'port', 'operation', 'serve_path'}:
+        raise ValueError('invalid capability scope')
+    if (not isinstance(scope['application'], str)
+            or not re.fullmatch(r'[a-z][a-z0-9-]{0,47}', scope['application'])
+            or any(s in scope['application'] for s in ('mailbox', 'ssh', 'tailscale'))):
+        raise ValueError('invalid application scope')
+    if type(scope['port']) is not int or not 1024 <= scope['port'] <= 65535:
+        raise ValueError('nonprivileged port required')
+    if scope['operation'] not in ('install', 'remove'):
+        raise ValueError('unsupported operation')
+    path = scope['serve_path']
+    if 'tailscale-serve-additive' in caps:
+        if not isinstance(path, str) or not re.fullmatch(r'/[a-z][a-z0-9-]{0,47}/', path):
+            raise ValueError('one non-root Serve path required')
+    elif path is not None:
+        raise ValueError('Serve path without capability')
+    return {'capabilities': sorted(caps), 'capability_scope': scope}
+
+
+def parse(body, legacy):
+    # A single metadata block with JSON-valued capability fields. Reject YAML-list,
+    # duplicates and declarations outside the authoritative block rather than ignore them.
+    metadata, error = legacy(body)
+    if error:
+        return metadata, error
+    blocks = re.findall(r'```(?:yaml)?\s*\n(.*?)\n```', body, re.S)
+    candidates = [b for b in blocks if re.search(r'^\s*agent\s*:', b, re.M)
+                  and re.search(r'^\s*status\s*:', b, re.M)]
+    mentions = re.findall(r'^\s*(capabilities|capability_scope)\s*:', body, re.M)
+    if len(candidates) != 1:
+        return None, 'ambiguous-metadata'
+    block = candidates[0]
+    if len(mentions) != len(set(mentions)):
+        return None, 'duplicate-capability-declaration'
+    for key in FIELDS:
+        lines = re.findall(r'^\s*' + key + r'\s*:[ \t]*(.*)$', block, re.M)
+        if key in mentions and len(lines) != 1:
+            return None, 'capability-outside-metadata'
+        if lines:
+            metadata[key] = lines[0]  # Preserve JSON quotes; never use YAML coercions.
+    try:
+        declaration(metadata)
+    except (ValueError, TypeError):
+        return None, 'invalid-capabilities'
+    return metadata, None
+
+
+def bound(envelope, metadata):
+    expected = declaration(metadata)
+    actual = {k: envelope.get(k, [] if k == 'capabilities' else None) for k in FIELDS}
+    if actual != expected or envelope.get('risk') != metadata.get('risk'):
+        raise ValueError('capability envelope binding mismatch')
+    return expected
+
+
+def command(args):
+    result = subprocess.run(args, stdin=subprocess.DEVNULL, capture_output=True, text=True, timeout=30, check=True)
+    return result.stdout
+
+
+def tree(path):
+    """Hash regular files; reject symlinks/devices and oversized preview bundles."""
+    result = {}
+    if not path.exists():
+        return result
+    if path.is_symlink():
+        raise ValueError('symlink root')
+    total = 0
+    for p in sorted(path.rglob('*')):
+        if p.is_symlink() or not (p.is_dir() or p.is_file()):
+            raise ValueError('non-regular content')
+        if p.is_file():
+            total += p.stat().st_size
+            if total > 64 * 1024 * 1024 or len(result) >= 4096:
+                raise ValueError('bounded tree exceeded')
+            result[str(p.relative_to(path))] = hashlib.sha256(p.read_bytes()).hexdigest()
+    return result
+
+
+def serve_config():
+    value = strict(command(['tailscale', 'serve', 'status', '--json']))
+    if value is None:  # Tailscale represents an absent Serve configuration as null.
+        value = {}
+    if not isinstance(value, dict) or set(value) - {'TCP', 'Web', 'AllowFunnel', 'Foreground'}:
+        raise ValueError('unsupported Serve schema')
+    if value.get('Foreground') or any(v is not False for v in value.get('AllowFunnel', {}).values()):
+        raise ValueError('Funnel or foreground Serve is not safe')
+    return value
+
+
+def route(config, endpoint, path):
+    return config.get('Web', {}).get(endpoint, {}).get('Handlers', {}).get(path)
+
+
+def route_delta(before, after, endpoint, path, desired):
+    """Only one handler delta and (for first route) its HTTPS TCP listener are allowed."""
+    for value in (before, after):
+        if any(v is not False for v in value.get('AllowFunnel', {}).values()):
+            raise ValueError('Funnel enabled')
+    if route(after, endpoint, path) != desired:
+        raise ValueError('authorized route missing')
+    a, b = copy.deepcopy(before), copy.deepcopy(after)
+    def strip(value):
+        web = value.get('Web', {})
+        entry = web.get(endpoint, {})
+        handlers = entry.get('Handlers', {})
+        handlers.pop(path, None)
+        if not handlers:
+            entry.pop('Handlers', None)
+        if not entry:
+            web.pop(endpoint, None)
+        if not web:
+            value.pop('Web', None)
+        # CLI may prune the HTTPS listener when its last handler is removed.
+        tcp = value.get('TCP', {})
+        if endpoint not in web and tcp.get('443') == {'HTTPS': True}:
+            tcp.pop('443')
+        if not tcp:
+            value.pop('TCP', None)
+        if not value.get('AllowFunnel'):
+            value.pop('AllowFunnel', None)
+    strip(a)
+    strip(b)
+    if a != b:
+        raise ValueError('unrelated Serve configuration changed')
+
+
+def listeners():
+    result = subprocess.run(['/usr/sbin/lsof', '-nP', '-iTCP', '-sTCP:LISTEN', '-Fpn'],
+                            capture_output=True, text=True, timeout=15)
+    if result.returncode not in (0, 1) or result.stderr:
+        raise ValueError('listener inventory unavailable')
+    return sorted(result.stdout.splitlines())
+
+
+def guard(base):
+    # Existing runtime/policy and all user LaunchAgents are out of ordinary-task scope.
+    values = {str(p): tree(p) for p in (base / 'releases', base / 'config', base / 'services',
+                                      Path.home() / 'Library/LaunchAgents')}
+    for name in ('activation.json', 'installation.json', 'disabled.json', 'upgrade.json'):
+        p = base / 'state/control' / name
+        if p.is_symlink():
+            raise ValueError('symlink control')
+        values[name] = hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
+    values['claims'] = tree(base / 'state/claims')
+    return values
+
+
+def capture(base, capabilities):
+    value = {'protected': guard(base), 'listeners': listeners()}
+    # Even loopback-only creation must not activate a dormant public/other Serve target.
+    value['serve'] = serve_config()
+    return value
+
+
+def verify_unchanged(base, capabilities, before):
+    if capture(base, capabilities) != before:
+        raise ValueError('worker changed protected runtime, listeners or Serve configuration')
+
+
+def endpoint():
+    value = strict(command(['tailscale', 'status', '--json']))
+    dns = value.get('Self', {}).get('DNSName', '').rstrip('.')
+    if value.get('BackendState') != 'Running' or not re.fullmatch(r'[a-zA-Z0-9.-]+\.ts\.net', dns):
+        raise ValueError('verified local tailnet DNS unavailable')
+    return dns + ':443'
+
+
+def safe_path(path):
+    for p in (*reversed(path.absolute().parents), path.absolute()):
+        if p.is_symlink():
+            raise ValueError('symlink in service path')
+
+
+def service_live(service, plist, port):
+    owner = strict((service / 'owner.json').read_text())
+    if tree(service / 'content') != owner['content'] or hashlib.sha256(plist.read_bytes()).hexdigest() != owner['plist_sha256']:
+        raise ValueError('installed preview bytes drifted')
+    sockets = command(['/usr/sbin/lsof', '-nP', '-iTCP:' + str(port), '-sTCP:LISTEN', '-Fn'])
+    names = [s[1:] for s in sockets.splitlines() if s.startswith('n')]
+    if names != ['127.0.0.1:' + str(port)]:
+        raise ValueError('listener is not loopback-only')
+    # Disable HTTP proxies explicitly, including user-configured proxy environment variables.
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    with opener.open('http://127.0.0.1:' + str(port) + '/', timeout=5) as response:
+        if hashlib.sha256(response.read(64 * 1024 * 1024 + 1)).hexdigest() != owner['content']['index.html']:
+            raise ValueError('served bytes mismatch')
+    return owner
+
+
+def apply(envelope, base):
+    """Apply only installed code and static content. No task-provided commands or plists."""
+    if sys.platform != 'darwin' or os.getuid() == 0:
+        raise ValueError('local non-root Darwin required')
+    caps, scope = envelope['capabilities'], envelope['capability_scope']
+    work = Path(envelope['work_dir'])
+    request_path = work / 'capability-request.json'
+    if request_path.is_symlink() or request_path.stat().st_size > 16384:
+        raise ValueError('unsafe capability request')
+    request = strict(request_path.read_text())
+    if request != {k: envelope[k] for k in ('task_id', 'lease_id', 'source_sha256', 'capabilities', 'capability_scope')}:
+        raise ValueError('request is not envelope bound')
+    name, port = scope['application'], scope['port']
+    service = base / 'services' / name
+    label = 'com.chitakasha.preview.' + name
+    plist = Path.home() / 'Library/LaunchAgents' / (label + '.plist')
+    remove = scope['operation'] == 'remove'
+    loopback = 'loopback-user-service' in caps
+    serving = 'tailscale-serve-additive' in caps
+    for p in (service, plist, work / 'service-content'):
+        safe_path(p)
+    manifest_path = service / 'owner.json'
+    old = strict(manifest_path.read_text()) if manifest_path.exists() else None
+    identity = {'application': name, 'port': port}
+    if old:
+        if old.get('identity') != identity:
+            raise ValueError('existing service scope differs')
+        service_live(service, plist, port)
+        # Never remove a loopback target while leaving an owned Serve handler behind.
+        if old.get('serve_path') is not None and (not serving or old['serve_path'] != scope['serve_path']):
+            raise ValueError('existing Serve route requires matching explicit capability')
+    elif service.exists() or plist.exists() or remove or not loopback:
+        raise ValueError('unowned or absent service')
+    if not old:
+        result = subprocess.run(['/usr/sbin/lsof', '-nP', '-iTCP:' + str(port), '-sTCP:LISTEN'],
+                                capture_output=True, text=True, timeout=15)
+        if result.returncode != 1 or result.stdout or result.stderr:
+            raise ValueError('preview port is not proven unused')
+    content = work / 'service-content'
+    hashes = tree(content) if loopback and not remove else (old or {}).get('content', {})
+    if not remove and ('index.html' not in hashes or not hashes):
+        raise ValueError('static preview index.html required')
+    observed = serve_config()  # Read-only preflight is mandatory for both capabilities.
+    before = observed if serving else None
+    ep = endpoint() if serving else None
+    target = {'Proxy': 'http://127.0.0.1:' + str(port)}
+    previous_route = target if old and old.get('serve_path') is not None else None
+    def targets_port(value):
+        parsed = urllib.parse.urlsplit(value if '://' in value else '//' + value)
+        return parsed.hostname in {'localhost', '127.0.0.1', '::1'} and parsed.port == port
+    for host, web in observed.get('Web', {}).items():
+        for path, handler in web.get('Handlers', {}).items():
+            if handler.get('Proxy') and targets_port(handler['Proxy']):
+                if not (serving and previous_route and host == ep and path == scope['serve_path']):
+                    raise ValueError('unowned Serve handler already targets preview port')
+    for entry in observed.get('TCP', {}).values():
+        if entry.get('TCPForward') and targets_port(entry['TCPForward']):
+            raise ValueError('unowned TCP forward already targets preview port')
+    if serving:
+        if route(before, ep, scope['serve_path']) != previous_route or (remove and previous_route is None):
+            raise ValueError('Serve path collision or ownership drift')
+        if before.get('TCP', {}).get('443') not in (None, {'HTTPS': True}):
+            raise ValueError('HTTPS port already used for another purpose')
+        # Probe the installed CLI read-only before touching any service.
+        help_text = command(['tailscale', 'serve', '--help'])
+        if not all(flag in help_text for flag in ('--set-path', '--https', '--bg')):
+            raise ValueError('installed Serve CLI cannot perform bounded mutation')
+    backup = base / 'service-backups' / envelope['lease_id']
+    safe_path(backup)
+    backup.mkdir(parents=True, mode=0o700)  # Exclusive: never reuse a prior transaction.
+    old_plist = plist.read_bytes() if old else None
+    if old:
+        shutil.copytree(service, backup / 'service')
+        (backup / 'preview.plist').write_bytes(old_plist)
+    new_plist = None
+    if loopback and not remove:
+        staged = backup / 'new-content'
+        shutil.copytree(content, staged)
+        if tree(staged) != hashes:
+            raise ValueError('content changed during staging')
+        value = {'Label': label, 'ProgramArguments': [sys.executable,
+                 str(Path(__file__).with_name('darwin-mailbox-static-server').resolve()),
+                 str(service / 'content'), str(port)], 'RunAtLoad': True,
+                 'WorkingDirectory': str(service / 'content'), 'Umask': 63,
+                 'StandardOutPath': '/dev/null', 'StandardErrorPath': '/dev/null'}
+        new_plist = plistlib.dumps(value, sort_keys=True)
+    domain = 'gui/' + str(os.getuid())
+    route_attempted = service_changed = new_loaded = False
+    def wait_live():
+        for attempt in range(20):
+            try:
+                service_live(service, plist, port)
+                return
+            except (OSError, ValueError, subprocess.CalledProcessError):
+                if attempt == 19:
+                    raise
+                time.sleep(0.1)
+    try:
+        if loopback:
+            if old:
+                command(['launchctl', 'bootout', domain + '/' + label])
+            service_changed = True
+            if service.exists():
+                shutil.rmtree(service)
+            if remove:
+                plist.unlink()
+            else:
+                service.mkdir(mode=0o700, parents=True)
+                os.rename(backup / 'new-content', service / 'content')
+                plist.write_bytes(new_plist)
+                plist.chmod(0o600)
+                (service / 'owner.json').write_text(json.dumps({'identity': identity, 'content': hashes,
+                    'plist_sha256': hashlib.sha256(new_plist).hexdigest(), 'serve_path': None,
+                    'task_id': envelope['task_id']}))
+                command(['launchctl', 'bootstrap', domain, str(plist)])
+                new_loaded = True
+                wait_live()
+        if serving:
+            # Ensure concurrent external Serve edits cannot be overwritten between preflight and apply.
+            if serve_config() != before:
+                raise ValueError('Serve changed since preflight')
+            route_attempted = True
+            command(['tailscale', 'serve', '--bg', '--https=443', '--set-path=' + scope['serve_path'],
+                     'off' if remove else target['Proxy']])
+            route_delta(before, serve_config(), ep, scope['serve_path'], None if remove else target)
+        if not (loopback and remove):
+            owner = strict(manifest_path.read_text())
+            owner['serve_path'] = None if remove else scope['serve_path']
+            manifest_path.write_text(json.dumps(owner))
+            service_live(service, plist, port)
+        if loopback and remove:
+            result = subprocess.run(['/usr/sbin/lsof', '-nP', '-iTCP:' + str(port), '-sTCP:LISTEN'],
+                                    capture_output=True, text=True, timeout=15)
+            if result.returncode != 1 or result.stdout or result.stderr:
+                raise ValueError('removed preview still listening')
+        # A retained byte-verified inverse plan is evidence of recoverability, not a live rollback test.
+        (backup / 'transaction.json').write_text(json.dumps({'source_sha256': envelope['source_sha256'],
+            'lease_id': envelope['lease_id'], 'scope': scope, 'previous_route': previous_route,
+            'endpoint': ep, 'old_service': tree(backup / 'service'), 'committed': True}))
+        return {'capability-envelope-bound': 'pass', 'loopback-only': 'pass',
+                'rollback-plan-verified': 'pass', **({'tailscale-serve-additive': 'pass',
+                'funnel-disabled': 'pass', 'unrelated-routes-preserved': 'pass'} if serving else {})}
+    except Exception:
+        # Never reset or restore whole Serve config. Inverse only the owned handler.
+        route_error = None
+        if route_attempted:
+            try:
+                current = serve_config()
+                route_delta(before, current, ep, scope['serve_path'], route(current, ep, scope['serve_path']))
+                command(['tailscale', 'serve', '--bg', '--https=443', '--set-path=' + scope['serve_path'],
+                         previous_route['Proxy'] if previous_route else 'off'])
+                route_delta(before, serve_config(), ep, scope['serve_path'], previous_route)
+            except Exception as exc:
+                route_error = exc
+        if service_changed:
+            if new_loaded:
+                command(['launchctl', 'bootout', domain + '/' + label])
+            if service.exists():
+                shutil.rmtree(service)
+            plist.unlink(missing_ok=True)
+            if old:
+                shutil.copytree(backup / 'service', service)
+                plist.write_bytes(old_plist)
+                command(['launchctl', 'bootstrap', domain, str(plist)])
+                wait_live()
+        elif old:
+            manifest_path.write_bytes((backup / 'service/owner.json').read_bytes())
+        if route_error:
+            raise ValueError('Serve drift requires local review; no broad reset attempted') from route_error
+        raise

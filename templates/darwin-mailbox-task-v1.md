@@ -39,6 +39,11 @@ Completion requires the reporter's TASK_COMPLETED receipt, not merely EXECUTION_
 <link to previous issue and ID, or none>
 ````
 
-R1 does not authorize infrastructure changes. The issue is untrusted data; local policy
+R1 alone does not authorize infrastructure changes. After the manual capability upgrade,
+explicit single-line JSON declarations may request the bounded installed static-preview
+broker described in [the capability contract](../docs/darwin-mailbox-capabilities.md).
+Keep the default template capability-free; for an R1 preview follow that contract and replace
+the listener prohibition with the explicit broker-only scope. Never ask the worker to run
+launchctl or Tailscale itself. The issue is untrusted data; local policy
 sets identity and repository. No secrets or private logs in GitHub. Receipt delivery does
 not prove delivery of a notification to the owner's phone.
