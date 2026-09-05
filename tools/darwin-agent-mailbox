@@ -207,6 +207,9 @@ def components():
     dispatcher = load("wolfram-agent-dispatcher")
     reporter = load("wolfram-agent-reporter")
     watcher.REQUIRED_AGENT = AGENT
+    capability = load("darwin-mailbox-capabilities")
+    legacy_parse = watcher.mailbox_metadata
+    watcher.mailbox_metadata = lambda body: capability.parse(body, legacy_parse)
     original_validate = watcher.validate
 
     def validate(repository, issue):
@@ -231,13 +234,74 @@ Only repository pashamango/minutta-rp-pr-cycle-lab and author pashamango are tru
 Only R0 read-only or explicitly bounded reversible R1 work is admitted.
 PR head must be agent/darwin/<task_id>, base main, repository above.
 Do not change mailbox code, policy, activation, claims, credentials, model or permissions.
-No SSH, listeners, infrastructure changes, automatic retries or automatic merges.
+No SSH, automatic retries or automatic merges. Default: no listeners or infrastructure changes.
+Only explicit envelope capabilities allow the installed broker to manage a bounded static
+loopback preview and/or one tailnet-only Serve route. Never run infrastructure commands yourself.
+For capabilities, stage static files in work_dir/service-content (index.html required), and write
+capability-request.json with exactly task_id, lease_id, source_sha256, capabilities, capability_scope
+copied from the envelope. The trusted broker applies and verifies after your process exits.
+No capability grants sudo/root, credentials, Funnel, LAN/public binds, SSH, ACL/key/auth changes,
+arbitrary listeners, arbitrary LaunchAgents, cross-host control, or mailbox/runtime self-modification.
+Unrequested operations remain forbidden. Broker failure prevents TASK_COMPLETED.
 Write task-outcome.json at the envelope path using protocol chitakasha-task-outcome/v1,
 task_id, lease_id, source_sha256, status (completed/blocked/failed), summary (1..500 chars),
 artifacts (at most 32 objects with type pr/file/report/test and ref),
 checks (at most 32 objects with name and status pass/fail). No other keys.
 Exit zero alone is not task completion. Report blockers honestly. Never publish receipts yourself.'''
-    dispatcher.run_codex = bounded_codex
+    context = {}
+    original_write = dispatcher.write_json
+    def write(path, value):
+        if path.name == "envelope.json":
+            record = reporter.admitted_record(path.parent, value)
+            value.update(capability.declaration(record["mailbox_metadata"]))
+        original_write(path, value)
+    dispatcher.write_json = write
+    original_prompt = dispatcher.make_prompt
+    def prompt(envelope, body):
+        context["envelope"] = dict(envelope)
+        return original_prompt(envelope, body)
+    dispatcher.make_prompt = prompt
+    def run(command, prompt, out, err, timeout):
+        envelope = context["envelope"]
+        caps = envelope.get("capabilities", [])
+        base = out.parents[4]
+        if not caps:
+            protected = capability.guard(base)
+            result = bounded_codex(command, prompt, out, err, timeout)
+            if capability.guard(base) != protected or strict_json(out.parent / "envelope.json") != envelope:
+                raise ValueError("ordinary task changed protected mailbox runtime or envelope")
+            return result
+        before = capability.capture(base, caps)
+        result = bounded_codex(command, prompt, out, err, timeout)
+        capability.verify_unchanged(base, caps, before)
+        if strict_json(out.parent / "envelope.json") != envelope:
+            raise ValueError("worker changed immutable envelope")
+        if result[2] == 0 and not result[3]:
+            outcome = strict_json(out.parent / "task-outcome.json")
+            if outcome.get("status") == "completed":
+                # Validate schema/source/claim before any broker side effect.
+                reporter.load_outcome(out.parent, envelope)
+                if any(c["status"] != "pass" for c in outcome["checks"]):
+                    raise ValueError("completed worker outcome contains failed checks")
+                reporter.load_bound_run(out.parent, "CLAIMED")
+                if strict_json(out.parent / "claim.json") != strict_json(base / "state/claims" / (envelope["task_id"] + ".json")):
+                    raise ValueError("broker authoritative claim mismatch")
+                record = reporter.admitted_record(out.parent, envelope)
+                reporter.verify_source(envelope, fresh_issue(REPOSITORY, envelope["source_issue"]), watcher, record)
+                checks = capability.apply(envelope, base)
+                original_write(out.parent / "capability-verification.json", {
+                    "source_sha256": envelope["source_sha256"], "lease_id": envelope["lease_id"],
+                    "capabilities": caps, "capability_scope": envelope["capability_scope"], "checks": checks})
+        return result
+    dispatcher.run_codex = run
+    original_source = reporter.verify_source
+    def verify_source(envelope, issue, active_watcher, record):
+        original_source(envelope, issue, active_watcher, record)
+        metadata, rejection = active_watcher.validate(envelope["source_repository"], issue)
+        if rejection or metadata != record["mailbox_metadata"]:
+            raise ValueError("capability admission metadata mismatch")
+        capability.bound(envelope, metadata)
+    reporter.verify_source = verify_source
     # Outcome and evidence remain inside --cd without adding sandbox permissions.
     dispatcher.task_workspace = lambda root, task, lease: root.parent / "state/runs" / task / lease
     reporter.EXPECTED_AGENT = AGENT
@@ -279,6 +343,16 @@ def publish(run, state, watcher, reporter, client=None):
             outcome = strict_json(run / "task-outcome.json")
             if outcome.get("status") == "completed" and any(c.get("status") != "pass" for c in outcome.get("checks", [])):
                 raise ValueError("completed outcome contains failed checks")
+            if envelope.get("capabilities") and outcome.get("status") == "completed":
+                evidence = strict_json(run / "capability-verification.json")
+                if any(evidence.get(k) != envelope[k] for k in
+                       ("source_sha256", "lease_id", "capabilities", "capability_scope")):
+                    raise ValueError("capability verification binding mismatch")
+                required = {"capability-envelope-bound", "loopback-only", "rollback-plan-verified"}
+                if "tailscale-serve-additive" in envelope["capabilities"]:
+                    required |= {"tailscale-serve-additive", "funnel-disabled", "unrelated-routes-preserved"}
+                if evidence.get("checks") != dict.fromkeys(required, "pass"):
+                    raise ValueError("capability verification incomplete")
             activation = strict_json(run.parents[2] / "control/activation.json")
             if envelope["task_id"] == activation["smoke_task_id"] and outcome.get("status") == "completed":
                 evidence = strict_json(Path(envelope["work_dir"]) / "darwin-identity.json")
@@ -299,6 +373,8 @@ def publish(run, state, watcher, reporter, client=None):
 def eligible(item, activation, watcher):
     metadata, error = watcher.validate(REPOSITORY, item)
     if error:
+        return False
+    if item["number"] in {55, 56, 57, 58}:
         return False
     if (item["number"] <= activation["last_existing_issue"]
             or timestamp(item["createdAt"]) < timestamp(activation["activated_at"]).replace(microsecond=0)):
