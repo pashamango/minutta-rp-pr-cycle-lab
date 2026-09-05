@@ -199,7 +199,7 @@ def record_revision(state_dir, task_id, record):
 
 
 def dispatch_record(record_path, state_dir, work_dir=None, timeout=900, codex=None,
-                    issue_fetcher=fetch_issue, watcher=None):
+                    issue_fetcher=fetch_issue, watcher=None, storage_root=None):
     watcher = watcher or load_watcher()
     record = json.loads(record_path.read_text(encoding="utf-8"))
     metadata = record.get("mailbox_metadata") or {}
@@ -236,7 +236,7 @@ def dispatch_record(record_path, state_dir, work_dir=None, timeout=900, codex=No
                 "risk": metadata["risk"], "claimed_at": claimed_at, "lease_id": lease_id,
                 "task_outcome_path": str(run_dir / "task-outcome.json")}
     write_json(run_dir / "claim.json", claim)
-    storage_root = Path.home() / "ChitAkasha-Storage"
+    storage_root = storage_root or Path.home() / "ChitAkasha-Storage"
     execution_dir = Path(work_dir) if work_dir is not None else task_workspace(
         storage_root, task_id, lease_id)
     envelope["work_dir"] = str(execution_dir)
