@@ -51,6 +51,10 @@ The broker generates the only supported user LaunchAgent. Root, system daemons, 
 executables, arbitrary listeners, LAN/public bind, SSH, credentials, ACL/key/auth changes,
 Funnel, cross-host control, automatic merge and mailbox self-modification remain forbidden.
 
+Both capabilities require a read-only Serve preflight. Existing Funnel enablement or an
+unowned handler/TCP forward aimed at the preview port blocks even loopback-only creation,
+so a new listener cannot activate a dormant Serve exposure.
+
 Serve uses only the existing authenticated local node, HTTPS 443, one non-root path, and
 an owned loopback HTTP target. The broker never invokes Funnel, reset, up, login or ACL/key
 commands. It rejects unsupported CLI/schema, foreground Serve, Funnel enablement, path

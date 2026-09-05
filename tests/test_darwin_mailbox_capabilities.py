@@ -312,8 +312,9 @@ class BrokerTests(unittest.TestCase):
         cap.apply(self.envelope(operation='remove'), self.base)
         self.assertFalse(self.running)
         self.assertFalse((self.base / 'services/example').exists())
-        self.assertFalse(any(cmd[0] == 'tailscale' for cmd in self.commands))
-        self.assertTrue(all(cmd[0] in ('launchctl', '/usr/sbin/lsof') for cmd in self.commands))
+        self.assertTrue(all(cmd[:3] == ['tailscale', 'serve', 'status']
+                            for cmd in self.commands if cmd[0] == 'tailscale'))
+        self.assertTrue(all(cmd[0] in ('launchctl', '/usr/sbin/lsof', 'tailscale') for cmd in self.commands))
 
     def test_combined_preserves_unrelated_and_removes_only_owned_handler(self):
         names = sorted(cap.ALLOWLIST)
@@ -335,6 +336,17 @@ class BrokerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'unowned'):
             cap.apply(self.envelope(['tailscale-serve-additive']), self.base)
         self.assertEqual(self.commands, [])
+
+    def test_loopback_only_cannot_activate_dormant_serve_or_funnel_target(self):
+        self.config['Web']['darwin.example.ts.net:443']['Handlers']['/foreign/'] = {
+            'Proxy': 'http://127.0.0.1:18765'}
+        with self.assertRaisesRegex(ValueError, 'unowned Serve'):
+            cap.apply(self.envelope(), self.base)
+        self.assertFalse(self.running)
+        self.config['AllowFunnel'] = {'darwin.example.ts.net:443': True}
+        with self.assertRaisesRegex(ValueError, 'Funnel'):
+            cap.apply(self.envelope(), self.base)
+        self.assertFalse(self.running)
 
     def test_route_collision_is_not_replaced(self):
         self.config['Web']['darwin.example.ts.net:443']['Handlers']['/example/'] = {'Proxy': 'http://127.0.0.1:22'}

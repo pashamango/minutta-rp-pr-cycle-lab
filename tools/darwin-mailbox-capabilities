@@ -12,6 +12,7 @@ import subprocess
 import sys
 import time
 import urllib.request
+import urllib.parse
 
 ALLOWLIST = frozenset({'loopback-user-service', 'tailscale-serve-additive'})
 FIELDS = {'capabilities', 'capability_scope'}
@@ -188,8 +189,8 @@ def guard(base):
 
 def capture(base, capabilities):
     value = {'protected': guard(base), 'listeners': listeners()}
-    if 'tailscale-serve-additive' in capabilities:
-        value['serve'] = serve_config()
+    # Even loopback-only creation must not activate a dormant public/other Serve target.
+    value['serve'] = serve_config()
     return value
 
 
@@ -270,10 +271,22 @@ def apply(envelope, base):
     hashes = tree(content) if loopback and not remove else (old or {}).get('content', {})
     if not remove and ('index.html' not in hashes or not hashes):
         raise ValueError('static preview index.html required')
-    before = serve_config() if serving else None
+    observed = serve_config()  # Read-only preflight is mandatory for both capabilities.
+    before = observed if serving else None
     ep = endpoint() if serving else None
     target = {'Proxy': 'http://127.0.0.1:' + str(port)}
     previous_route = target if old and old.get('serve_path') is not None else None
+    def targets_port(value):
+        parsed = urllib.parse.urlsplit(value if '://' in value else '//' + value)
+        return parsed.hostname in {'localhost', '127.0.0.1', '::1'} and parsed.port == port
+    for host, web in observed.get('Web', {}).items():
+        for path, handler in web.get('Handlers', {}).items():
+            if handler.get('Proxy') and targets_port(handler['Proxy']):
+                if not (serving and previous_route and host == ep and path == scope['serve_path']):
+                    raise ValueError('unowned Serve handler already targets preview port')
+    for entry in observed.get('TCP', {}).values():
+        if entry.get('TCPForward') and targets_port(entry['TCPForward']):
+            raise ValueError('unowned TCP forward already targets preview port')
     if serving:
         if route(before, ep, scope['serve_path']) != previous_route or (remove and previous_route is None):
             raise ValueError('Serve path collision or ownership drift')
