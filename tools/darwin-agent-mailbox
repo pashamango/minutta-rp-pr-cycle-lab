@@ -1,0 +1,398 @@
+#!/usr/bin/env python3
+"""Darwin-only policy adapter; legacy Wolfram entry points keep their defaults."""
+import argparse
+import contextlib
+import datetime as dt
+import fcntl
+import hashlib
+import importlib.machinery
+import importlib.util
+import json
+import os
+from pathlib import Path
+import selectors
+import signal
+import platform
+import subprocess
+import sys
+import time
+
+REPOSITORY = "pashamango/minutta-rp-pr-cycle-lab"
+AGENT = "codex@darwin.local"
+BASE = Path.home() / "ChitAkasha-Darwin/agent-mailbox"
+POLICY = {"repository": REPOSITORY, "author": "pashamango", "agent": AGENT,
+          "host": "Darwin", "branch_prefix": "agent/darwin/", "max_timeout_seconds": "900"}
+LOG_LIMIT = 1024 * 1024
+
+
+def load(name):
+    loader = importlib.machinery.SourceFileLoader(name.replace("-", "_"), str(Path(__file__).with_name(name)))
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
+def strict_json(path):
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            if key in result:
+                raise ValueError("duplicate JSON key")
+            result[key] = value
+        return result
+    if path.is_symlink() or path.stat().st_size > LOG_LIMIT:
+        raise ValueError("unsafe JSON file")
+    return json.loads(path.read_text(), object_pairs_hook=pairs)
+
+
+def real_directory(path):
+    path = Path(path).absolute()
+    for part in (*reversed(path.parents), path):
+        if part.is_symlink():
+            raise ValueError("symlink in mailbox path")
+    path.mkdir(parents=True, exist_ok=True, mode=0o700)
+    return path
+
+
+@contextlib.contextmanager
+def locked(path):
+    real_directory(path.parent)
+    fd = os.open(path, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+    try:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            yield False
+        else:
+            yield True
+    finally:
+        os.close(fd)
+
+
+def timestamp(value):
+    parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        raise ValueError("UTC timestamp required")
+    return parsed
+
+
+def check_policy(path):
+    values = {}
+    for raw in path.read_text().splitlines():
+        if not raw.strip() or raw.lstrip().startswith("#"):
+            continue
+        key, value = raw.split(":", 1)
+        if key in values:
+            raise ValueError("duplicate policy key")
+        values[key] = value.strip()
+    if values != POLICY:
+        raise ValueError("Darwin policy differs from compiled trust boundary")
+
+
+def gh(args, payload=None):
+    result = subprocess.run(["gh", *args], input=None if payload is None else json.dumps(payload),
+                            capture_output=True, text=True, timeout=45)
+    if result.returncode:
+        raise RuntimeError("GitHub request failed")
+    return json.loads(result.stdout) if result.stdout.strip() else None
+
+
+def issues():
+    # Include closed issues for task-id collision detection. Never silently truncate.
+    query = '''query($cursor:String){repository(owner:"pashamango",name:"minutta-rp-pr-cycle-lab"){
+      issues(first:100,after:$cursor){nodes{number title body state url createdAt updatedAt lastEditedAt
+      author{login}} pageInfo{hasNextPage endCursor}}}}'''
+    cursor = None
+    result = []
+    for _ in range(100):
+        data = gh(["api", "graphql", "--input", "-"], {"query": query, "variables": {"cursor": cursor}})
+        if data.get("errors"):
+            raise RuntimeError("GitHub query incomplete")
+        page = data["data"]["repository"]["issues"]
+        result.extend(page["nodes"])
+        if not page["pageInfo"]["hasNextPage"]:
+            return result
+        cursor = page["pageInfo"]["endCursor"]
+    raise RuntimeError("queue exceeds bounded pagination")
+
+
+def fresh_issue(repository, number):
+    if repository != REPOSITORY or type(number) is not int:
+        raise ValueError("source outside policy")
+    query = '''query($number:Int!){repository(owner:"pashamango",name:"minutta-rp-pr-cycle-lab"){
+      issue(number:$number){number title body state url createdAt updatedAt lastEditedAt author{login}}}}'''
+    data = gh(["api", "graphql", "--input", "-"], {"query": query, "variables": {"number": number}})
+    if data.get("errors"):
+        raise RuntimeError("GitHub query incomplete")
+    return data["data"]["repository"]["issue"]
+
+
+@contextlib.contextmanager
+def process_lifetime(process):
+    previous = {}
+    def stop(signum, frame):
+        raise SystemExit(128 + signum)
+    try:
+        for signum in (signal.SIGTERM, signal.SIGINT):
+            previous[signum] = signal.signal(signum, stop)
+        yield
+    finally:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        process.wait(timeout=5)
+        for signum, handler in previous.items():
+            signal.signal(signum, handler)
+
+
+def bounded_codex(command, prompt, stdout_path, stderr_path, timeout):
+    """Drain pipes while retaining at most 1 MiB each; kill the process group on timeout."""
+    started = dt.datetime.now(dt.timezone.utc).isoformat()
+    deadline = time.monotonic() + timeout
+    timed_out = False
+    with stdout_path.open("xb") as out, stderr_path.open("xb") as err:
+        os.chmod(stdout_path, 0o600)
+        os.chmod(stderr_path, 0o600)
+        process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE, start_new_session=True)
+        with process_lifetime(process), selectors.DefaultSelector() as selector:
+            for stream, sink in ((process.stdout, out), (process.stderr, err)):
+                os.set_blocking(stream.fileno(), False)
+                selector.register(stream, selectors.EVENT_READ, [sink, 0])
+            os.set_blocking(process.stdin.fileno(), False)
+            pending = memoryview(prompt.encode())
+            selector.register(process.stdin, selectors.EVENT_WRITE, None)
+            while selector.get_map():
+                if time.monotonic() >= deadline:
+                    timed_out = True
+                    try:
+                        os.killpg(process.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    break
+                for key, _ in selector.select(min(0.2, max(0, deadline - time.monotonic()))):
+                    if key.fileobj is process.stdin:
+                        try:
+                            pending = pending[os.write(key.fd, pending[:65536]):]
+                        except BrokenPipeError:
+                            pending = pending[:0]
+                        if not pending:
+                            selector.unregister(key.fileobj)
+                            key.fileobj.close()
+                    else:
+                        chunk = os.read(key.fd, 65536)
+                        if not chunk:
+                            selector.unregister(key.fileobj)
+                            key.fileobj.close()
+                        else:
+                            sink, count = key.data
+                            kept = chunk[:max(0, LOG_LIMIT - count)]
+                            sink.write(kept)
+                            key.data[1] += len(kept)
+            try:
+                process.wait(timeout=max(0.01, deadline - time.monotonic()))
+            except subprocess.TimeoutExpired:
+                timed_out = True
+                os.killpg(process.pid, signal.SIGKILL)
+                process.wait(timeout=5)
+        for stream in (process.stdin, process.stdout, process.stderr):
+            stream.close()
+    return started, dt.datetime.now(dt.timezone.utc).isoformat(), process.returncode, timed_out
+
+
+def components():
+    watcher = load("wolfram-agent-watcher")
+    dispatcher = load("wolfram-agent-dispatcher")
+    reporter = load("wolfram-agent-reporter")
+    watcher.REQUIRED_AGENT = AGENT
+    original_validate = watcher.validate
+
+    def validate(repository, issue):
+        metadata, error = original_validate(repository, issue)
+        if error:
+            return metadata, error
+        if metadata.get("host") != "Darwin":
+            return None, "wrong-host"
+        # GraphQL null proves the body has never been edited; absent evidence fails closed.
+        if "lastEditedAt" not in issue or issue["lastEditedAt"] is not None:
+            return None, "edited-or-unproven-source"
+        try:
+            dispatcher.safe_task_id(metadata.get("id"))
+        except ValueError:
+            return None, "invalid-task-id"
+        return metadata, None
+
+    watcher.validate = validate
+    dispatcher.PREAMBLE = dispatcher.PREAMBLE.replace("codex@wolfram.local", AGENT) + '''
+Trusted local identity: codex@darwin.local; host: Darwin.
+Only repository pashamango/minutta-rp-pr-cycle-lab and author pashamango are trusted.
+Only R0 read-only or explicitly bounded reversible R1 work is admitted.
+PR head must be agent/darwin/<task_id>, base main, repository above.
+Do not change mailbox code, policy, activation, claims, credentials, model or permissions.
+No SSH, listeners, infrastructure changes, automatic retries or automatic merges.
+Write task-outcome.json at the envelope path using protocol chitakasha-task-outcome/v1,
+task_id, lease_id, source_sha256, status (completed/blocked/failed), summary (1..500 chars),
+artifacts (at most 32 objects with type pr/file/report/test and ref),
+checks (at most 32 objects with name and status pass/fail). No other keys.
+Exit zero alone is not task completion. Report blockers honestly. Never publish receipts yourself.'''
+    dispatcher.run_codex = bounded_codex
+    # Outcome and evidence remain inside --cd without adding sandbox permissions.
+    dispatcher.task_workspace = lambda root, task, lease: root.parent / "state/runs" / task / lease
+    reporter.EXPECTED_AGENT = AGENT
+    reporter.EXPECTED_BRANCH_PREFIX = "agent/darwin/"
+    original_pr_validation = reporter.validate_pr_artifacts
+
+    def validate_prs(outcome, envelope, client):
+        class CheckedClient:
+            def pull_request(self, repository, number):
+                pr = client.pull_request(repository, number)
+                if pr.get("head", {}).get("repo", {}).get("full_name") != REPOSITORY:
+                    raise ValueError("PR head repository is outside Darwin policy")
+                return pr
+        return original_pr_validation(outcome, envelope, CheckedClient())
+
+    reporter.validate_pr_artifacts = validate_prs
+    original_verify = dispatcher.verify_record
+
+    def verify(record, issue, active_watcher):
+        current = dict(issue)
+        current["updatedAt"] = record["updated_at"]
+        return original_verify(record, current, active_watcher)
+
+    dispatcher.verify_record = verify
+    return watcher, dispatcher, reporter
+
+
+def publish(run, state, watcher, reporter, client=None):
+    try:
+        envelope, claim, result = reporter.load_bound_run(run, state)
+        authoritative = strict_json(run.parents[2] / "claims" / (envelope["task_id"] + ".json"))
+        if authoritative != claim or run.name != envelope["lease_id"] or run.parent.name != envelope["task_id"]:
+            raise ValueError("authoritative claim mismatch")
+        if result:
+            for stream in ("stdout", "stderr"):
+                if reporter.file_sha256(run / f"codex.{stream}.log") != result[f"{stream}_sha256"]:
+                    raise ValueError("log digest mismatch")
+        if state == "TASK_OUTCOME":
+            outcome = strict_json(run / "task-outcome.json")
+            if outcome.get("status") == "completed" and any(c.get("status") != "pass" for c in outcome.get("checks", [])):
+                raise ValueError("completed outcome contains failed checks")
+            activation = strict_json(run.parents[2] / "control/activation.json")
+            if envelope["task_id"] == activation["smoke_task_id"] and outcome.get("status") == "completed":
+                evidence = strict_json(Path(envelope["work_dir"]) / "darwin-identity.json")
+                if evidence != {"agent": AGENT, "system": "Darwin", "node": platform.node()} or platform.system() != "Darwin":
+                    raise ValueError("smoke identity evidence mismatch")
+        if client is None:
+            client = reporter.GhClient()
+            client.issue = fresh_issue
+        with locked(run / "writeback/reporter.lock") as acquired:
+            if not acquired:
+                return "busy"
+            return reporter.report(run, state, client, watcher)
+    except Exception as exc:
+        reporter.record_failure(run, state, exc)
+        return "writeback_failed"
+
+
+def eligible(item, activation, watcher):
+    metadata, error = watcher.validate(REPOSITORY, item)
+    if error:
+        return False
+    if (item["number"] <= activation["last_existing_issue"]
+            or timestamp(item["createdAt"]) < timestamp(activation["activated_at"]).replace(microsecond=0)):
+        return False
+    return activation.get("mode") == "normal" or metadata["id"] == activation["smoke_task_id"]
+
+
+def cycle(base=BASE, fetch_all=issues, fetch_one=fresh_issue, codex=None, client=None):
+    os.umask(0o077)
+    check_policy(base / "config/policy.yaml")
+    state = real_directory(base / "state")
+    with locked(state / "control/cycle.lock") as acquired:
+        if not acquired:
+            return {"busy": 1}
+        activation_path = state / "control/activation.json"
+        if not activation_path.exists() or (state / "control/disabled.json").exists():
+            return {"inactive": 1}
+        activation = strict_json(activation_path)
+        if activation.get("mode") not in {"smoke", "normal"}:
+            raise ValueError("invalid activation mode")
+        watcher, dispatcher, reporter = components()
+        dispatcher.run_reporter = lambda run, status: publish(run, status, watcher, reporter, client)
+        items = fetch_all()
+        ids = {}
+        for item in items:
+            metadata, _ = watcher.mailbox_metadata(item.get("body") or "")
+            if metadata and metadata.get("id"):
+                ids.setdefault(metadata["id"], set()).add(item["number"])
+        counts = {}
+        for item in items:
+            if not eligible(item, activation, watcher):
+                continue
+            metadata, _ = watcher.validate(REPOSITORY, item)
+            task_id = metadata["id"]
+            if len(ids[task_id]) != 1:
+                counts["duplicate_task_id"] = counts.get("duplicate_task_id", 0) + 1
+                continue
+            claim_path = state / "claims" / (task_id + ".json")
+            if claim_path.exists():
+                # Reconcile receipts only, never invoke Codex again, even after writeback failure.
+                claim = strict_json(claim_path)
+                run = state / "runs" / task_id / claim["lease_id"]
+                reconciled = []
+                for receipt in ("CLAIMED", "EXECUTION_FINISHED", "TASK_OUTCOME"):
+                    if receipt == "CLAIMED" or (run / "result.json").exists():
+                        actual = receipt
+                        if receipt == "EXECUTION_FINISHED":
+                            actual = strict_json(run / "result.json")["terminal_state"].upper()
+                        if receipt != "TASK_OUTCOME" or (run / "task-outcome.json").exists():
+                            reconciled.append(publish(run, actual, watcher, reporter, client))
+                counts["already_claimed"] = counts.get("already_claimed", 0) + 1
+                if len(reconciled) == 3 and all(r in {"posted", "already_reported"} for r in reconciled):
+                    counts["receipts_verified"] = counts.get("receipts_verified", 0) + 1
+                continue
+            prior = list((state / "inbox").glob(f"*__{item['number']}__*.json"))
+            if len(prior) > 1:
+                raise ValueError("multiple immutable admissions require manual review")
+            if prior:
+                record = prior[0]
+            else:
+                _, digest = watcher.admit(REPOSITORY, item, state)
+                record = state / "inbox" / f"{REPOSITORY.replace('/', '__')}__{item['number']}__{digest}.json"
+            outcome = dispatcher.dispatch_record(record, state, timeout=180 if activation["mode"] == "smoke" else 900,
+                                                 codex=codex, issue_fetcher=fetch_one, watcher=watcher,
+                                                 storage_root=base / "storage")
+            counts[outcome] = counts.get(outcome, 0) + 1
+            # One bounded execution per poll. Other eligible tasks wait for the next poll.
+            break
+        if activation["mode"] == "smoke" and counts.get("already_claimed") == 1 and counts.get("receipts_verified") == 1:
+            claim_path = state / "claims" / (activation["smoke_task_id"] + ".json")
+            claim = strict_json(claim_path)
+            run = state / "runs" / activation["smoke_task_id"] / claim["lease_id"]
+            required = ("claimed", "execution_finished", "task_completed")
+            if all((run / "writeback" / (name + ".json")).exists() for name in required):
+                # Only a subsequent poll can promote; first execution is never sufficient.
+                activation["mode"] = "normal"
+                activation["smoke_verified_at"] = dispatcher.utc_now()
+                activation["idempotent_poll"] = counts
+                dispatcher.write_json(activation_path, activation)
+        dispatcher.write_json(state / "control/last-poll.json", {"at": dispatcher.utc_now(), "counts": counts})
+        return counts
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.parse_args()
+    try:
+        print(json.dumps(cycle(), sort_keys=True))
+        return 0
+    except Exception as exc:
+        # No raw task, exception text, subprocess output or environment in service logs.
+        print("darwin-mailbox: " + type(exc).__name__, file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

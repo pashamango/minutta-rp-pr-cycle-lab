@@ -1,0 +1,275 @@
+#!/usr/bin/env python3
+"""Pinned, explicit post-merge Darwin install/activation. No updater or merge loop."""
+import argparse
+import base64
+import hashlib
+import json
+import os
+from pathlib import Path
+import plistlib
+import re
+import shutil
+import subprocess
+import sys
+
+# Keep installed shared modules adjacent to the adapter. No Wolfram paths are written.
+FILES = (
+    "tools/wolfram-agent-watcher", "tools/wolfram-agent-dispatcher",
+    "tools/wolfram-agent-reporter", "tools/darwin-agent-mailbox", "tools/darwin-mailbox-manage",
+    "config/darwin-agent-mailbox-policy.yaml", "templates/darwin-mailbox-task-v1.md",
+    "docs/darwin-agent-mailbox.md",
+)
+LABEL = "com.chitakasha.darwin-agent-mailbox"
+ROOT = Path(__file__).resolve().parents[1]
+BASE = Path.home() / "ChitAkasha-Darwin/agent-mailbox"
+PLIST = Path.home() / "Library/LaunchAgents" / (LABEL + ".plist")
+
+
+def adapter():
+    import importlib.machinery
+    import importlib.util
+    loader = importlib.machinery.SourceFileLoader("darwin_mailbox", str(Path(__file__).with_name("darwin-agent-mailbox")))
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def put(path, data, mode=0o600):
+    """An existing file is acceptable only when byte-for-byte identical. Never overwrite."""
+    m = adapter()
+    m.real_directory(path.parent)
+    if path.is_symlink():
+        raise ValueError("target is a symlink")
+    try:
+        fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, mode)
+    except FileExistsError:
+        if not path.is_file() or path.read_bytes() != data:
+            raise ValueError("target conflicts with verified installation: " + str(path))
+        return
+    with os.fdopen(fd, "wb") as stream:
+        stream.write(data)
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
+def checked_merge(pr, head, api):
+    if not re.fullmatch(r"[a-f0-9]{40}", head) or pr < 1:
+        raise ValueError("explicit PR and full checked head SHA required")
+    repo = adapter().REPOSITORY
+    value = api(["api", f"repos/{repo}/pulls/{pr}"])
+    if (value.get("merged") is not True or value.get("base", {}).get("ref") != "main"
+            or value.get("head", {}).get("ref") != "agent/darwin/DARWIN-MAILBOX-0001"
+            or value.get("head", {}).get("sha") != head
+            or value.get("base", {}).get("repo", {}).get("full_name") != repo
+            or value.get("head", {}).get("repo", {}).get("full_name") != repo):
+        raise ValueError("expected checked PR is not merged into trusted main")
+    merged = value.get("merge_commit_sha", "")
+    if not re.fullmatch(r"[a-f0-9]{40}", merged):
+        raise ValueError("missing merge commit")
+    comparison = api(["api", f"repos/{repo}/compare/{merged}...main"])
+    if comparison.get("status") not in {"ahead", "identical"}:
+        raise ValueError("merge commit is not in current main")
+    return merged
+
+
+def verified_files(merged, head, api):
+    repo = adapter().REPOSITORY
+    files = {}
+    for name in FILES:
+        checked = subprocess.run(["git", "-C", str(ROOT), "show", head + ":" + name],
+                                 capture_output=True, timeout=15, check=True).stdout
+        raw = api(["api", f"repos/{repo}/contents/{name}?ref={merged}"])
+        if raw.get("type") != "file" or raw.get("encoding") != "base64":
+            raise ValueError("unexpected merged file representation")
+        data = base64.b64decode(raw["content"])
+        if data != checked:
+            raise ValueError("merged file differs from reviewed head: " + name)
+        # The command itself and its local imports must also be the checked version.
+        if (ROOT / name).is_symlink() or (ROOT / name).read_bytes() != checked:
+            raise ValueError("local bootstrap file differs from checked head: " + name)
+        files[name] = data
+    return files
+
+
+def launch_status():
+    result = subprocess.run(["launchctl", "print", f"gui/{os.getuid()}/{LABEL}"],
+                            capture_output=True, timeout=10)
+    return result.returncode == 0
+
+
+def status(base=BASE):
+    m = adapter()
+    control = base / "state/control"
+    value = {"label": LABEL, "loaded": launch_status(), "base": str(base)}
+    for key, name in (("installation", "installation.json"), ("activation", "activation.json"),
+                      ("last_poll", "last-poll.json")):
+        path = control / name
+        value[key] = m.strict_json(path) if path.exists() else None
+    value["disabled"] = (control / "disabled.json").exists()
+    value["state"] = ("DISABLED" if value["disabled"] else
+                      "DARWIN_MAILBOX_CONNECTED" if value["loaded"] and value["activation"]
+                      and value["activation"].get("smoke_verified_at") else
+                      "DARWIN_MAILBOX_SMOKE_PENDING" if value["activation"] else "INACTIVE")
+    return value
+
+
+def disable(base=BASE):
+    m = adapter()
+    put(base / "state/control/disabled.json", b'{"disabled":true}\n')
+    # Disable gate precedes bootout; history and activation watermark are retained.
+    if launch_status():
+        subprocess.run(["launchctl", "bootout", f"gui/{os.getuid()}/{LABEL}"], check=True, timeout=15)
+    return status(base)
+
+
+def smoke_body(task_id):
+    return f'''<!-- chitakasha-mailbox:v1 -->
+```yaml
+id: {task_id}
+type: read-only-smoke
+agent: codex@darwin.local
+host: Darwin
+status: ready
+risk: R0
+mode: bounded-dispatch
+```
+## Objective
+Confirm this Codex process runs locally on Darwin. Maximum 180 seconds.
+## Scope
+Read local identity only. No infrastructure changes, network calls, PRs, other tasks,
+configuration changes or mailbox edits. Only service evidence and outcome writes are allowed.
+## Deliverables and verification
+Read Python platform.system() and platform.node() locally. Write darwin-identity.json
+in the envelope work_dir with exactly agent, system, node; agent must be codex@darwin.local,
+system must be the observed Darwin, node must be the actual platform.node() value.
+Do not assume successful identity verification. If the system is not Darwin, report blocked.
+Write the strict task-outcome.json at task_outcome_path in the trusted envelope,
+with protocol chitakasha-task-outcome/v1 and matching task_id, lease_id, source_sha256.
+Use status completed only after identity verification, a short summary,
+artifacts [{{"type":"file","ref":"darwin-identity.json"}}], and
+checks [{{"name":"local-darwin-identity","status":"pass"}}].
+## Definition of done
+Reporter validates the identity evidence and publishes CLAIMED, EXECUTION_FINISHED,
+then TASK_COMPLETED. The worker must not post receipts itself.
+'''
+
+
+def ensure_smoke(base, task_id, m):
+    control = base / "state/control"
+    marker = control / "smoke-issue.json"
+    if marker.exists():
+        return m.strict_json(marker)
+    matches = []
+    for item in m.issues():
+        if item["title"] == task_id:
+            if item["body"] != smoke_body(task_id) or item["author"]["login"] != "pashamango":
+                raise ValueError("conflicting smoke issue")
+            matches.append(item)
+    if len(matches) > 1:
+        raise ValueError("duplicate smoke issue")
+    intent = control / "smoke-create-intent.json"
+    if matches:
+        item = matches[0]
+        result = {"number": item["number"], "url": item["url"], "task_id": task_id}
+    else:
+        if intent.exists():
+            raise ValueError("smoke create previously attempted; inspect GitHub, do not auto-retry")
+        put(intent, json.dumps({"task_id": task_id}).encode())
+        raw = m.gh(["api", "--method", "POST", f"repos/{m.REPOSITORY}/issues", "--input", "-"],
+                   {"title": task_id, "body": smoke_body(task_id)})
+        result = {"number": raw["number"], "url": raw["html_url"], "task_id": task_id}
+    put(marker, json.dumps(result, sort_keys=True).encode())
+    return result
+
+
+def install(pr, head, activate=False):
+    os.umask(0o077)
+    m = adapter()
+    m.real_directory(BASE)
+    with m.locked(BASE / "state/control/install.lock") as acquired:
+        if not acquired:
+            raise ValueError("installation already running")
+        if m.gh(["api", "user"]).get("login") != "pashamango":
+            raise ValueError("existing GitHub authorization must be pashamango")
+        merged = checked_merge(pr, head, m.gh)
+        files = verified_files(merged, head, m.gh)
+        release = BASE / "releases" / merged
+        manifest = {"pr": pr, "checked_head": head, "merged_commit": merged,
+                    "files": {name: digest(data) for name, data in files.items()}}
+        control = BASE / "state/control"
+        # Preflight all destinations before writing anything. Unknown content is a conflict.
+        targets = {release / name: data for name, data in files.items()}
+        targets[BASE / "config/policy.yaml"] = files["config/darwin-agent-mailbox-policy.yaml"]
+        targets[control / "installation.json"] = json.dumps(manifest, sort_keys=True).encode()
+        codex = shutil.which("codex")
+        gh_cli = shutil.which("gh")
+        if not codex or not gh_cli:
+            raise ValueError("existing Codex and gh executables required")
+        environment_path = ":".join(dict.fromkeys([str(Path(codex).parent), str(Path(gh_cli).parent),
+                                                 str(Path(sys.executable).parent), "/usr/local/bin", "/usr/bin", "/bin"]))
+        plist = {"Label": LABEL, "ProgramArguments": [sys.executable, str(release / "tools/darwin-agent-mailbox")],
+                 "WorkingDirectory": str(BASE), "StartInterval": 60, "RunAtLoad": True,
+                 "EnvironmentVariables": {"PATH": environment_path}, "Umask": 63,
+                 "StandardOutPath": "/dev/null", "StandardErrorPath": "/dev/null"}
+        targets[PLIST] = plistlib.dumps(plist, sort_keys=True)
+        for path, data in targets.items():
+            m.real_directory(path.parent)
+            if path.is_symlink() or (path.exists() and (not path.is_file() or path.read_bytes() != data)):
+                raise ValueError("installation path conflict: " + str(path))
+        if launch_status() and not (control / "installation.json").exists():
+            raise ValueError("unowned Darwin LaunchAgent already loaded")
+        for path, data in targets.items():
+            put(path, data)
+        if not activate:
+            return status()
+        activation_path = control / "activation.json"
+        if not activation_path.exists():
+            task_id = "DARWIN-MAILBOX-SMOKE-0001-" + head[:12]
+            last_existing_issue = max((item["number"] for item in m.issues()), default=0)
+            put(activation_path, json.dumps({"activated_at": m.load("wolfram-agent-dispatcher").utc_now(),
+                                             "last_existing_issue": last_existing_issue,
+                                             "mode": "smoke", "smoke_task_id": task_id,
+                                             "merged_commit": merged}, sort_keys=True).encode())
+        activation = m.strict_json(activation_path)
+        if activation["merged_commit"] != merged:
+            raise ValueError("activation belongs to another release")
+        ensure_smoke(BASE, activation["smoke_task_id"], m)
+        disabled = control / "disabled.json"
+        if disabled.exists():
+            if disabled.is_symlink() or disabled.read_bytes() != b'{"disabled":true}\n':
+                raise ValueError("unknown disable marker")
+            disabled.unlink()  # This adapter's reversible control file only; no history removed.
+        if not launch_status():
+            subprocess.run(["launchctl", "enable", f"gui/{os.getuid()}/{LABEL}"], check=True, timeout=15)
+            subprocess.run(["launchctl", "bootstrap", f"gui/{os.getuid()}", str(PLIST)], check=True, timeout=15)
+        # LaunchAgent initiates exactly one bounded smoke. No merge wait or execution retry.
+        return status()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("command", choices=("install", "activate", "status", "disable"))
+    parser.add_argument("--pr", type=int)
+    parser.add_argument("--expected-head")
+    args = parser.parse_args()
+    try:
+        if args.command in {"install", "activate"}:
+            if not args.pr or not args.expected_head:
+                parser.error("--pr and --expected-head are required")
+            result = install(args.pr, args.expected_head, args.command == "activate")
+        else:
+            result = status() if args.command == "status" else disable()
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+    except Exception as exc:
+        print("darwin-mailbox-manage: " + str(exc), file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -16,6 +16,7 @@ import uuid
 
 EXPECTED_REPOSITORY = "pashamango/minutta-rp-pr-cycle-lab"
 EXPECTED_AGENT = "codex@wolfram.local"
+EXPECTED_BRANCH_PREFIX = "agent/wolfram/"
 ALLOWED_RISKS = {"R0", "R1"}
 EXECUTION_STATES = {"execution_finished": "EXECUTION_FINISHED",
                     "execution_failed": "EXECUTION_FAILED", "timed_out": "TIMED_OUT"}
@@ -158,7 +159,7 @@ def load_outcome(run_dir, envelope):
 def validate_pr_artifacts(outcome, envelope, client):
     validations = []
     pattern = re.compile(r"^(?:https://github\.com/([^/]+/[^/]+)/pull/|#)([1-9][0-9]*)$")
-    expected_branch = f"agent/wolfram/{envelope['task_id']}"
+    expected_branch = EXPECTED_BRANCH_PREFIX + envelope['task_id']
     for artifact in outcome["artifacts"]:
         if artifact["type"] != "pr":
             continue

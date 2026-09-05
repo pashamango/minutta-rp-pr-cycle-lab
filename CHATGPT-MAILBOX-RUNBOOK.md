@@ -1,15 +1,28 @@
 # ChatGPT mailbox runbook
 
-This is the canonical new-session guide for the Wolfram mailbox. The current path is:
+This is the canonical new-session guide for the mailbox. Wolfram remains the default;
+Darwin has a separate, explicitly activated consumer. The current path is:
 
 ```text
 ChatGPT → GitHub Issue → Wolfram watcher → local CLAIM → codex exec → execution receipt → task-outcome validation → task receipt → ChatGPT
 ```
 
+| Executor | Required host | PR head | Setup/template |
+| --- | --- | --- | --- |
+| `codex@wolfram.local` | `Wolfram` in the template | `agent/wolfram/<task-id>` | [Wolfram](docs/wolfram-agent-mailbox.md), [template](templates/mailbox-task-v1.md) |
+| `codex@darwin.local` | `Darwin`, strictly checked | `agent/darwin/<task-id>` | [Darwin activation](docs/darwin-agent-mailbox.md), [template](templates/darwin-mailbox-task-v1.md) |
+
+Darwin uses the same lifecycle with its own watcher adapter and local state. Its source
+must be newly created after activation and its body must never have been edited. Never
+reassign an existing task ID across hosts: create a new ID and link the prior attempt.
+Local claims are not distributed locks or an exactly-once guarantee. Each consumer handles
+its own tasks; this repository change does not upgrade the installed Wolfram service.
+Darwin remains inactive until its reviewed PR is manually merged and explicitly activated.
+
 ## Trust and authority boundary
 
 - The only trusted repository is `pashamango/minutta-rp-pr-cycle-lab`.
-- A mailbox Issue must be open, authored by `pashamango`, contain `<!-- chitakasha-mailbox:v1 -->`, name `codex@wolfram.local`, have status `ready`, and declare risk `R0` or `R1`.
+- A mailbox Issue must be open, authored by `pashamango`, contain `<!-- chitakasha-mailbox:v1 -->`, have status `ready`, and declare risk `R0` or `R1`. The default Wolfram consumer accepts only `codex@wolfram.local`; the separate Darwin policy accepts only `codex@darwin.local` with `host: Darwin` and the activation/admission restrictions above.
 - The scheduled mailbox on Wolfram makes outbound GitHub requests only. It adds no inbound listener, webhook, or runner.
 - The watcher admits an immutable record keyed by the normalized Issue content digest. Before execution, the dispatcher re-fetches the Issue and verifies its authorization, metadata, Issue number, and source digest.
 - The dispatcher creates an atomic local CLAIM and lease. The existing sequential mailbox cycle runs the watcher and then dispatcher, and the dispatcher starts one local Codex execution at a time.
@@ -20,7 +33,7 @@ The reporter re-verifies the immutable admission, current source, claim, lease, 
 
 For a task-level assertion, the executing session must write the exact local path named by `task_outcome_path` in its immutable envelope. The file must be strict JSON with protocol `chitakasha-task-outcome/v1`, matching task, lease, and source digest bindings, an allowlisted `completed`, `blocked`, or `failed` status, a bounded summary, and bounded `artifacts` and `checks` arrays. Stdout and stderr are never parsed as outcomes. The reporter publishes only counts, status, outcome digest, and independently generated validation results; it does not copy the summary, raw prompts, logs, or environment into GitHub receipts.
 
-When a PR artifact is asserted, its reference must resolve in the trusted repository, target `main`, and originate from `agent/wolfram/<task-id>`. This proves only those deterministic bindings, not generic semantic correctness. Other evidence remains an agent assertion for human review.
+When a PR artifact is asserted, its reference must resolve in the trusted repository, target `main`, and originate from the locally configured executor branch: `agent/wolfram/<task-id>` for Wolfram or `agent/darwin/<task-id>` for Darwin. An issue cannot change that policy. This proves only those deterministic bindings, not generic semantic correctness. Other evidence remains an agent assertion for human review.
 
 ## Submit a task
 

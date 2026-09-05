@@ -1,0 +1,6 @@
+repository: pashamango/minutta-rp-pr-cycle-lab
+author: pashamango
+agent: codex@darwin.local
+host: Darwin
+branch_prefix: agent/darwin/
+max_timeout_seconds: 900
