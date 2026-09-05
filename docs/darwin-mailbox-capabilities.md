@@ -87,7 +87,8 @@ it does not alter an existing source checkout or either mailbox's task history.
 base, head, closed/merged state and both head/merge ancestry. It compares local git object,
 checkout, merged GitHub bytes and staged installed hashes. Existing installed bytes are
 checked against the retained installation manifest. Unknown installation layouts fail closed.
-The existing non-root account's ComputerName must be Darwin; no remote SSH is used.
+The existing non-root account and verified Darwin installation are required; no remote SSH is used.
+See the exact host compatibility rule below.
 
 The install and cycle locks exclude active dispatch. The upgrader stages a complete release,
 records a durable journal, gates polling, boots out only the Darwin label and atomically
@@ -120,3 +121,38 @@ The additive CLI syntax and target-optional `off` operation follow the official
 Only the flags documented there are used; CLI help/schema probes and structural checks remain
 mandatory on the installed version. Existing tailnet HTTPS authorization must already be
 available; this upgrade does not enable or approve it.
+
+## Local identity hotfix after PR #60
+
+The original exact `ComputerName == Darwin` check incorrectly rejected the observed
+`Darwin-on-MacBookPro3`. No Mac rename is needed. The hotfix retains macOS/non-root checks
+and requires current-user ownership of the existing installation, manifest, activation,
+policy and Darwin LaunchAgent. It checks the compiled agent/host/repository policy,
+completed activation and an absolute runtime path inside this installation. Existing
+installed-byte checks and exact runtime-pointer validation still precede mutation.
+A copied installation with stale absolute paths, incomplete state, wrong ownership,
+wrong policy, label or installed bytes is rejected.
+
+There is no immutable hardware ID in the original installation: `codex@darwin.local` and
+`host: Darwin` identify the logical consumer, not the physical Mac. As an additional narrow
+compatibility check, the exact (ComputerName, LocalHostName) pair must be either
+(`Darwin-on-MacBookPro3`, `Darwin-on-MacBookPro3`) or legacy (`Darwin`, `Darwin`). No prefix,
+substring, suffix or case-folded matching is used. HostName may remain unset; the observed
+Tailscale DNS `darwin-on-macbookpro3-4.tail94aa6c.ts.net.` is supporting diagnostic context,
+not a new authorization dependency. No Tailscale or naming changes are made.
+A complete same-user clone with rewritten/matching paths and those exact names cannot be
+distinguished without a previously provisioned hardware-bound identity. The hotfix does
+not claim to solve that residual same-UID limitation or silently create a new identity.
+
+The reported PR #60 failure occurred in `local_host()` before remote verification, locks,
+release staging, disable gates, journals, or LaunchAgent changes. The wrapper had already
+created a disposable detached checkout at `~/ChitAkasha-Darwin/mailbox-upgrade-0002.*`
+(possibly including Python bytecode caches). It needs no cleanup for correctness; retain
+it for inspection or later remove only the identified disposable checkout. No mailbox
+state cleanup or rollback is required for this specific error. This conclusion follows
+from the reported error and code ordering, not a remote inspection of Darwin.
+
+Use the hotfix PR's actual-number/full-head replacement command after manual merge with a
+merge commit. Its compiled expected branch is `agent/wolfram/DARWIN-MAILBOX-0002-HOTFIX-01`;
+merged-state and both canonical-main ancestry checks are unchanged. All capability,
+watermark/history, permanent #55/#56/#57/#58 exclusions and rollback behavior remain intact.
