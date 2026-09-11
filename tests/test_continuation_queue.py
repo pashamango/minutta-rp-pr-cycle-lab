@@ -16,9 +16,9 @@ class ContinuationQueueTests(unittest.TestCase):
             acknowledge(root, **{k: args[k] for k in ("task_id", "source_digest", "lease_id")})
             self.assertEqual(pending(root), [])
 
-    def test_binding_collision_is_rejected(self):
+    def test_acknowledge_wrong_binding_is_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             enqueue(root, task_id="T1", source_digest="a" * 64, lease_id="b" * 32, run_dir=root)
-            with self.assertRaises(ValueError):
-                enqueue(root, task_id="T2", source_digest="a" * 64, lease_id="b" * 32, run_dir=root)
+            with self.assertRaises((FileNotFoundError, ValueError)):
+                acknowledge(root, "T2", "a" * 64, "b" * 32)

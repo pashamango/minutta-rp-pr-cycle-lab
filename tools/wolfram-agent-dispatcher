@@ -275,7 +275,7 @@ def dispatch_record(record_path, state_dir, work_dir=None, timeout=900, codex=No
     write_json(run_dir / "result.json", result)
     # Leave a durable, lease-bound continuation even when the child process exits
     # before producing task-outcome.json. This never settles the task or reruns it.
-    enqueue(state / "continuations", task_id=task_id, source_digest=digest,
+    enqueue(state_dir / "continuations", task_id=task_id, source_digest=digest,
             lease_id=lease_id, run_dir=run_dir)
     run_reporter(run_dir, terminal.upper())
     if terminal == "execution_finished" and (run_dir / "task-outcome.json").exists():
