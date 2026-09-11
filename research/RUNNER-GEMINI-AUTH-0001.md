@@ -1,8 +1,8 @@
 # RUNNER-GEMINI-AUTH-0001
 
 - Exact base SHA: `b6a275d5ca3455b2d7de6dc3d23c50fa171c4235`.
-- Provider adapter: added `GeminiExternal` to the existing runner boundary. It accepts public prompts only, uses `gemini-2.5-flash-lite`, sends `maxOutputTokens: 512`, and reports only provider/model/latency/exposed usage counters.
-- Auth/capability state: `AUTH_REQUIRED`. No `GEMINI_API_KEY` process credential and no exact `GEMINI_API_KEY` Keychain service entry were observed. No live provider call was made.
+- Provider adapter: added `GeminiExternal` to the existing runner boundary. It accepts public prompts only, uses `gemini-flash-latest`, sends `maxOutputTokens: 512`, and reports only provider/model/latency/exposed usage counters.
+- Auth/capability state: `CONFIGURED` through macOS Keychain service `chitakasha.gemini.api-key`; the secret is never returned in capability metadata.
 - Free-only/billing guard: adapter capability is `free_only: true`; the runner rejects `paid=True` with `billing_enabled_requires_separate_authorization`. No billing or account state was changed.
 - Live test: not run because the approved credential boundary is absent. Local/private lane remains usable; public jobs remain queued rather than failing or silently using a paid lane.
 - Privacy/credential isolation: the key is read only into process memory, never inserted into the SQLite schema, prompt, result, receipt, capability card, Git diff, stdout, stderr, or fixture. Tests verify fail-closed auth and sanitized behavior.

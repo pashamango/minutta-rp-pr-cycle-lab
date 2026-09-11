@@ -23,10 +23,10 @@ class RunnerTests(unittest.TestCase):
         card=Runner(self.db, Local(), NoAuthExternal()).capability_card(); self.assertEqual(card["protocol"],"worker-capability-card/v1"); self.assertNotIn("prompt",str(card)); self.assertEqual(card["credentials"],"not_exposed")
 
     def test_gemini_without_key_is_auth_required(self):
-        g=GeminiExternal(api_key=None)
+        g=GeminiExternal(api_key="")
         self.assertEqual(g.capability().availability, "auth_required")
         with self.assertRaisesRegex(PermissionError, "AUTH_REQUIRED"): g.infer("public synthetic probe")
 
     def test_default_runner_uses_fail_closed_gemini_lane(self):
-        r=Runner(self.db, Local()); r.submit("j5", "public synthetic fixture", "public")
+        r=Runner(self.db, Local(), GeminiExternal(api_key="")); r.submit("j5", "public synthetic fixture", "public")
         self.assertEqual(r.process("j5")["state"], "queued")

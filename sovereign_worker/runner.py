@@ -1,5 +1,5 @@
 from __future__ import annotations
-import hashlib, json, os, sqlite3, time, urllib.request
+import hashlib, json, os, sqlite3, subprocess, time, urllib.request
 from dataclasses import dataclass, asdict
 from pathlib import Path
 
@@ -41,10 +41,24 @@ class NoAuthExternal:
 class GeminiExternal:
     """Minimal public-only Gemini adapter; the key is process-bound and never persisted."""
     ENV_KEY = "GEMINI_API_KEY"
-    DEFAULT_MODEL = "gemini-2.5-flash-lite"
+    KEYCHAIN_SERVICE = "chitakasha.gemini.api-key"
+    DEFAULT_MODEL = "gemini-flash-latest"
     def __init__(self, model=DEFAULT_MODEL, timeout=30, api_key=None):
         self.model, self.timeout = model, timeout
-        self._api_key = api_key if api_key is not None else os.environ.get(self.ENV_KEY)
+        self._api_key = api_key if api_key is not None else self._load_key()
+    @classmethod
+    def _load_key(cls):
+        value = os.environ.get(cls.ENV_KEY)
+        if value:
+            return value
+        try:
+            result = subprocess.run(
+                ["security", "find-generic-password", "-s", cls.KEYCHAIN_SERVICE, "-w"],
+                check=True, capture_output=True, text=True, timeout=3,
+            )
+            return result.stdout.strip() or None
+        except (FileNotFoundError, subprocess.SubprocessError):
+            return None
     def capability(self):
         return Capability("google-gemini", "public", True, self.model,
                           "configured" if self._api_key else "auth_required")
