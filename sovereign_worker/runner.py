@@ -1,5 +1,5 @@
 from __future__ import annotations
-import hashlib, json, sqlite3, time, urllib.request
+import hashlib, json, os, sqlite3, subprocess, time, urllib.request
 from dataclasses import dataclass, asdict
 from pathlib import Path
 
@@ -38,11 +38,52 @@ class NoAuthExternal:
     def capability(self): return Capability("external", "public", True, "unselected", "auth_required")
     def infer(self, prompt): raise PermissionError("AUTH_REQUIRED")
 
+class GeminiExternal:
+    """Minimal public-only Gemini adapter; the key is process-bound and never persisted."""
+    ENV_KEY = "GEMINI_API_KEY"
+    DEFAULT_MODEL = "gemini-2.5-flash-lite"
+    def __init__(self, model=DEFAULT_MODEL, timeout=30, api_key=None):
+        self.model, self.timeout = model, timeout
+        self._api_key = api_key if api_key is not None else os.environ.get(self.ENV_KEY)
+    def capability(self):
+        return Capability("google-gemini", "public", True, self.model,
+                          "configured" if self._api_key else "auth_required")
+    def infer(self, prompt):
+        if not self._api_key: raise PermissionError("AUTH_REQUIRED")
+        body = json.dumps({"contents":[{"parts":[{"text":prompt}]}],
+                           "generationConfig":{"maxOutputTokens":512}}).encode()
+        url = ("https://generativelanguage.googleapis.com/v1beta/models/" +
+               self.model + ":generateContent?key=" + self._api_key)
+        req = urllib.request.Request(url, body, {"Content-Type":"application/json"})
+        started = time.monotonic()
+        with urllib.request.urlopen(req, timeout=self.timeout) as response: data = json.load(response)
+        candidates = data.get("candidates", [])
+        result = "".join(p.get("text", "") for p in candidates[0].get("content", {}).get("parts", [])) if candidates else ""
+        usage = data.get("usageMetadata", {})
+        return result, {"provider":"google-gemini", "model":self.model,
+            "latency_ms":round((time.monotonic()-started)*1000),
+            "usage":{k:usage[k] for k in ("promptTokenCount","candidatesTokenCount","totalTokenCount") if k in usage}, "retries":0}
+
+class KeychainGeminiExternal(GeminiExternal):
+    """Gemini adapter whose reusable credential is read only from macOS Keychain."""
+    SERVICE = "GEMINI_API_KEY"
+    ACCOUNT = "codex@wolfram.local"
+    def __init__(self, model=GeminiExternal.DEFAULT_MODEL, timeout=30, security=None):
+        self._security = security or ("/usr/bin/security",)
+        super().__init__(model=model, timeout=timeout, api_key=self._read_key())
+    def _read_key(self):
+        try:
+            return subprocess.check_output((*self._security, "find-generic-password",
+                "-s", self.SERVICE, "-a", self.ACCOUNT, "-w"),
+                stderr=subprocess.DEVNULL, text=True, timeout=2).strip() or None
+        except (OSError, subprocess.SubprocessError):
+            return None
+
 class Runner:
     def __init__(self, db_path, local=None, external=None, paid=False):
         if paid: raise PermissionError("billing_enabled_requires_separate_authorization")
         self.db_path = str(db_path); Path(db_path).parent.mkdir(parents=True, exist_ok=True)
-        self.local, self.external = local or Ollama(), external or NoAuthExternal()
+        self.local, self.external = local or Ollama(), external or KeychainGeminiExternal()
         with sqlite3.connect(self.db_path) as db:
             db.execute("PRAGMA journal_mode=WAL")
             db.execute("CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, prompt TEXT NOT NULL, privacy TEXT NOT NULL, state TEXT NOT NULL, result TEXT, receipt TEXT)")

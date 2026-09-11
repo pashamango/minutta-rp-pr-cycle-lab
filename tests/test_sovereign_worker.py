@@ -1,6 +1,6 @@
 import tempfile, unittest
 from pathlib import Path
-from sovereign_worker.runner import Runner, Capability, StubExternal, NoAuthExternal
+from sovereign_worker.runner import Runner, Capability, StubExternal, NoAuthExternal, GeminiExternal, KeychainGeminiExternal
 
 class Local:
     def capability(self): return Capability("fake-local", "private", True, "test", "configured")
@@ -21,3 +21,18 @@ class RunnerTests(unittest.TestCase):
         with self.assertRaises(PermissionError): Runner(self.db, Local(), paid=True)
     def test_capability_card_is_sanitized(self):
         card=Runner(self.db, Local(), NoAuthExternal()).capability_card(); self.assertEqual(card["protocol"],"worker-capability-card/v1"); self.assertNotIn("prompt",str(card)); self.assertEqual(card["credentials"],"not_exposed")
+
+    def test_gemini_without_key_is_auth_required(self):
+        g=GeminiExternal(api_key=None)
+        self.assertEqual(g.capability().availability, "auth_required")
+        with self.assertRaisesRegex(PermissionError, "AUTH_REQUIRED"): g.infer("public synthetic probe")
+
+    def test_default_runner_uses_fail_closed_gemini_lane(self):
+        r=Runner(self.db, Local()); r.submit("j5", "public synthetic fixture", "public")
+        self.assertEqual(r.process("j5")["state"], "queued")
+
+    def test_keychain_adapter_is_fail_closed_without_entry(self):
+        def missing(*args, **kwargs): raise FileNotFoundError
+        g=KeychainGeminiExternal(security=("security-missing",))
+        self.assertEqual(g.capability().availability, "auth_required")
+        with self.assertRaisesRegex(PermissionError, "AUTH_REQUIRED"): g.infer("public synthetic probe")
