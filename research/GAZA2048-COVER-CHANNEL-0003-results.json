@@ -1,0 +1,235 @@
+{
+  "seed": 920003,
+  "trials_per_cell": 100,
+  "locator_bits": 48,
+  "locator_format": "v1 + 16-bit trial + 48-bit SHA-256 truncation in a 19-character QR byte payload",
+  "library_versions": {
+    "qrcode": "8.2",
+    "opencv": "5.0.0",
+    "numpy": "2.5.3",
+    "pillow": "12.3.0"
+  },
+  "qr_version": 2,
+  "qr_modules": 33,
+  "ordinary_qr_compatible": {
+    "standard": true,
+    "artwork": true,
+    "chroma": false,
+    "hybrid": true
+  },
+  "visual_proxy": {
+    "chroma_strength_rgb_delta": 7,
+    "chroma_changed_pixel_fraction": 0.75,
+    "chroma_mean_abs_rgb_delta": 3.5,
+    "chroma_p95_abs_rgb_delta": 7.0,
+    "hybrid_changed_pixel_fraction": 0.75,
+    "hybrid_mean_abs_rgb_delta": 3.5
+  },
+  "clean_control": {
+    "standard": {
+      "construction": "standard",
+      "severity": 0,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 1.0,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 37.202
+    },
+    "artwork": {
+      "construction": "artwork",
+      "severity": 0,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 1.0,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 37.804
+    },
+    "chroma": {
+      "construction": "chroma",
+      "severity": 0,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 0.0,
+      "chroma_recovery_rate": 1.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 99.957
+    },
+    "hybrid": {
+      "construction": "hybrid",
+      "severity": 0,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 1.0,
+      "chroma_recovery_rate": 1.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 46.608
+    }
+  },
+  "summary": [
+    {
+      "construction": "standard",
+      "severity": 0,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 1.0,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 37.202
+    },
+    {
+      "construction": "standard",
+      "severity": 1,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 1.0,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 37.265
+    },
+    {
+      "construction": "standard",
+      "severity": 2,
+      "trials": 100,
+      "exact_recovery_rate": 0.99,
+      "qr_recovery_rate": 0.99,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 40.381
+    },
+    {
+      "construction": "standard",
+      "severity": 3,
+      "trials": 100,
+      "exact_recovery_rate": 0.73,
+      "qr_recovery_rate": 0.73,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 39.934
+    },
+    {
+      "construction": "artwork",
+      "severity": 0,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 1.0,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 37.804
+    },
+    {
+      "construction": "artwork",
+      "severity": 1,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 1.0,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 37.811
+    },
+    {
+      "construction": "artwork",
+      "severity": 2,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 1.0,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 39.887
+    },
+    {
+      "construction": "artwork",
+      "severity": 3,
+      "trials": 100,
+      "exact_recovery_rate": 0.76,
+      "qr_recovery_rate": 0.76,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 39.38
+    },
+    {
+      "construction": "chroma",
+      "severity": 0,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 0.0,
+      "chroma_recovery_rate": 1.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 99.957
+    },
+    {
+      "construction": "chroma",
+      "severity": 1,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 0.0,
+      "chroma_recovery_rate": 1.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 32.423
+    },
+    {
+      "construction": "chroma",
+      "severity": 2,
+      "trials": 100,
+      "exact_recovery_rate": 0.0,
+      "qr_recovery_rate": 0.0,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 151.487
+    },
+    {
+      "construction": "chroma",
+      "severity": 3,
+      "trials": 100,
+      "exact_recovery_rate": 0.0,
+      "qr_recovery_rate": 0.0,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 69.651
+    },
+    {
+      "construction": "hybrid",
+      "severity": 0,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 1.0,
+      "chroma_recovery_rate": 1.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 46.608
+    },
+    {
+      "construction": "hybrid",
+      "severity": 1,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 1.0,
+      "chroma_recovery_rate": 1.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 45.68
+    },
+    {
+      "construction": "hybrid",
+      "severity": 2,
+      "trials": 100,
+      "exact_recovery_rate": 1.0,
+      "qr_recovery_rate": 1.0,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 48.441
+    },
+    {
+      "construction": "hybrid",
+      "severity": 3,
+      "trials": 100,
+      "exact_recovery_rate": 0.76,
+      "qr_recovery_rate": 0.76,
+      "chroma_recovery_rate": 0.0,
+      "undetected_error_rate": 0.0,
+      "median_decode_ms": 48.432
+    }
+  ],
+  "gray_severity3_sample_rows": 50,
+  "gray_sample_n": 25,
+  "elapsed_s": 125.64
+}
