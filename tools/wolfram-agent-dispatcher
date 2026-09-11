@@ -15,6 +15,10 @@ import signal
 import subprocess
 import sys
 import uuid
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from continuation.queue import enqueue
 
 
 PREAMBLE = """You are codex@wolfram.local executing an authorized ChitAkasha mailbox task.
@@ -269,6 +273,10 @@ def dispatch_record(record_path, state_dir, work_dir=None, timeout=900, codex=No
     os.chmod(stdout_path, 0o444)
     os.chmod(stderr_path, 0o444)
     write_json(run_dir / "result.json", result)
+    # Leave a durable, lease-bound continuation even when the child process exits
+    # before producing task-outcome.json. This never settles the task or reruns it.
+    enqueue(state / "continuations", task_id=task_id, source_digest=digest,
+            lease_id=lease_id, run_dir=run_dir)
     run_reporter(run_dir, terminal.upper())
     if terminal == "execution_finished" and (run_dir / "task-outcome.json").exists():
         run_reporter(run_dir, "TASK_OUTCOME")
