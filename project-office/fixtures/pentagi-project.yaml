@@ -1,0 +1,16 @@
+schema: PROJECT/v1
+company_id: chitakasha
+portfolio_id: research-infrastructure
+project_id: pentagi-endless-loop
+mission: Make scheduler control flexible enough to terminate bounded work safely.
+stage: RESEARCH
+budget: {mode: shadow-only, limit: 1 bounded work package}
+kpis: {loop_termination: reviewable, information_gain: durable}
+status: ACTIVE
+acceptance_gates:
+  - {gate_id: scheduler-control, value: 10, status: OPEN, kind: information_gain, acceptance_condition: verified bounded control-plane proposal}
+claims:
+  - {schema: CLAIM/v1, claim_id: pentagi-loop-claim, parent_project: pentagi-endless-loop, source_issue: 150, evidence_ref: pr-120, claim_type: design, statement: A flexible scheduler control plane prevents the endless loop, status: hypothesis, cheapest_falsification: bounded replay still loops, resulting_gate_movement: scheduler-control}
+evidence_refs: [pr-120]
+issues: [{issue_id: 150, status: CLOSED, gate_id: scheduler-control, evidence_ref: pr-120, accepted: false}]
+consumed_evidence: []
