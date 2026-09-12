@@ -11,3 +11,4 @@ acceptance_gates:
   - {gate_id: scheduler-control, value: 10, status: OPEN, kind: information_gain, acceptance_condition: verified bounded control-plane proposal}
 claims: [{schema: CLAIM/v1, claim_id: pentagi-loop-claim, parent_project: pentagi-endless-loop, source_issue: 150, evidence_ref: pr-120, claim_type: design, status: hypothesis, resulting_gate_movement: scheduler-control}]
 evidence_refs: [pr-120]
+evidence: [{evidence_ref: pr-120, durable: true, reviewable: true, consumed: false}]
