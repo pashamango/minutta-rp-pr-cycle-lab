@@ -1,0 +1,13 @@
+{
+  "protocol": "chitakasha-forensic-evidence/v1",
+  "task_id": "DARWIN-CODEX-137-FORENSIC-0001",
+  "source_issue": 170,
+  "source_repository": "pashamango/minutta-rp-pr-cycle-lab",
+  "source_sha256": "c63311b43465cf786a3874ff19ae4953963d98bd24924fd3750f127c85369431",
+  "lease_id": "cb2d1c351b074c42a333b0d2f4f2824e",
+  "phase": "skeleton",
+  "sanitized": true,
+  "probe_window": null,
+  "observations": [],
+  "raw_evidence_policy": "retain on origin host; publish hashes and redacted excerpts only"
+}
