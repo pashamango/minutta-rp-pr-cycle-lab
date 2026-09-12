@@ -1,0 +1,12 @@
+{
+  "protocol": "evidence-publication/v1",
+  "task_id": "SYNTHETIC-SCHEDULER-0001",
+  "source_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "lease_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "artifact_manifest_sha256": "computed-from-canonical-manifest",
+  "artifact_refs": [{"type": "report", "ref": "artifacts/scheduler.md"}],
+  "check_refs": [{"type": "test", "ref": "checks/scheduler.json"}],
+  "outcome_ref": "outcome.json",
+  "published_git_blob": "computed-by-git-hash-object",
+  "publication_identity": "same-as-artifact-manifest-sha256"
+}
