@@ -1,6 +1,6 @@
 """Durable lease-bound continuation checkpoints; semantic settlement stays local."""
 from __future__ import annotations
-import json, os, tempfile
+import json, os, tempfile, hashlib
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -16,8 +16,16 @@ class CommanderLease:
 @dataclass(frozen=True)
 class ReporterCheckpoint:
     task_id:str; source_digest:str; child_lease_id:str; commander_role_lease_id:str; outcome_digest:str; reporter_authority:str; reporter_version:str; state:str="REPORTER_VALIDATED"
+    @classmethod
+    def from_record(cls, record, module_sha256, role_id):
+        required={"protocol","task_id","source_sha256","child_lease_id","issue_number","outcome_status","outcome_sha256","terminal_receipt_state","receipt_key","evidence_validation","reporter_authority","reporter_version","reporter_module_sha256","created_at","remote_state","record_sha256"}
+        if set(record)!=required or record.get("protocol")!="chitakasha-reporter-validation/v1": raise LeaseError("invalid reporter validation record")
+        unsigned=dict(record); actual=unsigned.pop("record_sha256")
+        expected="sha256:"+hashlib.sha256(json.dumps(unsigned,sort_keys=True,separators=(",",":")).encode()).hexdigest()
+        if actual!=expected or record["reporter_module_sha256"]!=module_sha256 or not record["reporter_authority"] or not record["reporter_version"]: raise LeaseError("invalid reporter provenance")
+        return cls(record["task_id"],record["source_sha256"],record["child_lease_id"],role_id,record["outcome_sha256"],record["reporter_authority"],record["reporter_version"])
 class CommanderStore:
-    transitions=("CLAIMED","EXECUTION_CHECKPOINT","OUTCOME_CANDIDATE","REPORTER_VALIDATED","SETTLED")
+    transitions=("CLAIMED","EXECUTION_CHECKPOINT","OUTCOME_CANDIDATE")
     def __init__(self,path:Path,role_lease_id="commander-role"): self.path=Path(path); self.role_lease_id=role_lease_id
     def _read(self):
         if not self.path.exists(): return {"role":None,"children":{},"checkpoints":{},"reservations":0}
@@ -45,6 +53,7 @@ class CommanderStore:
         if raw is None: raise LeaseError("missing role")
         role=CommanderLease(**{k:raw[k] for k in ("principal","scope","mandate_digest","created_at","deadline","budget","revoked")})
         if role.revoked: raise LeaseError("role revoked")
+        if raw.get("role_lease_id") != self.role_lease_id: raise LeaseError("role lease ID drift")
         if _time(now)>=_time(role.deadline): raise LeaseError("role expired")
         if (p,s,m)!=(role.principal,role.scope,role.mandate_digest): raise LeaseError("role binding mismatch")
         return role
@@ -70,7 +79,13 @@ class CommanderStore:
         if c["state"]=="SETTLED":
             if d["checkpoints"].get(checkpoint.task_id)!=asdict(checkpoint): raise LeaseError("conflicting replay")
             return "already_settled"
-        if c["state"]!="REPORTER_VALIDATED": raise LeaseError("settlement before validation")
+        if c["state"]!="OUTCOME_CANDIDATE": raise LeaseError("settlement before validation")
         d["checkpoints"][checkpoint.task_id]=asdict(checkpoint); c["state"]="SETTLED"; c["sequence"]+=1; self._write(d); return "settled"
+    def consume_validation_record(self, path, reporter_module, principal, scope, mandate_digest, now):
+        """Read only the explicitly supplied checkpoint and settle atomically."""
+        try: record=json.loads(Path(path).read_text(encoding="utf-8"))
+        except Exception as exc: raise LeaseError("corrupt or truncated validation record") from exc
+        checkpoint=ReporterCheckpoint.from_record(record, hashlib.sha256(Path(reporter_module).read_bytes()).hexdigest(), self.role_lease_id)
+        return self.accept_reporter_checkpoint(checkpoint, principal, scope, mandate_digest, now)
     def settle_child(self,*a,**k): raise LeaseError("bare settlement disabled; submit reporter checkpoint")
     def resumable_children(self): return sorted(k for k,v in self._read()["children"].items() if v["state"]!="SETTLED")
