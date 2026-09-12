@@ -146,6 +146,30 @@ class ReporterTests(unittest.TestCase):
         self.assertIn("\nTASK_COMPLETED\n", client.posts[0][2])
         self.assertEqual(reporter.report(self.run, "TASK_OUTCOME", client, watcher), "already_reported")
 
+    def test_task_outcome_writes_bounded_validation_record(self):
+        self.write_outcome(summary="secret=fixture; raw worker log")
+        client = FakeClient(self.item)
+        self.assertEqual(reporter.report(self.run, "TASK_OUTCOME", client, watcher), "posted")
+        record = json.loads((self.run / "writeback/validation-record.json").read_text())
+        self.assertEqual(record["protocol"], reporter.VALIDATION_PROTOCOL)
+        self.assertEqual(record["remote_state"], "posted")
+        self.assertEqual(record["validation_timestamp"], self.result["finished_at"])
+        self.assertNotIn("secret", json.dumps(record))
+        self.assertNotIn("summary", record)
+        self.assertEqual(len(record), 16)
+
+    def test_conflicting_validation_record_fails_closed(self):
+        self.write_outcome()
+        client = FakeClient(self.item)
+        reporter.report(self.run, "TASK_OUTCOME", client, watcher)
+        path = self.run / "writeback/validation-record.json"
+        value = json.loads(path.read_text())
+        value["receipt_key"] = "sha256:" + "f" * 64
+        path.chmod(0o644)
+        path.write_text(json.dumps(value) + "\n")
+        with self.assertRaisesRegex(ValueError, "conflicting"):
+            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
+
     def test_wrong_task_lease_or_source_is_rejected(self):
         for field, value in (("task_id", "MAILBOX-WRONG"), ("lease_id", "f" * 32),
                              ("source_sha256", "f" * 64)):
