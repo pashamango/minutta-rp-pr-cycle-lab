@@ -1,0 +1,12 @@
+{
+  "schema": "darwin-codex-handoff-evidence/v1",
+  "task_id": "DARWIN-CODEX-137-HANDOFF-0001",
+  "source_issue": 172,
+  "source_sha256": "9fed3d0559970304cfff8bcaef5ea6b630875f72430f82ff919222508f1b21fe",
+  "lease_id": "275fac63ea9b4b099eb0750977aa2af8",
+  "phase": "publication_gate",
+  "base_branch": "main",
+  "base_sha": "e863dd9",
+  "status": "pending_probe",
+  "sanitized": true
+}
