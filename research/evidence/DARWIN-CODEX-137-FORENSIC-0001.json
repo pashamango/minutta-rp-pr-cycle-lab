@@ -5,9 +5,25 @@
   "source_repository": "pashamango/minutta-rp-pr-cycle-lab",
   "source_sha256": "c63311b43465cf786a3874ff19ae4953963d98bd24924fd3750f127c85369431",
   "lease_id": "cb2d1c351b074c42a333b0d2f4f2824e",
-  "phase": "skeleton",
+  "phase": "bounded_probe",
   "sanitized": true,
-  "probe_window": null,
-  "observations": [],
+  "probe_window": {
+    "started_utc": "2026-09-12T21:13:35Z",
+    "transport": "authorized SSH alias darwin",
+    "ended_utc": "2026-09-12T21:13:35Z"
+  },
+  "observations": [
+    {"name": "ssh_transport", "result": "pass"},
+    {"name": "bin_true", "result": "fail", "detail": "exit 127; leaf path absent; no 137"},
+    {"name": "echo_ls_uname_controls", "result": "pass"},
+    {"name": "darwin_architecture", "result": "x86_64; Darwin 21.6.0"},
+    {"name": "memory_pressure", "result": "87 percent free; compressor 0; pageouts 0"},
+    {"name": "swap", "result": "0.00M used"},
+    {"name": "resource_limits", "result": "rss/data unlimited; max processes 2784 soft / 4176 hard"},
+    {"name": "disk", "result": "root 18 percent capacity"},
+    {"name": "codex_diagnostic_report", "result": "not found by sanitized filename search"},
+    {"name": "unified_log_kill_record", "result": "not found in bounded 15 minute query"},
+    {"name": "killed_process", "result": "unobservable"}
+  ],
   "raw_evidence_policy": "retain on origin host; publish hashes and redacted excerpts only"
 }
