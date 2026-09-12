@@ -1,132 +1,76 @@
-"""Fail-closed role continuation with atomic JSON checkpoints.
-
-This is a pure local primitive. It does not claim child completion: only a
-caller supplied reporter settlement may move a child to ``settled``.
-"""
-
+"""Durable lease-bound continuation checkpoints; semantic settlement stays local."""
 from __future__ import annotations
-
-import json
-import os
-import tempfile
+import json, os, tempfile
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
-
-class LeaseError(ValueError):
-    """Raised when a role or child binding is not admissible."""
-
-
-def _time(value: str) -> datetime:
-    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
-    if parsed.tzinfo is None:
-        raise LeaseError("timestamps must include timezone")
-    return parsed.astimezone(timezone.utc)
-
-
+class LeaseError(ValueError): pass
+def _time(v):
+    d=datetime.fromisoformat(v.replace("Z","+00:00"))
+    if d.tzinfo is None: raise LeaseError("timestamps must include timezone")
+    return d.astimezone(timezone.utc)
 @dataclass(frozen=True)
 class CommanderLease:
-    principal: str
-    scope: str
-    mandate_digest: str
-    created_at: str
-    deadline: str
-    budget: int | None = None
-    revoked: bool = False
-
-
+    principal:str; scope:str; mandate_digest:str; created_at:str; deadline:str; budget:int|None=None; revoked:bool=False
 @dataclass(frozen=True)
-class OutcomeCheckpoint:
-    task_id: str
-    source_digest: str
-    lease_id: str
-    state: str
-    sequence: int
-
-
+class ReporterCheckpoint:
+    task_id:str; source_digest:str; child_lease_id:str; commander_role_lease_id:str; outcome_digest:str; reporter_authority:str; reporter_version:str; state:str="REPORTER_VALIDATED"
 class CommanderStore:
-    """Persist one role, child claims, and monotonic settlement checkpoints."""
-
-    def __init__(self, path: Path):
-        self.path = Path(path)
-
-    def _read(self) -> dict:
-        if not self.path.exists():
-            return {"role": None, "children": {}, "checkpoints": {}}
-        return json.loads(self.path.read_text(encoding="utf-8"))
-
-    def _write(self, value: dict) -> None:
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        fd, name = tempfile.mkstemp(prefix=self.path.name + ".", dir=self.path.parent)
+    transitions=("CLAIMED","EXECUTION_CHECKPOINT","OUTCOME_CANDIDATE","REPORTER_VALIDATED","SETTLED")
+    def __init__(self,path:Path,role_lease_id="commander-role"): self.path=Path(path); self.role_lease_id=role_lease_id
+    def _read(self):
+        if not self.path.exists(): return {"role":None,"children":{},"checkpoints":{},"reservations":0}
         try:
-            with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                json.dump(value, handle, sort_keys=True, separators=(",", ":"))
-                handle.write("\n")
-                handle.flush()
-                os.fsync(handle.fileno())
-            os.replace(name, self.path)
+            d=json.loads(self.path.read_text(encoding="utf-8"))
+            if not isinstance(d,dict) or not isinstance(d.get("children",{}),dict): raise ValueError
+            return d
+        except Exception as e: raise LeaseError("corrupt or truncated state") from e
+    def _write(self,d):
+        self.path.parent.mkdir(parents=True,exist_ok=True); fd,n=tempfile.mkstemp(prefix=self.path.name+".",dir=self.path.parent)
+        try:
+            with os.fdopen(fd,"w",encoding="utf-8") as h: json.dump(d,h,sort_keys=True,separators=(",",":")); h.write("\n"); h.flush(); os.fsync(h.fileno())
+            os.replace(n,self.path)
+            try: fd=os.open(self.path.parent,os.O_RDONLY); os.fsync(fd); os.close(fd)
+            except OSError: pass
         finally:
-            if os.path.exists(name):
-                os.unlink(name)
-
-    def create_role(self, role: CommanderLease) -> None:
-        data = self._read()
-        if data["role"] is not None:
-            raise LeaseError("role already exists")
-        if _time(role.deadline) <= _time(role.created_at):
-            raise LeaseError("deadline must follow creation")
-        data["role"] = asdict(role)
-        self._write(data)
-
-    def revoke(self) -> None:
-        data = self._read()
-        if data["role"] is None:
-            raise LeaseError("missing role")
-        data["role"]["revoked"] = True
-        self._write(data)
-
-    def resume(self, principal: str, scope: str, mandate_digest: str, now: str) -> CommanderLease:
-        data = self._read()
-        raw = data["role"]
-        if raw is None:
-            raise LeaseError("missing role")
-        role = CommanderLease(**raw)
-        if role.revoked:
-            raise LeaseError("role revoked")
-        if _time(now) >= _time(role.deadline):
-            raise LeaseError("role expired")
-        if (principal, scope, mandate_digest) != (role.principal, role.scope, role.mandate_digest):
-            raise LeaseError("role binding mismatch")
+            if os.path.exists(n): os.unlink(n)
+    def create_role(self,role):
+        d=self._read()
+        if d["role"] is not None: raise LeaseError("role already exists")
+        if _time(role.deadline)<=_time(role.created_at): raise LeaseError("deadline must follow creation")
+        d["role"]={**asdict(role),"role_lease_id":self.role_lease_id}; self._write(d)
+    def _resume(self,p,s,m,now):
+        d=self._read(); raw=d.get("role")
+        if raw is None: raise LeaseError("missing role")
+        role=CommanderLease(**{k:raw[k] for k in ("principal","scope","mandate_digest","created_at","deadline","budget","revoked")})
+        if role.revoked: raise LeaseError("role revoked")
+        if _time(now)>=_time(role.deadline): raise LeaseError("role expired")
+        if (p,s,m)!=(role.principal,role.scope,role.mandate_digest): raise LeaseError("role binding mismatch")
         return role
-
-    def start_child(self, task_id: str, source_digest: str, lease_id: str,
-                    principal: str, scope: str, mandate_digest: str, now: str) -> None:
-        self.resume(principal, scope, mandate_digest, now)
-        data = self._read()
-        if task_id in data["children"]:
-            raise LeaseError("child already exists")
-        data["children"][task_id] = {"source_digest": source_digest, "lease_id": lease_id,
-                                       "state": "claimed"}
-        data["checkpoints"][task_id] = asdict(OutcomeCheckpoint(
-            task_id, source_digest, lease_id, "claimed", 0))
-        self._write(data)
-
-    def settle_child(self, task_id: str, source_digest: str, lease_id: str) -> None:
-        data = self._read()
-        child = data["children"].get(task_id)
-        if child is None or (child["source_digest"], child["lease_id"]) != (source_digest, lease_id):
-            raise LeaseError("child binding mismatch")
-        checkpoint = data["checkpoints"][task_id]
-        if checkpoint["state"] == "settled":
-            return
-        if checkpoint["state"] != "claimed":
-            raise LeaseError("non-monotonic child transition")
-        checkpoint.update(state="settled", sequence=checkpoint["sequence"] + 1)
-        child["state"] = "settled"
-        self._write(data)
-
-    def resumable_children(self) -> list[str]:
-        data = self._read()
-        return sorted(task for task, child in data["children"].items() if child["state"] != "settled")
-
+    def resume(self,*a): return self._resume(*a)
+    def revoke(self):
+        d=self._read()
+        if not d.get("role"): raise LeaseError("missing role")
+        d["role"]["revoked"]=True; self._write(d)
+    def start_child(self,task_id,source_digest,lease_id,principal,scope,mandate_digest,now):
+        role=self._resume(principal,scope,mandate_digest,now); d=self._read()
+        if task_id in d["children"]: raise LeaseError("child already exists")
+        if role.budget is not None and d.get("reservations",0)>=role.budget: raise LeaseError("budget exhausted")
+        d["reservations"]=d.get("reservations",0)+1; d["children"][task_id]={"source_digest":source_digest,"lease_id":lease_id,"state":"CLAIMED","sequence":0}; self._write(d)
+    def advance(self,task_id,state,principal,scope,mandate_digest,now):
+        self._resume(principal,scope,mandate_digest,now); d=self._read(); c=d["children"].get(task_id)
+        if not c or state not in self.transitions or self.transitions.index(state)!=c["sequence"]+1: raise LeaseError("non-monotonic child transition")
+        c["state"]=state; c["sequence"]+=1; self._write(d)
+    def accept_reporter_checkpoint(self,checkpoint,principal,scope,mandate_digest,now):
+        self._resume(principal,scope,mandate_digest,now); d=self._read(); c=d["children"].get(checkpoint.task_id)
+        if not c or (c["source_digest"],c["lease_id"])!=(checkpoint.source_digest,checkpoint.child_lease_id): raise LeaseError("checkpoint binding mismatch")
+        if checkpoint.commander_role_lease_id!=self.role_lease_id or not checkpoint.reporter_authority or not checkpoint.reporter_version or checkpoint.state!="REPORTER_VALIDATED": raise LeaseError("untrusted reporter checkpoint")
+        if len(checkpoint.outcome_digest)!=64: raise LeaseError("invalid outcome digest")
+        if c["state"]=="SETTLED":
+            if d["checkpoints"].get(checkpoint.task_id)!=asdict(checkpoint): raise LeaseError("conflicting replay")
+            return "already_settled"
+        if c["state"]!="REPORTER_VALIDATED": raise LeaseError("settlement before validation")
+        d["checkpoints"][checkpoint.task_id]=asdict(checkpoint); c["state"]="SETTLED"; c["sequence"]+=1; self._write(d); return "settled"
+    def settle_child(self,*a,**k): raise LeaseError("bare settlement disabled; submit reporter checkpoint")
+    def resumable_children(self): return sorted(k for k,v in self._read()["children"].items() if v["state"]!="SETTLED")
