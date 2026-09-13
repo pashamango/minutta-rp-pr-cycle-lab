@@ -8,9 +8,9 @@ from continuation.role_lease import CommanderLease, CommanderStore
 
 
 class SuccessorContinuityFalsificationTests(unittest.TestCase):
-    """Historical reproduction: public metadata plus an unkeyed self-hash is accepted."""
+    """Caller-controlled promotion and settlement entrances fail closed."""
 
-    def test_caller_accessible_promotion_accepts_forged_validation_record(self):
+    def test_caller_accessible_promotion_rejects_forged_validation_record(self):
         with tempfile.TemporaryDirectory() as directory:
             state_path = Path(directory) / "state.json"
             record_path = Path(directory) / "forged-validation-record.json"
@@ -26,9 +26,9 @@ class SuccessorContinuityFalsificationTests(unittest.TestCase):
             source_sha256 = "a" * 64
             lease_id = "1" * 32
             store.start_child(task_id, source_sha256, lease_id, *args)
-            for state in ("EXECUTION_CHECKPOINT", "OUTCOME_CANDIDATE",
-                          "REPORTER_VALIDATED"):
+            for state in ("EXECUTION_CHECKPOINT", "OUTCOME_CANDIDATE"):
                 store.advance(task_id, state, *args)
+            before = state_path.read_bytes()
 
             # These are public trust-root constants copied from the inherited
             # reporter/consumer. No key, signature, or secret is involved.
@@ -62,10 +62,16 @@ class SuccessorContinuityFalsificationTests(unittest.TestCase):
             ).hexdigest()
             record_path.write_text(json.dumps(record), encoding="utf-8")
 
-            self.assertEqual(
-                store.accept_validation_record(record_path, *args, source_issue=199),
-                "settled",
-            )
+            with self.assertRaisesRegex(ValueError, "issuer-authenticated certificate"):
+                store.advance(task_id, "REPORTER_VALIDATED", *args)
+            self.assertEqual(state_path.read_bytes(), before)
+            with self.assertRaisesRegex(ValueError, "issuer-authenticated certificate"):
+                store.accept_reporter_checkpoint(None, *args)
+            self.assertEqual(state_path.read_bytes(), before)
+            with self.assertRaisesRegex(ValueError, "unkeyed validation records"):
+                store.accept_validation_record(record_path, *args, source_issue=199)
+            self.assertEqual(state_path.read_bytes(), before)
+            self.assertEqual(store.resumable_children(), [task_id])
 
 
 if __name__ == "__main__":

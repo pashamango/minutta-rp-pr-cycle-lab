@@ -63,31 +63,13 @@ class CommanderStore:
         if role.budget is not None and d.get("reservations",0)>=role.budget: raise LeaseError("budget exhausted")
         d["reservations"]=d.get("reservations",0)+1; d["children"][task_id]={"source_digest":source_digest,"lease_id":lease_id,"state":"CLAIMED","sequence":0}; self._write(d)
     def advance(self,task_id,state,principal,scope,mandate_digest,now):
+        if state=="REPORTER_VALIDATED": raise LeaseError("REPORTER_VALIDATED requires issuer-authenticated certificate")
         self._resume(principal,scope,mandate_digest,now); d=self._read(); c=d["children"].get(task_id)
         if not c or state not in self.transitions or self.transitions.index(state)!=c["sequence"]+1: raise LeaseError("non-monotonic child transition")
         c["state"]=state; c["sequence"]+=1; self._write(d)
     def accept_reporter_checkpoint(self,checkpoint,principal,scope,mandate_digest,now):
-        self._resume(principal,scope,mandate_digest,now); d=self._read(); c=d["children"].get(checkpoint.task_id)
-        if not c or (c["source_digest"],c["lease_id"])!=(checkpoint.source_digest,checkpoint.child_lease_id): raise LeaseError("checkpoint binding mismatch")
-        if checkpoint.commander_role_lease_id!=self.role_lease_id or not checkpoint.reporter_authority or not checkpoint.reporter_version or checkpoint.state!="REPORTER_VALIDATED": raise LeaseError("untrusted reporter checkpoint")
-        if len(checkpoint.outcome_digest)!=64: raise LeaseError("invalid outcome digest")
-        if c["state"]=="SETTLED":
-            if d["checkpoints"].get(checkpoint.task_id)!=asdict(checkpoint): raise LeaseError("conflicting replay")
-            return "already_settled"
-        if c["state"]!="REPORTER_VALIDATED": raise LeaseError("settlement before validation")
-        d["checkpoints"][checkpoint.task_id]=asdict(checkpoint); c["state"]="SETTLED"; c["sequence"]+=1; self._write(d); return "settled"
+        raise LeaseError("issuer-authenticated certificate required")
     def accept_validation_record(self,path,principal,scope,mandate_digest,now,source_issue=None):
-        raw=json.loads(Path(path).read_text(encoding="utf-8"))
-        if not isinstance(raw,dict) or set(raw)!=VALIDATION_KEYS: raise LeaseError("invalid validation record schema")
-        supplied=raw["payload_sha256"]; payload=dict(raw); del payload["payload_sha256"]
-        if not isinstance(supplied,str) or hashlib.sha256(json.dumps(payload,sort_keys=True,separators=(",",":")).encode()).hexdigest()!=supplied: raise LeaseError("validation payload digest mismatch")
-        expected={"protocol":VALIDATION_PROTOCOL,"reporter_authority":REPORTER_AUTHORITY,"reporter_protocol":VALIDATION_PROTOCOL,"reporter_sha256":REPORTER_SHA256,"validation_timestamp_source":"result.finished_at"}
-        if any(raw.get(k)!=v for k,v in expected.items()): raise LeaseError("untrusted reporter validation")
-        if source_issue is not None and raw.get("issue_number")!=source_issue: raise LeaseError("source issue mismatch")
-        if raw.get("outcome_status") not in {"completed","blocked","failed"} or raw.get("terminal_receipt_state") not in {"TASK_COMPLETED","TASK_BLOCKED","TASK_FAILED"}: raise LeaseError("invalid outcome state")
-        if not all(isinstance(raw.get(k),str) and len(raw[k])==64 for k in ("source_sha256","outcome_sha256")): raise LeaseError("invalid validation digest")
-        if not isinstance(raw.get("evidence_validation"),list) or raw.get("remote_state") not in {"posted","confirmed-existing"}: raise LeaseError("invalid validation evidence")
-        checkpoint=ReporterCheckpoint(raw["task_id"],raw["source_sha256"],raw["lease_id"],self.role_lease_id,raw["outcome_sha256"],REPORTER_AUTHORITY,VALIDATION_PROTOCOL)
-        return self.accept_reporter_checkpoint(checkpoint,principal,scope,mandate_digest,now)
+        raise LeaseError("issuer-authenticated certificate required; unkeyed validation records cannot settle")
     def settle_child(self,*a,**k): raise LeaseError("bare settlement disabled; submit reporter checkpoint")
     def resumable_children(self): return sorted(k for k,v in self._read()["children"].items() if v["state"]!="SETTLED")
