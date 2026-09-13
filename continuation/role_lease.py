@@ -1,6 +1,6 @@
 """Durable lease-bound continuation checkpoints; semantic settlement stays local."""
 from __future__ import annotations
-import json, os, tempfile
+import hashlib, json, os, tempfile
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -16,6 +16,10 @@ class CommanderLease:
 @dataclass(frozen=True)
 class ReporterCheckpoint:
     task_id:str; source_digest:str; child_lease_id:str; commander_role_lease_id:str; outcome_digest:str; reporter_authority:str; reporter_version:str; state:str="REPORTER_VALIDATED"
+VALIDATION_PROTOCOL="chitakasha-reporter-validation/v1"
+REPORTER_AUTHORITY="wolfram-agent-reporter"
+REPORTER_SHA256="8723f408947bf50962b1b451f44f7d1e33516c9fa6e8adffce76556b1ef0c9ed"
+VALIDATION_KEYS={"protocol","reporter_authority","reporter_protocol","reporter_sha256","task_id","source_sha256","lease_id","issue_number","outcome_status","outcome_sha256","terminal_receipt_state","receipt_key","evidence_validation","validation_timestamp","validation_timestamp_source","remote_state","payload_sha256"}
 class CommanderStore:
     transitions=("CLAIMED","EXECUTION_CHECKPOINT","OUTCOME_CANDIDATE","REPORTER_VALIDATED","SETTLED")
     def __init__(self,path:Path,role_lease_id="commander-role"): self.path=Path(path); self.role_lease_id=role_lease_id
@@ -72,5 +76,18 @@ class CommanderStore:
             return "already_settled"
         if c["state"]!="REPORTER_VALIDATED": raise LeaseError("settlement before validation")
         d["checkpoints"][checkpoint.task_id]=asdict(checkpoint); c["state"]="SETTLED"; c["sequence"]+=1; self._write(d); return "settled"
+    def accept_validation_record(self,path,principal,scope,mandate_digest,now,source_issue=None):
+        raw=json.loads(Path(path).read_text(encoding="utf-8"))
+        if not isinstance(raw,dict) or set(raw)!=VALIDATION_KEYS: raise LeaseError("invalid validation record schema")
+        supplied=raw["payload_sha256"]; payload=dict(raw); del payload["payload_sha256"]
+        if not isinstance(supplied,str) or hashlib.sha256(json.dumps(payload,sort_keys=True,separators=(",",":")).encode()).hexdigest()!=supplied: raise LeaseError("validation payload digest mismatch")
+        expected={"protocol":VALIDATION_PROTOCOL,"reporter_authority":REPORTER_AUTHORITY,"reporter_protocol":VALIDATION_PROTOCOL,"reporter_sha256":REPORTER_SHA256,"validation_timestamp_source":"result.finished_at"}
+        if any(raw.get(k)!=v for k,v in expected.items()): raise LeaseError("untrusted reporter validation")
+        if source_issue is not None and raw.get("issue_number")!=source_issue: raise LeaseError("source issue mismatch")
+        if raw.get("outcome_status") not in {"completed","blocked","failed"} or raw.get("terminal_receipt_state") not in {"TASK_COMPLETED","TASK_BLOCKED","TASK_FAILED"}: raise LeaseError("invalid outcome state")
+        if not all(isinstance(raw.get(k),str) and len(raw[k])==64 for k in ("source_sha256","outcome_sha256")): raise LeaseError("invalid validation digest")
+        if not isinstance(raw.get("evidence_validation"),list) or raw.get("remote_state") not in {"posted","confirmed-existing"}: raise LeaseError("invalid validation evidence")
+        checkpoint=ReporterCheckpoint(raw["task_id"],raw["source_sha256"],raw["lease_id"],self.role_lease_id,raw["outcome_sha256"],REPORTER_AUTHORITY,VALIDATION_PROTOCOL)
+        return self.accept_reporter_checkpoint(checkpoint,principal,scope,mandate_digest,now)
     def settle_child(self,*a,**k): raise LeaseError("bare settlement disabled; submit reporter checkpoint")
     def resumable_children(self): return sorted(k for k,v in self._read()["children"].items() if v["state"]!="SETTLED")
