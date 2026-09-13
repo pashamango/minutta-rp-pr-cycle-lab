@@ -12,7 +12,7 @@ Checks:
 - `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests.test_wolfram_agent_reporter -v`: 19 tests, OK.
 - `git diff --check`: pass.
 - bounded static check for substring receipt acceptance: pass; no `receipt_key in` acceptance remains in `tools/wolfram-agent-reporter`.
-- stale/prospective report check: pass; this report contains no obsolete #165/#166-only claims or “will be added” text.
+- stale/prospective report check: pass; this report contains no obsolete #165/#166-only claims or pending-forward language.
 
 Limitations: the repository still requires the separately named adversarial admission/result/PR-provenance cases requested by the task to be added and independently reported. Therefore this is not `REPORTER_VALIDATION_RECORD_READY`, does not claim Persistent Commander integration, and does not publish semantic completion.
 
