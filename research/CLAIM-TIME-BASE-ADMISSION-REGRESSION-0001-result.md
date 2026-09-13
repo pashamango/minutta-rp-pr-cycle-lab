@@ -5,6 +5,8 @@
 - lease_id: `7da6ff77e42c44099af8e7d440a9f083`
 - claim_time_base_sha: `1b1f209fb34bf3f994f656bc5eea69fc55d1c6e8`
 - continuity_sha: `3512ed6`
+- implementation_sha: `32c121b8022c164b0ff1fae74b2e86a54dfb2137`
+- final_sha: `pending until this result record is committed`
 - verdict: `EXTERNAL_PREFLIGHT_BOUNDARY_LOCALIZED`
 - exact_reproduction_213_214: `not rerun; prior unpublished Darwin artifacts were not inspected or reconstructed`
 - implementation_status: `no repository moving-main equality gate found`
