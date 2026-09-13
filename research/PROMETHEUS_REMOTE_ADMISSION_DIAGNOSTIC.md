@@ -5,6 +5,7 @@
 - diagnostic task/source/lease: `PROMETHEUS-REMOTE-ADMISSION-NOOP-0001` / issue `218` / `e08acedad93a1a61f201ea1939e589eaa003836dd23961694ec212eeae6f8ba9` / `ee4e0138a5524ae3876fdebe1aa2e319`
 - predecessor task/source/lease: `REMOTE-ADMISSION-PUBLISHER-INTEGRATION-0001` / issue `217` / `478c85f904c263b4171aca80ff8a81c8a14b783631b38717425df8ac89107c68` / `b9345ba106b4465e856375ae8d619d64`
 - protected PR/head: `216` / `c442653be1e0265d9d274c5facbb461227654943`
+- diagnostic PR: `219`
 - diagnostic launch base: `ce57dca6ee89c13d6c788783c2fe1e2b3b8e9cbd`
 - completion_asserted: `false`
 
