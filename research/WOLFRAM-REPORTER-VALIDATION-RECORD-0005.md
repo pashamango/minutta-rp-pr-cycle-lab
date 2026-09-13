@@ -22,15 +22,15 @@ completion.
 - `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest tests.test_wolfram_agent_reporter -v`: 26/26 passed.
 - `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v`: 130/130 passed, 0 failures, 0 errors.
 - `git diff --check`: passed.
-- Fresh fetch verified branch `agent/wolfram/WOLFRAM-REPORTER-VALIDATION-RECORD-0004`, PR #190 open, base `main`, and inherited head `ab05358ab2e057499ee5c7392c15e4ad689be0cb`; checkpoint and implementation heads are ancestors, remote branch currently resolves to implementation head.
+- Fresh fetch verified branch `agent/wolfram/WOLFRAM-REPORTER-VALIDATION-RECORD-0004`, PR #190 open, and base `main`; the recorded `implementation_head` was the remote head immediately before the report commit. The externally bound final PR head is the report-containing head.
 - Static receipt proof: no `receipt_key in` or equivalent substring acceptance in `tools/wolfram-agent-reporter`.
 - Static consolidated-tree proof: no obsolete `will be added`, `15/15`, `119/119`, or READY status surface remains.
 
 The seven named adversarial tests cover wrong repository, wrong head branch,
 wrong base, missing admission, mismatched admission, nonzero execution, and
-all non-`TASK_OUTCOME` reporter states. Each asserts no completion post and no
-validation record; the admission cases also exercise the pre-existing-marker
-boundary. Inherited tests retain exact canonical replay idempotence, rejection
+all non-`TASK_OUTCOME` reporter states. In the old test version, these fixtures
+did not create the pre-existing terminal marker, so that version did not
+exercise the marker-preservation boundary. Inherited tests retain exact canonical replay idempotence, rejection
 of key-only/quoted/prose/truncated/conflicting bodies, exact marker provenance,
 authority/protocol/module binding, and bounded no-secret evidence.
 

@@ -116,6 +116,27 @@ class ReporterTests(unittest.TestCase):
         value.update(changes)
         (self.run / "task-outcome.json").write_text(json.dumps(value) + "\n")
 
+    def seed_terminal_marker(self):
+        """Create the exact terminal marker from an otherwise valid baseline."""
+        self.write_outcome()
+        outcome = json.loads((self.run / "task-outcome.json").read_text())
+        _, key = reporter.receipt_payload("TASK_COMPLETED", self.envelope, self.claim,
+                                          self.result, self.run, outcome, [])
+        marker = self.run / "writeback/task_completed.json"
+        marker.parent.mkdir(exist_ok=True)
+        marker.write_text(json.dumps({"receipt_key": key, "state": "TASK_COMPLETED",
+                                      "remote": "posted"}, sort_keys=True) + "\n")
+        return marker, marker.read_bytes()
+
+    def assert_rejected_without_touching_marker(self, mutate):
+        marker, marker_bytes = self.seed_terminal_marker()
+        mutate()
+        with self.assertRaises(ValueError):
+            reporter.report(self.run, "TASK_OUTCOME", self.client, watcher)
+        self.assertEqual(marker.read_bytes(), marker_bytes)
+        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+        self.assertNotIn("\nTASK_COMPLETED\n", "\n".join(p[2] for p in self.client.posts))
+
     def test_execution_payload_is_allowlisted_and_does_not_leak_input(self):
         client = FakeClient(self.item)
         self.assertEqual(reporter.report(self.run, "EXECUTION_FINISHED", client, watcher), "posted")
@@ -289,71 +310,54 @@ class ReporterTests(unittest.TestCase):
         return client
 
     def test_pr_wrong_repository_creates_no_validation_record(self):
-        self.write_outcome(artifacts=[{"type": "pr", "ref": "https://github.com/evil/repo/pull/42"}])
-        client = self.bound_pr_client()
-        with self.assertRaisesRegex(ValueError, "pull request"):
-            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
-        self.assertEqual(client.posts, [])
-        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+        self.client = self.bound_pr_client()
+        self.assert_rejected_without_touching_marker(lambda: self.write_outcome(
+            artifacts=[{"type": "pr", "ref": "https://github.com/evil/repo/pull/42"}]))
 
     def test_pr_wrong_head_branch_creates_no_validation_record(self):
-        self.write_outcome(artifacts=[{"type": "pr", "ref": "#42"}])
-        client = self.bound_pr_client(head="agent/wolfram/other")
-        with self.assertRaisesRegex(ValueError, "pull request"):
-            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
-        self.assertEqual(client.posts, [])
-        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+        self.client = self.bound_pr_client(head="agent/wolfram/other")
+        self.assert_rejected_without_touching_marker(lambda: self.write_outcome(
+            artifacts=[{"type": "pr", "ref": "#42"}]))
 
     def test_pr_wrong_base_creates_no_validation_record(self):
-        self.write_outcome(artifacts=[{"type": "pr", "ref": "#42"}])
-        client = self.bound_pr_client(base="develop")
-        with self.assertRaisesRegex(ValueError, "pull request"):
-            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
-        self.assertEqual(client.posts, [])
-        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+        self.client = self.bound_pr_client(base="develop")
+        self.assert_rejected_without_touching_marker(lambda: self.write_outcome(
+            artifacts=[{"type": "pr", "ref": "#42"}]))
 
     def test_missing_immutable_admission_creates_no_validation_record(self):
-        self.write_outcome()
-        next((self.run.parents[2] / "inbox").glob("*")).unlink()
-        client = FakeClient(self.item)
-        with self.assertRaisesRegex(ValueError, "admission"):
-            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
-        self.assertEqual(client.posts, [])
-        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+        self.client = FakeClient(self.item)
+        self.assert_rejected_without_touching_marker(lambda: next(
+            (self.run.parents[2] / "inbox").glob("*")).unlink())
 
     def test_wrong_immutable_admission_binding_creates_no_validation_record(self):
-        self.write_outcome()
-        admission = next((self.run.parents[2] / "inbox").glob("*"))
-        value = json.loads(admission.read_text())
-        value["author_login"] = "attacker"
-        admission.write_text(json.dumps(value) + "\n")
-        client = FakeClient(self.item)
-        with self.assertRaisesRegex(ValueError, "admission"):
-            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
-        self.assertEqual(client.posts, [])
-        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+        self.client = FakeClient(self.item)
+        def mutate():
+            admission = next((self.run.parents[2] / "inbox").glob("*"))
+            value = json.loads(admission.read_text())
+            value["author_login"] = "attacker"
+            admission.write_text(json.dumps(value) + "\n")
+        self.assert_rejected_without_touching_marker(mutate)
 
     def test_nonzero_execution_creates_no_terminal_validation_record(self):
-        self.result["process_exit_status"] = 9
-        (self.run / "result.json").write_text(json.dumps(self.result) + "\n")
-        client = FakeClient(self.item)
-        with self.assertRaisesRegex(ValueError, "successful"):
-            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
-        self.assertEqual(client.posts, [])
-        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+        self.client = FakeClient(self.item)
+        self.assert_rejected_without_touching_marker(lambda: (
+            self.result.update(process_exit_status=9),
+            (self.run / "result.json").write_text(json.dumps(self.result) + "\n")))
 
     def test_non_task_outcome_states_create_no_terminal_validation_record(self):
         for state in ("CLAIMED", *reporter.EXECUTION_STATES.values()):
             with self.subTest(state=state):
-                client = FakeClient(self.item)
+                self.client = FakeClient(self.item)
+                marker, marker_bytes = self.seed_terminal_marker()
                 if state != "CLAIMED":
                     local = next(key for key, value in reporter.EXECUTION_STATES.items() if value == state)
                     self.result["terminal_state"] = local
                     self.result["process_exit_status"] = 0 if local == "execution_finished" else 9
                     (self.run / "result.json").write_text(json.dumps(self.result) + "\n")
-                reporter.report(self.run, state, client, watcher)
+                reporter.report(self.run, state, self.client, watcher)
+                self.assertEqual(marker.read_bytes(), marker_bytes)
                 self.assertFalse((self.run / "writeback/validation-record.json").exists())
-                self.assertNotIn("TASK_COMPLETED", "\n".join(p[2] for p in client.posts))
+                self.assertNotIn("\nTASK_COMPLETED\n", "\n".join(p[2] for p in self.client.posts))
 
     def test_github_failure_preserves_local_result_and_is_bounded(self):
         before = (self.run / "result.json").read_bytes()
