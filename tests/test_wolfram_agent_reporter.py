@@ -261,8 +261,26 @@ class ReporterTests(unittest.TestCase):
         client = FakeClient(self.item)
         body, key = reporter.receipt_payload("CLAIMED", self.envelope, self.claim, None, self.run)
         client.items = [{"body": f"prior {key}"}]
+        self.assertEqual(reporter.report(self.run, "CLAIMED", client, watcher), "posted")
+        self.assertEqual(len(client.posts), 1)
+
+    def test_remote_existing_exact_canonical_receipt_is_idempotent(self):
+        body, _ = reporter.receipt_payload("CLAIMED", self.envelope, self.claim, None, self.run)
+        client = FakeClient(self.item)
+        client.items = [{"body": body}]
         self.assertEqual(reporter.report(self.run, "CLAIMED", client, watcher), "already_reported")
-        self.assertEqual(client.posts, [])
+        self.assertEqual(reporter.report(self.run, "CLAIMED", client, watcher), "already_reported")
+
+    def test_remote_receipt_fragments_and_conflicts_are_rejected(self):
+        body, key = reporter.receipt_payload("CLAIMED", self.envelope, self.claim, None, self.run)
+        for remote in (f"quoted: {key}", body.replace("CLAIMED", "TASK_FAILED"),
+                       body[:-1], body + "extra\n"):
+            with self.subTest(remote=remote):
+                client = FakeClient(self.item)
+                client.items = [{"body": remote}]
+                self.assertEqual(reporter.report(self.run, "CLAIMED", client, watcher), "posted")
+                self.assertEqual(len(client.posts), 1)
+                (self.run / "writeback/claimed.json").unlink()
 
     def test_github_failure_preserves_local_result_and_is_bounded(self):
         before = (self.run / "result.json").read_bytes()

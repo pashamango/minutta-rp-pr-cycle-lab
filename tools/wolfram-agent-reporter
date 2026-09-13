@@ -322,7 +322,9 @@ def report(run_dir, state, client=None, watcher=None):
                                     result["finished_at"])
         return "already_reported"
     comments = client.comments(envelope["source_repository"], envelope["source_issue"])
-    if any(receipt_key in (comment.get("body") or "") for comment in comments):
+    # Remote publication is proven only by the complete canonical body.
+    # Substring matching accepts copied keys, quoted fragments, and conflicts.
+    if any(isinstance(comment, dict) and comment.get("body") == body for comment in comments):
         write_exclusive(marker, {"receipt_key": receipt_key, "state": receipt_state, "remote": "existing"})
         if state == "TASK_OUTCOME":
             write_validation_record(run_dir, envelope, outcome, receipt_state, receipt_key,
