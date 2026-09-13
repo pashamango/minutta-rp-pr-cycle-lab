@@ -156,7 +156,43 @@ class ReporterTests(unittest.TestCase):
         self.assertEqual(record["validation_timestamp"], self.result["finished_at"])
         self.assertNotIn("secret", json.dumps(record))
         self.assertNotIn("summary", record)
-        self.assertEqual(len(record), 16)
+        self.assertEqual(record["reporter_authority"], reporter.REPORTER_AUTHORITY)
+        self.assertEqual(record["reporter_protocol"], reporter.REPORTER_PROTOCOL)
+        self.assertNotEqual(record["reporter_authority"], self.envelope["agent"])
+        self.assertEqual(len(record), 17)
+
+    def test_existing_marker_requires_exact_schema_and_provenance(self):
+        self.write_outcome()
+        client = FakeClient(self.item)
+        body, key = reporter.receipt_payload("TASK_COMPLETED", self.envelope, self.claim,
+                                             self.result, self.run,
+                                             json.loads((self.run / "task-outcome.json").read_text()), [])
+        marker = self.run / "writeback/task_completed.json"
+        marker.parent.mkdir()
+        cases = [
+            {"receipt_key": key, "state": "TASK_COMPLETED"},
+            {"receipt_key": "sha256:" + "0" * 64, "state": "TASK_COMPLETED", "remote": "posted"},
+            {"receipt_key": key, "state": "TASK_FAILED", "remote": "posted"},
+            {"receipt_key": key, "state": "TASK_COMPLETED", "remote": "unknown"},
+            {"receipt_key": key, "state": "TASK_COMPLETED", "remote": "posted", "extra": "x"},
+        ]
+        for value in cases:
+            with self.subTest(value=value):
+                marker.write_text(json.dumps(value) + "\n")
+                with self.assertRaises(ValueError):
+                    reporter.report(self.run, "TASK_OUTCOME", client, watcher)
+                self.assertFalse((self.run / "writeback/validation-record.json").exists())
+
+    def test_existing_remote_receipt_replay_is_idempotent(self):
+        self.write_outcome()
+        client = FakeClient(self.item)
+        body, key = reporter.receipt_payload("TASK_COMPLETED", self.envelope, self.claim,
+                                             self.result, self.run,
+                                             json.loads((self.run / "task-outcome.json").read_text()), [])
+        client.items = [{"body": body}]
+        self.assertEqual(reporter.report(self.run, "TASK_OUTCOME", client, watcher), "already_reported")
+        self.assertEqual(reporter.report(self.run, "TASK_OUTCOME", client, watcher), "already_reported")
+        self.assertEqual(len(client.posts), 0)
 
     def test_conflicting_validation_record_fails_closed(self):
         self.write_outcome()
