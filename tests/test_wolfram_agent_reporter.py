@@ -282,6 +282,79 @@ class ReporterTests(unittest.TestCase):
                 self.assertEqual(len(client.posts), 1)
                 (self.run / "writeback/claimed.json").unlink()
 
+    def bound_pr_client(self, base="main", head="agent/wolfram/MAILBOX-0003"):
+        client = FakeClient(self.item)
+        client.prs[42] = {"base": {"ref": base, "repo": {"full_name": watcher.EXPECTED_REPOSITORY}},
+                          "head": {"ref": head}}
+        return client
+
+    def test_pr_wrong_repository_creates_no_validation_record(self):
+        self.write_outcome(artifacts=[{"type": "pr", "ref": "https://github.com/evil/repo/pull/42"}])
+        client = self.bound_pr_client()
+        with self.assertRaisesRegex(ValueError, "pull request"):
+            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
+        self.assertEqual(client.posts, [])
+        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+
+    def test_pr_wrong_head_branch_creates_no_validation_record(self):
+        self.write_outcome(artifacts=[{"type": "pr", "ref": "#42"}])
+        client = self.bound_pr_client(head="agent/wolfram/other")
+        with self.assertRaisesRegex(ValueError, "pull request"):
+            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
+        self.assertEqual(client.posts, [])
+        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+
+    def test_pr_wrong_base_creates_no_validation_record(self):
+        self.write_outcome(artifacts=[{"type": "pr", "ref": "#42"}])
+        client = self.bound_pr_client(base="develop")
+        with self.assertRaisesRegex(ValueError, "pull request"):
+            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
+        self.assertEqual(client.posts, [])
+        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+
+    def test_missing_immutable_admission_creates_no_validation_record(self):
+        self.write_outcome()
+        next((self.run.parents[2] / "inbox").glob("*")).unlink()
+        client = FakeClient(self.item)
+        with self.assertRaisesRegex(ValueError, "admission"):
+            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
+        self.assertEqual(client.posts, [])
+        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+
+    def test_wrong_immutable_admission_binding_creates_no_validation_record(self):
+        self.write_outcome()
+        admission = next((self.run.parents[2] / "inbox").glob("*"))
+        value = json.loads(admission.read_text())
+        value["author_login"] = "attacker"
+        admission.write_text(json.dumps(value) + "\n")
+        client = FakeClient(self.item)
+        with self.assertRaisesRegex(ValueError, "admission"):
+            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
+        self.assertEqual(client.posts, [])
+        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+
+    def test_nonzero_execution_creates_no_terminal_validation_record(self):
+        self.result["process_exit_status"] = 9
+        (self.run / "result.json").write_text(json.dumps(self.result) + "\n")
+        client = FakeClient(self.item)
+        with self.assertRaisesRegex(ValueError, "successful"):
+            reporter.report(self.run, "TASK_OUTCOME", client, watcher)
+        self.assertEqual(client.posts, [])
+        self.assertFalse((self.run / "writeback/validation-record.json").exists())
+
+    def test_non_task_outcome_states_create_no_terminal_validation_record(self):
+        for state in ("CLAIMED", *reporter.EXECUTION_STATES.values()):
+            with self.subTest(state=state):
+                client = FakeClient(self.item)
+                if state != "CLAIMED":
+                    local = next(key for key, value in reporter.EXECUTION_STATES.items() if value == state)
+                    self.result["terminal_state"] = local
+                    self.result["process_exit_status"] = 0 if local == "execution_finished" else 9
+                    (self.run / "result.json").write_text(json.dumps(self.result) + "\n")
+                reporter.report(self.run, state, client, watcher)
+                self.assertFalse((self.run / "writeback/validation-record.json").exists())
+                self.assertNotIn("TASK_COMPLETED", "\n".join(p[2] for p in client.posts))
+
     def test_github_failure_preserves_local_result_and_is_bounded(self):
         before = (self.run / "result.json").read_bytes()
         client = FakeClient(self.item, fail=True)
