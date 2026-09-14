@@ -1,18 +1,31 @@
 import unittest
 from sovereign_worker.capability_session import *
+
 class Tests(unittest.TestCase):
  def setUp(self):
-  self.st=SyntheticState('b','c','p','m','t'); self.m=MandateLease('md','dev','p',frozenset({'read'}),100); self.a=Approval('n','md',self.st.digest,'dev','p',frozenset({'read'}),1,50); self.v=FakeApprovalVerifier([('n','md',self.st.digest,'dev','p',frozenset({'read'}),1,50)]); self.s=CapabilitySession(self.st,self.v)
- def auth(self): self.assertTrue(self.s.authorize(self.a,self.m,1))
- def test_issue_and_execute_only_registered_exact_capability(self):
-  self.auth(); cap=self.s.issue(TaskLeaseRequest('t','src','lease','read',40),2); self.assertTrue(self.s.execute(cap,task_id='t',source_sha256='src',execution_lease='lease',capability_class='read',now=3)); self.assertFalse(self.s.execute(IssuedTaskCapability('t','src','lease','read',1,40,100),task_id='t',source_sha256='src',execution_lease='lease',capability_class='read',now=3))
- def test_exact_binding_rejects_empty_and_replay(self):
-  self.assertFalse(self.s.authorize(Approval('n','md','', 'dev','p',frozenset({'read'}),1,50),self.m,1)); self.auth(); self.assertFalse(self.s.authorize(self.a,self.m,1))
- def test_drift_requires_fresh_proof_and_old_observation_fails(self):
-  self.auth(); self.s.observe(SyntheticState('x','c','p','m','t')); self.s.observe(self.st); self.assertEqual(self.s.state_name,SessionState.REAUTH_REQUIRED); self.assertFalse(self.s.authorize(self.a,self.m,1))
- def test_fresh_proof_reauthorizes_after_drift(self):
-  changed=SyntheticState('x','c','p','m','t'); fresh=Approval('fresh','md',changed.digest,'dev','p',frozenset({'read'}),1,50); v=FakeApprovalVerifier([('fresh','md',changed.digest,'dev','p',frozenset({'read'}),1,50)]); s=CapabilitySession(self.st,v); s.authorize(self.a,self.m,1) if False else None; s.observe(changed); self.assertTrue(s.authorize(fresh,self.m,2)); self.assertEqual(s.state_name,SessionState.ACTIVE)
- def test_scope_expiry_and_revocation(self):
-  self.auth(); self.assertIsNone(self.s.issue(TaskLeaseRequest('t','src','l','write',40),1)); self.assertIsNone(self.s.issue(TaskLeaseRequest('t','src','l','read',101),1)); cap=self.s.issue(TaskLeaseRequest('t','src','l','read',40),1); self.s.revoke(); self.assertFalse(self.s.execute(cap,task_id='t',source_sha256='src',execution_lease='l',capability_class='read',now=2))
- def test_unchanged_observation_nontrigger(self): self.auth(); self.s.observe(self.st); self.assertEqual(self.s.state_name,SessionState.ACTIVE)
+  self.st=SyntheticState('b','c','p','m','t'); self.payload=MandatePayload('principal','m',self.st.digest,'p',frozenset({'read'}),1,0,50); self.m=MandateLease(self.payload); self.proof=ApprovalProof('n',self.payload.digest); self.s=CapabilitySession(self.st,FakeApprovalVerifier({('n',self.payload.digest)}))
+ def test_every_payload_mutation_rejects_reused_original_proof(self):
+  for field,value in {'principal':'other','device_id':'other-device','state_digest':'bad','policy_digest':'bad','allowed_classes':frozenset({'write'}),'session_epoch':2,'issued_at':1,'expires_at':49}.items():
+   data=self.payload.__dict__.copy(); data[field]=value; mutated=MandateLease(MandatePayload(**data)); self.assertNotEqual(mutated.mandate_digest,self.payload.digest); self.assertFalse(self.s.authorize(self.proof,mutated,1),field)
+ def test_session_capability_binds_all_request_fields_and_rejects_forgery(self):
+  self.assertTrue(self.s.authorize(self.proof,self.m,1)); cap=self.s.issue(TaskLeaseRequest('task','src','lease','read',40),2); self.assertIsNotNone(cap)
+  for args in [('other-task','src','lease','read'),('task','other-source','lease','read'),('task','src','other-lease','read'),('task','src','lease','write')]: self.assertFalse(self.s.execute(cap,task_id=args[0],source_sha256=args[1],execution_lease=args[2],capability_class=args[3],now=3))
+  forged=IssuedTaskCapability('task','src','lease','read',1,40,50); self.assertFalse(self.s.execute(forged,task_id='task',source_sha256='src',execution_lease='lease',capability_class='read',now=3))
+ def test_cross_device_policy_epoch_and_expiry_reject(self):
+  for field,value in [('device_id','other-device'),('policy_digest','other-policy'),('session_epoch',2)]:
+   data=self.payload.__dict__.copy(); data[field]=value; altered=MandateLease(MandatePayload(**data)); self.assertFalse(CapabilitySession(self.st,FakeApprovalVerifier({('x',altered.mandate_digest)})).authorize(ApprovalProof('x',altered.mandate_digest),altered,1))
+  expired=MandatePayload('principal','m',self.st.digest,'p',frozenset({'read'}),1,0,1); self.assertFalse(CapabilitySession(self.st,FakeApprovalVerifier({('e',expired.digest)})).authorize(ApprovalProof('e',expired.digest),MandateLease(expired),1)); self.assertTrue(self.s.authorize(self.proof,self.m,1)); self.assertIsNone(self.s.issue(TaskLeaseRequest('t','src','l','read',51),1))
+ def test_requested_expiry_at_now_is_rejected_independently_of_parent_expiry(self):
+  self.assertTrue(self.s.authorize(self.proof,self.m,10)); self.assertIsNone(self.s.issue(TaskLeaseRequest('t','src','l','read',10),10))
+ def test_drift_requires_newer_epoch_and_invalidates_old_proof_and_capability(self):
+  self.assertTrue(self.s.authorize(self.proof,self.m,1)); cap=self.s.issue(TaskLeaseRequest('t','src','lease','read',40),2); changed=SyntheticState('x','c','p','m','t',2); self.s.observe(changed); self.assertFalse(self.s.execute(cap,task_id='t',source_sha256='src',execution_lease='lease',capability_class='read',now=3)); self.assertFalse(self.s.authorize(self.proof,self.m,3)); fresh=MandatePayload('principal','m',changed.digest,'p',frozenset({'read'}),2,3,50); fp=ApprovalProof('fresh',fresh.digest); self.s.verifier.approvals.add((fp.nonce,fp.mandate_digest)); self.assertTrue(self.s.authorize(fp,MandateLease(fresh),4)); self.assertFalse(self.s.execute(cap,task_id='t',source_sha256='src',execution_lease='lease',capability_class='read',now=5)); self.s.verifier.approvals.add((self.proof.nonce,self.proof.mandate_digest)); self.assertFalse(self.s.authorize(self.proof,self.m,5)); self.assertFalse(self.s.authorize(fp,MandateLease(fresh),5))
+ def test_returning_to_old_observation_does_not_restore_authority(self):
+  self.assertTrue(self.s.authorize(self.proof,self.m,1)); self.s.observe(SyntheticState('x','c','p','m','t',2)); self.s.observe(self.st); self.assertFalse(self.s.authorize(self.proof,self.m,3))
+ def test_injected_unchanged_sleep_wake_is_explicit_non_trigger(self):
+  self.assertTrue(self.s.authorize(self.proof,self.m,1)); self.s.observe(self.st); self.s.observe(self.st); self.assertEqual(self.s.state_name,SessionState.ACTIVE); self.assertIsNotNone(self.s.issue(TaskLeaseRequest('t','src','l','read',40),2))
+ def test_injected_unchanged_python_venv_replacement_is_explicit_non_trigger(self):
+  self.assertTrue(self.s.authorize(self.proof,self.m,1)); self.s.observe(self.st); self.assertEqual(self.s.state_name,SessionState.ACTIVE); self.assertIsNotNone(self.s.issue(TaskLeaseRequest('t','src','l','read',40),2))
+ def test_fresh_locked_session_observing_unchanged_state_cannot_mint_authority(self):
+  fresh_session=CapabilitySession(self.st,FakeApprovalVerifier()); fresh_session.observe(self.st); self.assertEqual(fresh_session.state_name,SessionState.LOCKED); self.assertIsNone(fresh_session.issue(TaskLeaseRequest('t','src','l','read',40),1))
+
 if __name__=='__main__': unittest.main()
