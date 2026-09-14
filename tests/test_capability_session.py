@@ -32,7 +32,30 @@ class CapabilitySessionTests(unittest.TestCase):
         self.s.revoke(); self.assertFalse(self.s.execute(self.lease, task_id="task", source_sha256="src", lease_id="lease", capability_class="read", now=2))
 
     def test_sleep_wake_and_python_replacement_do_not_change_bound_state(self):
-        self.s.observe(self.state); self.assertEqual(self.s.state_name, SessionState.ACTIVE)
+        self.s.observe(self.state); self.assertEqual(self.s.state_name, SessionState.LOCKED)
+        self.assertFalse(self.s.execute(self.lease, task_id="task", source_sha256="src", lease_id="lease", capability_class="read", now=2))
+
+    def test_observe_never_mints_authority_from_locked(self):
+        self.s.observe(self.state)
+        self.assertEqual(self.s.state_name, SessionState.LOCKED)
+        self.assertFalse(self.s.execute(self.lease, task_id="task", source_sha256="src", lease_id="lease", capability_class="read", now=2))
+
+    def test_return_to_old_observation_does_not_restore_authority(self):
+        changed = SyntheticState("b2", "bin1", "pol1", "m1", "t1")
+        self.s.observe(changed); self.s.observe(self.state)
+        self.assertEqual(self.s.state_name, SessionState.REAUTH_REQUIRED)
+        self.assertFalse(self.s.authorize(self.approval, self.lease, 1))
+
+    def test_state_digest_scope_and_epoch_are_bound(self):
+        approval = Approval("n2", "task", "lease", 1, "read", self.state.digest, 10)
+        verifier = FakeApprovalVerifier([("n2", "task", "lease", 1, "read", self.state.digest, 10)])
+        s = CapabilitySession(self.state, verifier)
+        self.assertFalse(s.authorize(Approval("n2", "task", "lease", 1, "write", self.state.digest, 10), self.lease, 1))
+        self.assertTrue(s.authorize(approval, self.lease, 1))
+
+    def test_task_cannot_outlive_parent_session(self):
+        lease = TaskLease("task", "src", "lease", "read", 1, 101, 100)
+        self.assertFalse(self.s.authorize(self.approval, lease, 1))
 
 
 if __name__ == "__main__": unittest.main()
