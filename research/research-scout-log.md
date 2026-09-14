@@ -23,3 +23,12 @@ Weekly synthesis is produced Fridays at 12:20 America/Los_Angeles from the accum
 - **Confidence:** high; primary release evidence and current repository Issues agree on the overlap.
 - **Relevance:** medium-high as validation of the design direction, low as an immediate implementation opportunity.
 - **Handoff:** none. Do not create an Issue or allocate Codex. Revisit only if the framework exposes a materially better interoperable stop-reason schema, portable cancellation token, or benchmarked loop-control advantage that our runtime lacks. Luna/Light policy unchanged; no quota counters estimated.
+
+## 2026-09-14 04:20 America/Los_Angeles — NO-OP: MCP working groups are active, but no decision-grade artifact yet
+
+- **Topic:** MCP progressive disclosure, authentication, and server-card discovery.
+- **Evidence:** official MCP events calendar shows Progressive Disclosure WG, Auth Interest Group, and Server Card WG sessions on 2026-09-14, with Agents/Triggers/Gateways work continuing later in the week — https://meet.modelcontextprotocol.io/ .
+- **Finding:** this is a strong standards-direction signal but not yet a protocol change. No published spec revision, accepted proposal, reference implementation, or benchmarked artifact surfaced in this pass that would justify changing NICLI/mailbox/router design or opening another candidate Issue. Chasing meeting schedules alone would manufacture novelty.
+- **Confidence:** high on the official activity signal; intentionally low/no claim about outcomes before artifacts are published.
+- **Relevance:** high watch value because progressive disclosure + auth + server cards map directly to capability minimization, sovereign tool discovery, and bounded authority; low immediate action value.
+- **Handoff:** none. Watch for concrete proposals/merges from these groups before creating a candidate. Keep existing architecture and Luna/Light quota policy unchanged; no quota counters estimated; no Codex/NICLI execution allocated.
