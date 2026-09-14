@@ -53,7 +53,7 @@ class CapabilitySession:
     def __init__(self,state,verifier): self.state=self.bound_state=state;self.verifier=verifier;self.state_name=SessionState.LOCKED;self.revoked=False;self._caps={};self._last_epoch=0
     def authorize(self,proof,mandate,now):
         p=mandate.payload
-        if (self.revoked or self.state!=self.bound_state or proof.mandate_digest!=p.digest or p.state_digest!=self.state.digest or p.session_epoch!=self.bound_state.session_epoch or (self.state_name==SessionState.REAUTH_REQUIRED and p.session_epoch<=self._last_epoch) or now<p.issued_at or now>=p.expires_at or not self.verifier.verify(proof)): return False
+        if (self.revoked or self.state!=self.bound_state or proof.mandate_digest!=p.digest or p.state_digest!=self.state.digest or p.device_id!=self.state.machine_identity or p.policy_digest!=self.state.policy_digest or p.session_epoch!=self.bound_state.session_epoch or (self.state_name==SessionState.REAUTH_REQUIRED and p.session_epoch<=self._last_epoch) or now<p.issued_at or now>=p.expires_at or not self.verifier.verify(proof)): return False
         self.state_name=SessionState.ACTIVE;self.mandate=mandate;self._last_epoch=p.session_epoch;return True
     def issue(self,request,now):
         if self.state_name!=SessionState.ACTIVE or self.revoked or now>=self.mandate.parent_expires_at or request.capability_class not in self.mandate.allowed_classes or request.requested_expires_at>self.mandate.parent_expires_at or request.requested_expires_at<=now:return None
