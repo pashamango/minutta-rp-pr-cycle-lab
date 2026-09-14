@@ -14,3 +14,12 @@ Weekly synthesis is produced Fridays at 12:20 America/Los_Angeles from the accum
 - **Confidence:** high for the OpenAI primary-source product facts; medium for Olares financing terms because the round details are company-reported and investors/structure were not fully disclosed.
 - **Relevance:** high, but incremental rather than novel. Agents API remains a separately metered executor option, not free Work/Codex quota; Olares remains market validation for local/private AI hardware, not evidence that our software-first wedge is proven.
 - **Handoff:** none. Preserve #137/#211 for Research Market. Luna/Light default unchanged; no quota counters estimated; no Codex/NICLI execution allocated.
+
+## 2026-09-13 21:20 America/Los_Angeles — NO-OP: Microsoft bounded-loop release confirms existing mailbox design
+
+- **Topic:** bounded agent execution / timeout and stop-reason semantics.
+- **Evidence:** Microsoft Agent Framework Python 1.18.0, released 2026-09-10 — https://github.com/microsoft/agent-framework/releases/tag/python-1.18.0 . Release notes add a maximum-duration bound and explicit stop-reason signal to the tool invocation loop, alongside shared vector-store abstractions.
+- **Finding:** the bounded-loop change is a useful external confirmation, but it does not change our architecture enough to justify a new candidate. The current mailbox/worker backlog already treats execution timeout as a first-class terminal state and has bounded task envelopes, durable receipts, restart/idempotency requirements, and explicit effect/settlement semantics (#4, #25, #57, #97, #115, #204, #227). Importing Microsoft Agent Framework now would add dependency/migration risk without closing an identified gap.
+- **Confidence:** high; primary release evidence and current repository Issues agree on the overlap.
+- **Relevance:** medium-high as validation of the design direction, low as an immediate implementation opportunity.
+- **Handoff:** none. Do not create an Issue or allocate Codex. Revisit only if the framework exposes a materially better interoperable stop-reason schema, portable cancellation token, or benchmarked loop-control advantage that our runtime lacks. Luna/Light policy unchanged; no quota counters estimated.
