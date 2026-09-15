@@ -1,0 +1,78 @@
+protocol: GEMINI_INDEPENDENT_JOB/v1
+task_id: GEMINI-INDEPENDENT-INTEROP-0001
+status: ARMED
+execution_authorized: true
+execution_plane: external-independent
+trigger: git-ref-change
+challenge_nonce: GMI-20260915-A2272CDF
+request_sha256: 4ac6d06a38b48dde88bbc3687c42e07b924b621b588e2a7da7e12d98ce27fafe
+request_payload_canonical_json: '{"challenge_nonce":"GMI-20260915-A2272CDF","drive_folder_id":"1vdXAJXkoNKDuEnJeqGXNbCYeavo7RkWg","drive_ledger_id":"1XVkfv8LeipwgHqB5M-mq7Q_ecO9-tp0WZjV2sfZ1gP0","execution_plane":"external-independent","free_only":true,"openai_codex_authorized":false,"openai_work_authorized":false,"protocol":"GEMINI_INDEPENDENT_JOB/v1","provider":"google-gemini","provider_project":"projects/667742918474","result_requirement":"Return the exact nonce plus this request digest and one short sentence proving the response was generated for this request.","task_id":"GEMINI-INDEPENDENT-INTEROP-0001"}'
+
+provider:
+  name: google-gemini
+  expected_principal: pavel.cherkashin@vestor.in
+  project_resource: projects/667742918474
+  key_display_name: Gemini API Key for NICLI
+  billing_policy: FREE_ONLY
+
+openai:
+  work_authorized: false
+  codex_authorized: false
+  downstream_execution_authorized: false
+
+secret_policy:
+  raw_secret_in_git: forbidden
+  raw_secret_in_drive: forbidden
+  raw_secret_in_prompt: forbidden
+  raw_secret_in_stdout_stderr: forbidden
+  require_local_opaque_capability: true
+
+request:
+  kind: synthetic-low-sensitivity
+  prompt: >-
+    Independent interoperability probe. Return the exact challenge nonce
+    GMI-20260915-A2272CDF, the exact request digest
+    4ac6d06a38b48dde88bbc3687c42e07b924b621b588e2a7da7e12d98ce27fafe,
+    and one short sentence stating that this response was generated for this
+    request. Do not request or reveal credentials.
+
+result_contract:
+  required_fields:
+    - protocol
+    - task_id
+    - challenge_nonce
+    - request_sha256
+    - provider
+    - model_if_observed
+    - generated_text
+    - generated_at
+  drive:
+    folder_id: 1vdXAJXkoNKDuEnJeqGXNbCYeavo7RkWg
+    ledger_document_id: 1XVkfv8LeipwgHqB5M-mq7Q_ecO9-tp0WZjV2sfZ1gP0
+    required: true
+  git:
+    result_path: interop/gemini/results/GEMINI-INDEPENDENT-INTEROP-0001.yaml
+    required: true
+  forgejo:
+    mode: capability-probe-then-dedicated-test-branch
+    required_for_core_pass: false
+    required_for_full_interop_pass: true
+    forbidden:
+      - merge
+      - force-push
+      - protected-branch-write
+      - credential-rendering
+    if_unavailable: FORGEJO_CAPABILITY_MISSING
+
+acceptance:
+  core_pass: same nonce and request_sha256 appear in independent Gemini result in both Git and Google Drive
+  full_interop_pass: core_pass plus same bound result is durably observable through an already-authorized private Forgejo path
+  publication_is_completion_oracle: false
+  max_jobs_in_flight: 1
+
+failure_semantics:
+  no_local_gemini_capability: GEMINI_CAPABILITY_MISSING
+  wrong_google_identity: ACCOUNT_HIERARCHY_MISMATCH
+  paid_only_path: FREE_ONLY_POLICY_BLOCK
+  no_hook_or_runner_observation: GIT_TRIGGER_NOT_CONSUMED
+  forgejo_unavailable: FORGEJO_CAPABILITY_MISSING
