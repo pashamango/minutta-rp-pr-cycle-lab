@@ -1,0 +1,169 @@
+{
+  "n": 34,
+  "metrics": {
+    "text": {
+      "top1": 0.6470588235294118,
+      "top3": 0.8823529411764706
+    },
+    "signature": {
+      "top1": 0.5294117647058824,
+      "top3": 0.7058823529411765
+    },
+    "sr": {
+      "top1": 0.47058823529411764,
+      "top3": 0.8235294117647058
+    }
+  },
+  "confusions": {
+    "text": [
+      [
+        "https://github.com/Netcracker/qubership-envgene/issues/1734",
+        "null-lookup",
+        "https://github.com/AzyzHm/ComptaRAG/issues/1",
+        "path-config"
+      ],
+      [
+        "https://github.com/montimage-projects/mmt-dpi/issues/199",
+        "null-lookup",
+        "https://github.com/dsx-ai-factory/infra-controller/issues/1824",
+        "concurrency"
+      ],
+      [
+        "https://github.com/dotnet/runtime/issues/117138",
+        "null-lookup",
+        "https://github.com/openclaw/openclaw/issues/129793",
+        "idempotency"
+      ],
+      [
+        "https://github.com/apache/fesod/issues/1045",
+        "null-lookup",
+        "https://github.com/conceptadev/rockets/issues/104",
+        "serialization"
+      ],
+      [
+        "https://github.com/can1357/oh-my-pi/issues/10251",
+        "stale-state",
+        "https://github.com/router-for-me/CLIProxyAPI/issues/5714",
+        "path-config"
+      ],
+      [
+        "https://github.com/microsoft/Huabu/issues/141",
+        "stale-state",
+        "https://github.com/OpenHands/OpenHands/issues/16951",
+        "path-config"
+      ],
+      [
+        "https://github.com/learning-unlimited/ESP-Website/issues/6002",
+        "concurrency",
+        "https://github.com/openclaw/openclaw/issues/129793",
+        "idempotency"
+      ],
+      [
+        "https://github.com/SaltyAlpha/Grim/issues/2772",
+        "concurrency",
+        "https://github.com/Fredilly/app.article6/issues/1070",
+        "stale-state"
+      ]
+    ],
+    "signature": [
+      [
+        "https://github.com/patil-rushikesh/PipeShellX/issues/50",
+        "idempotency",
+        "https://github.com/Maki-Zeninn/stellar-router/issues/1014",
+        "serialization"
+      ],
+      [
+        "https://github.com/Project-Arrakis/dune-awakening-selfhost-docker/issues/746",
+        "idempotency",
+        "https://github.com/SaltyAlpha/Grim/issues/2772",
+        "concurrency"
+      ],
+      [
+        "https://github.com/montimage-projects/mmt-dpi/issues/199",
+        "null-lookup",
+        "https://github.com/MHSanaei/3x-ui/issues/6446",
+        "path-config"
+      ],
+      [
+        "https://github.com/dotnet/runtime/issues/117138",
+        "null-lookup",
+        "https://github.com/learning-unlimited/ESP-Website/issues/6002",
+        "concurrency"
+      ],
+      [
+        "https://github.com/apache/fesod/issues/1045",
+        "null-lookup",
+        "https://github.com/OpenHands/OpenHands/issues/16951",
+        "path-config"
+      ],
+      [
+        "https://github.com/apache/rocketmq/issues/11055",
+        "null-lookup",
+        "https://github.com/AzyzHm/ComptaRAG/issues/1",
+        "path-config"
+      ],
+      [
+        "https://github.com/Ridhesh927/Eminence/issues/51",
+        "authorization",
+        "https://github.com/kubeedge/ianvs/issues/801",
+        "concurrency"
+      ],
+      [
+        "https://github.com/juliahooper/jentic-one/issues/41",
+        "authorization",
+        "https://github.com/OpenHands/OpenHands/issues/16951",
+        "path-config"
+      ]
+    ],
+    "sr": [
+      [
+        "https://github.com/patil-rushikesh/PipeShellX/issues/50",
+        "idempotency",
+        "https://github.com/Ridhesh927/Eminence/issues/51",
+        "authorization"
+      ],
+      [
+        "https://github.com/Netcracker/qubership-envgene/issues/1734",
+        "null-lookup",
+        "https://github.com/AzyzHm/ComptaRAG/issues/1",
+        "path-config"
+      ],
+      [
+        "https://github.com/montimage-projects/mmt-dpi/issues/199",
+        "null-lookup",
+        "https://github.com/MHSanaei/3x-ui/issues/6446",
+        "path-config"
+      ],
+      [
+        "https://github.com/dotnet/runtime/issues/117138",
+        "null-lookup",
+        "https://github.com/conceptadev/rockets/issues/104",
+        "serialization"
+      ],
+      [
+        "https://github.com/apache/fesod/issues/1045",
+        "null-lookup",
+        "https://github.com/SaltyAlpha/Grim/issues/2772",
+        "concurrency"
+      ],
+      [
+        "https://github.com/Ridhesh927/Eminence/issues/51",
+        "authorization",
+        "https://github.com/Fredilly/app.article6/issues/1070",
+        "stale-state"
+      ],
+      [
+        "https://github.com/juliahooper/jentic-one/issues/41",
+        "authorization",
+        "https://github.com/OpenHands/OpenHands/issues/16951",
+        "path-config"
+      ],
+      [
+        "https://github.com/can1357/oh-my-pi/issues/10251",
+        "stale-state",
+        "https://github.com/router-for-me/CLIProxyAPI/issues/5714",
+        "path-config"
+      ]
+    ]
+  }
+}
