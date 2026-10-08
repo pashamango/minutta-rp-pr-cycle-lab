@@ -29,6 +29,11 @@ TASK_FIELDS = ("outcome_status", "artifact_count", "check_count",
                "outcome_sha256", "evidence_validation")
 OUTCOME_KEYS = {"protocol", "task_id", "lease_id", "source_sha256", "status",
                 "summary", "artifacts", "checks"}
+VALIDATION_PROTOCOL = "chitakasha-reporter-validation/v1"
+REPORTER_AUTHORITY = "wolfram-agent-reporter"
+REPORTER_PROTOCOL = VALIDATION_PROTOCOL
+MARKER_KEYS = {"receipt_key", "state", "remote"}
+MARKER_REMOTE = {"posted": "posted", "existing": "confirmed-existing"}
 
 
 def load_watcher(path=None):
@@ -237,6 +242,58 @@ def receipt_payload(state, envelope, claim, result, run_dir, outcome=None, valid
     return "\n".join(lines) + "\n", receipt_key
 
 
+def write_validation_record(run_dir, envelope, outcome, receipt_state, receipt_key,
+                            validations, remote, validation_timestamp):
+    """Persist only bounded, evidence-oriented fields; never copy worker content."""
+    payload = {
+        "protocol": VALIDATION_PROTOCOL,
+        "reporter_authority": REPORTER_AUTHORITY,
+        "reporter_protocol": REPORTER_PROTOCOL,
+        "reporter_sha256": file_sha256(Path(__file__)),
+        "task_id": envelope["task_id"],
+        "source_sha256": envelope["source_sha256"],
+        "lease_id": envelope["lease_id"],
+        "issue_number": envelope["source_issue"],
+        "outcome_status": outcome["status"],
+        "outcome_sha256": file_sha256(run_dir / "task-outcome.json"),
+        "terminal_receipt_state": receipt_state,
+        "receipt_key": receipt_key,
+        "evidence_validation": list(validations),
+        "validation_timestamp": validation_timestamp,
+        "validation_timestamp_source": "result.finished_at",
+        "remote_state": remote,
+    }
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    payload["payload_sha256"] = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+    path = run_dir / "writeback" / "validation-record.json"
+    if path.exists():
+        existing = json.loads(path.read_text(encoding="utf-8"))
+        if existing != payload:
+            raise ValueError("conflicting validation record")
+        return "already_recorded"
+    try:
+        write_exclusive(path, payload)
+    except FileExistsError:
+        existing = json.loads(path.read_text(encoding="utf-8"))
+        if existing != payload:
+            raise ValueError("conflicting validation record")
+        return "already_recorded"
+    return "recorded"
+
+
+def load_terminal_marker(path, receipt_state, receipt_key):
+    """Validate the producer's local marker before it can authorize a record."""
+    marker = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(marker, dict) or set(marker) != MARKER_KEYS:
+        raise ValueError("invalid terminal marker schema")
+    if marker.get("state") != receipt_state or marker.get("receipt_key") != receipt_key:
+        raise ValueError("terminal marker provenance mismatch")
+    remote = marker.get("remote")
+    if remote not in MARKER_REMOTE:
+        raise ValueError("invalid terminal marker remote")
+    return MARKER_REMOTE[remote]
+
+
 def report(run_dir, state, client=None, watcher=None):
     if state not in {"CLAIMED", "TASK_OUTCOME", *EXECUTION_STATES.values()}:
         raise ValueError("unsupported receipt state")
@@ -258,13 +315,26 @@ def report(run_dir, state, client=None, watcher=None):
                                         outcome, validations)
     marker = run_dir / "writeback" / f"{receipt_state.lower()}.json"
     if marker.exists():
+        remote_state = load_terminal_marker(marker, receipt_state, receipt_key)
+        if state == "TASK_OUTCOME":
+            write_validation_record(run_dir, envelope, outcome, receipt_state, receipt_key,
+                                    validations, remote_state,
+                                    result["finished_at"])
         return "already_reported"
     comments = client.comments(envelope["source_repository"], envelope["source_issue"])
-    if any(receipt_key in (comment.get("body") or "") for comment in comments):
+    # Remote publication is proven only by the complete canonical body.
+    # Substring matching accepts copied keys, quoted fragments, and conflicts.
+    if any(isinstance(comment, dict) and comment.get("body") == body for comment in comments):
         write_exclusive(marker, {"receipt_key": receipt_key, "state": receipt_state, "remote": "existing"})
+        if state == "TASK_OUTCOME":
+            write_validation_record(run_dir, envelope, outcome, receipt_state, receipt_key,
+                                    validations, "confirmed-existing", result["finished_at"])
         return "already_reported"
     client.post(envelope["source_repository"], envelope["source_issue"], body)
     write_exclusive(marker, {"receipt_key": receipt_key, "state": receipt_state, "remote": "posted"})
+    if state == "TASK_OUTCOME":
+        write_validation_record(run_dir, envelope, outcome, receipt_state, receipt_key,
+                                validations, "posted", result["finished_at"])
     return "posted"
 
 
