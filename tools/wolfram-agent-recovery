@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+"""Lease-bound recovery bookkeeping; semantic settlement remains reporter-owned."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import tempfile
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def atomic_json(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile("w", dir=path.parent, delete=False, encoding="utf-8") as f:
+        json.dump(value, f, indent=2, sort_keys=True)
+        f.write("\n")
+        name = f.name
+    Path(name).replace(path)
+
+
+def recover(run_dir, expected=None):
+    run_dir = Path(run_dir)
+    envelope = json.loads((run_dir / "envelope.json").read_text())
+    claim = json.loads((run_dir / "claim.json").read_text())
+    binding = (envelope.get("task_id"), envelope.get("source_sha256"), envelope.get("lease_id"))
+    claim_binding = (claim.get("task_id"), claim.get("source_digest"), claim.get("lease_id"))
+    if binding != claim_binding or any(not isinstance(v, str) or not v for v in binding):
+        raise ValueError("task/source/lease binding mismatch")
+    if expected is not None and tuple(expected) != binding:
+        raise ValueError("expected task/source/lease binding mismatch")
+    result = json.loads((run_dir / "result.json").read_text())
+    result_binding = (result.get("task_id"), result.get("source_digest"), result.get("lease_id"))
+    if result_binding != binding:
+        raise ValueError("result task/source/lease binding mismatch")
+    outcome_path = run_dir / "task-outcome.json"
+    if outcome_path.exists():
+        outcome = json.loads(outcome_path.read_text())
+        if (outcome.get("task_id"), outcome.get("source_sha256"), outcome.get("lease_id")) != binding:
+            raise ValueError("outcome task/source/lease binding mismatch")
+        decision = "reporter_reconcile_candidate"
+        action = "preserve_outcome_for_strict_reporter"
+    elif result.get("terminal_state") == "execution_finished":
+        decision = "checkpoint_only"
+        action = "write_execution_checkpoint"
+    else:
+        decision = "no_repair"
+        action = "none"
+    ledger = run_dir / "recovery-ledger.json"
+    key = hashlib.sha256("\n".join(binding).encode()).hexdigest()
+    if ledger.exists():
+        prior = json.loads(ledger.read_text())
+        if prior.get("binding_key") == key:
+            return prior
+        raise ValueError("recovery ledger binding mismatch")
+    record = {"protocol": "chitakasha-recovery/v1", "binding": {"task_id": binding[0], "source_sha256": binding[1], "lease_id": binding[2]},
+              "binding_key": key, "decision": decision, "allowlisted_action": action,
+              "precondition": "bound envelope, claim, and result agree; no existing recovery ledger",
+              "postcondition": "checkpoint/decision is durable; semantic settlement is unchanged",
+              "result_sha256": digest(run_dir / "result.json")}
+    if action == "write_execution_checkpoint":
+        checkpoint = {"protocol": "chitakasha-recovery-checkpoint/v1", "binding": record["binding"],
+                      "result_sha256": record["result_sha256"], "stdout_sha256": result.get("stdout_sha256"),
+                      "stderr_sha256": result.get("stderr_sha256"), "semantic_verdict": "unknown"}
+        atomic_json(run_dir / "execution-checkpoint.json", checkpoint)
+    atomic_json(ledger, record)
+    return record
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--run-dir", type=Path, required=True)
+    args = p.parse_args()
+    print(json.dumps(recover(args.run_dir), sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()
