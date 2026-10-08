@@ -13,6 +13,7 @@ import shutil
 import subprocess
 import sys
 import uuid
+from datetime import datetime, timezone
 
 EXPECTED_REPOSITORY = "pashamango/minutta-rp-pr-cycle-lab"
 EXPECTED_AGENT = "codex@wolfram.local"
@@ -266,6 +267,34 @@ def report(run_dir, state, client=None, watcher=None):
     client.post(envelope["source_repository"], envelope["source_issue"], body)
     write_exclusive(marker, {"receipt_key": receipt_key, "state": receipt_state, "remote": "posted"})
     return "posted"
+
+def emit_validation_record(run_dir, state, checkpoint_root, client=None, watcher=None, pr=None):
+    """After successful strict reporting, emit the allowlisted commander evidence record."""
+    result = report(run_dir, state, client, watcher)
+    if state == "CLAIMED":
+        raise ValueError("validation requires terminal outcome")
+    client = client or GhClient(); watcher = watcher or load_watcher()
+    envelope, claim, outcome = load_bound_run(run_dir, state)
+    admission = admitted_record(run_dir, envelope)
+    issue = client.issue(envelope["source_repository"], envelope["source_issue"])
+    verify_source(envelope, issue, watcher, admission)
+    if pr is not None and (pr.get("repository") != envelope["source_repository"] or
+                           pr.get("base") != "main" or not pr.get("branch") or
+                           not pr["branch"].startswith("agent/wolfram/")):
+        raise ValueError("invalid PR binding")
+    fields = {"protocol":"chitakasha-reporter-validation/v1", "task_id":envelope["task_id"],
+              "source_sha256":envelope["source_sha256"], "child_lease_id":envelope["lease_id"],
+              "issue_number":envelope["source_issue"], "outcome_status":outcome["terminal_state"],
+              "outcome_sha256":file_sha256(run_dir/"result.json"), "terminal_receipt_state":state,
+              "receipt_key":receipt_payload(state,envelope,claim,outcome,run_dir)[1],
+              "evidence_validation":"strict-reporter/v1", "reporter_authority":"tools/wolfram-agent-reporter",
+              "reporter_version":"v1", "reporter_module_sha256":file_sha256(Path(__file__)),
+              "created_at":datetime.now(timezone.utc).isoformat().replace("+00:00","Z"),
+              "remote_state":"existing-or-posted"}
+    fields["record_sha256"] = "sha256:" + hashlib.sha256(json.dumps(fields,sort_keys=True,separators=(",",":")).encode()).hexdigest()
+    path=Path(checkpoint_root)/envelope["task_id"]/envelope["lease_id"]/"validation.json"
+    write_exclusive(path, fields)
+    return result
 
 
 def record_failure(run_dir, state, exc):
