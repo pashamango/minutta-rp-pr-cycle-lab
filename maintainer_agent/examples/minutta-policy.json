@@ -1,0 +1,22 @@
+{
+  "version": "MAINTAINER_POLICY/v1",
+  "enabled": false,
+  "repository": "pashamango/minutta-rp-pr-cycle-lab",
+  "base_branches": ["main"],
+  "autonomous_ceiling": "R0",
+  "protected_paths": [
+    ".github/workflows/**",
+    ".maintainer/**",
+    "maintainer_agent/**",
+    "CODEOWNERS",
+    "**/CODEOWNERS",
+    "config/*credential*",
+    "config/*policy*"
+  ],
+  "risk_rules": [
+    {"pattern": "docs/**", "risk_class": "R0"},
+    {"pattern": "tests/**", "risk_class": "R0"},
+    {"pattern": "tools/**", "risk_class": "R1"},
+    {"pattern": "launchd/**", "risk_class": "R2"}
+  ]
+}

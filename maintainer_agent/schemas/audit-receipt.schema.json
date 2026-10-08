@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mindrock.example/schemas/constitutional-audit-receipt-v1.json",
+  "title": "CONSTITUTIONAL_AUDIT_RECEIPT/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "repository", "pr_number", "head_sha", "base_sha",
+    "policy_root", "auditor_identity", "verdict",
+    "deterministic_checks_complete", "semantic_checks_complete",
+    "unresolved_objections", "issued_at", "expires_at"
+  ],
+  "properties": {
+    "version": {"const": "CONSTITUTIONAL_AUDIT_RECEIPT/v1"},
+    "repository": {"type": "string"},
+    "pr_number": {"type": "integer", "minimum": 1},
+    "head_sha": {"type": "string", "pattern": "^[0-9a-f]{40,64}$"},
+    "base_sha": {"type": "string", "pattern": "^[0-9a-f]{40,64}$"},
+    "policy_root": {"type": "string", "minLength": 16},
+    "auditor_identity": {"type": "string", "minLength": 1},
+    "verdict": {"enum": ["PASS", "FAIL", "INDETERMINATE"]},
+    "deterministic_checks_complete": {"type": "boolean"},
+    "semantic_checks_complete": {"type": "boolean"},
+    "unresolved_objections": {"type": "array", "items": {"type": "string"}},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"}
+  }
+}
