@@ -1,0 +1,22 @@
+{
+  "schema": "chitakasha-evidence/v1",
+  "task_id": "FORGEJO-TAILSCALE-RECOVERY-0002",
+  "source_issue": 175,
+  "source_repository": "pashamango/minutta-rp-pr-cycle-lab",
+  "source_sha256": "0c532583192a5f7150fe89d5cf40a6560cbcb734197f187182edbaeacd63d559",
+  "lease_id": "abd57a370bf346cd83e124d2662bfc88",
+  "checkpoint": {
+    "base_branch": "main",
+    "initial_head": "725294932d46baec8539686b567da77a97430ea1",
+    "task_branch": "agent/wolfram/FORGEJO-TAILSCALE-RECOVERY-0002",
+    "darwin_mutation_performed": false,
+    "outcome": "FORGEJO_LOCAL_RECOVERED_TAILNET_BLOCKED",
+    "first_broken_transition": "SERVE_ROUTE -> FORGEJO_GIT",
+    "publication_commit": "83f1dae7ccba09832cac996316323f2829fee7a3",
+    "forgejo_git_http_status": 403,
+    "predecessor_artifact": "not_found_in_bounded_locations",
+    "serve_routes": ["/forgejo", "/gd2.git", "/ceoffice/", "/delegation", "/ceoffice/api/"],
+    "funnel": "disabled"
+  },
+  "secrets": "not_recorded"
+}
