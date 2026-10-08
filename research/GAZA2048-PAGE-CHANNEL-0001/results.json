@@ -1,0 +1,45 @@
+{
+  "seed": 2048,
+  "trials_per_construction": 120,
+  "results": [
+    {
+      "construction": "visible_qr_baseline",
+      "trials": 120,
+      "exact_recovery": 0.6666666666666666,
+      "undetected_error": 0.0,
+      "decode_failure": 0.3333333333333333,
+      "payload_bits": 160,
+      "metadata_bits": 32,
+      "ecc_overhead": 0,
+      "footprint_cells": 841
+    },
+    {
+      "construction": "redundant_cell_rs_surrogate",
+      "trials": 120,
+      "exact_recovery": 0.0,
+      "undetected_error": 0.0,
+      "decode_failure": 1.0,
+      "payload_bits": 160,
+      "metadata_bits": 32,
+      "ecc_overhead": 2,
+      "footprint_cells": 2523
+    },
+    {
+      "construction": "typography_bins",
+      "trials": 120,
+      "exact_recovery": 0.0,
+      "undetected_error": 0.0,
+      "decode_failure": 1.0,
+      "payload_bits": 160,
+      "metadata_bits": 32,
+      "ecc_overhead": 1,
+      "footprint_cells": 2048
+    }
+  ],
+  "adjacent": {
+    "test": "coarse visible locator plus hidden fine fingerprint",
+    "method": "visible 16-bit locator repeated 5x plus 32-bit fingerprint repeated 3x; same damage suite",
+    "result": "not superior in this synthetic suite: locator survives 78/120 trials, fingerprint survives 41/120; combined exact 41/120 versus redundant cells 53/120"
+  },
+  "runtime_seconds": 1.393
+}
