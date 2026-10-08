@@ -1,0 +1,22 @@
+{
+  "schema": "darwin-codex-handoff-evidence/v1",
+  "task_id": "DARWIN-CODEX-137-HANDOFF-0001",
+  "source_issue": 172,
+  "source_sha256": "9fed3d0559970304cfff8bcaef5ea6b630875f72430f82ff919222508f1b21fe",
+  "lease_id": "275fac63ea9b4b099eb0750977aa2af8",
+  "phase": "single_synthetic_invocation",
+  "base_branch": "main",
+  "base_sha": "e863dd9",
+  "status": "SAFE_REPRODUCTION_UNAVAILABLE",
+  "initial_pr": 173,
+  "initial_head": "98f5464",
+  "probe_started_utc": "2026-09-12T22:12:41Z",
+  "launcher_pid": 45268,
+  "raw_wait_status": 1,
+  "decoded_signal": null,
+  "sigkill_observed": false,
+  "leaf_executed": false,
+  "missing_representation": "trusted_git_working_root_and_valid_pid_ppid_wait_capture_for_the_actual_handoff",
+  "wise_broker": {"decision":"ADOPT","rationale":"Process-bound records can serve publishers and runners when separate from completion settlement."},
+  "sanitized": true
+}
