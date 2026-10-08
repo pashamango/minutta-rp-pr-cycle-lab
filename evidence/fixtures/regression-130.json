@@ -1,0 +1,11 @@
+{
+  "task_id": "LOCAL-MARKET-SCHEDULER-0003",
+  "source_digest": "6f7baa9558ce8a41c712bcdb6463dd1dab2bab44b117c214dfb6757b6464aa80",
+  "lease_id": "1b62547086af4774906870a07004f8d6",
+  "exit_status": 0,
+  "artifact_count": 3,
+  "check_count": 7,
+  "reporter": "TASK_BLOCKED",
+  "evidence_validation": [],
+  "publication_required_before_reporter": true
+}

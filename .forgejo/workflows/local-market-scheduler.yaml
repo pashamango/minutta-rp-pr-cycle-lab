@@ -1,0 +1,13 @@
+name: local-market-scheduler-fixtures
+on: [workflow_dispatch]
+jobs:
+  wolfram-fixture:
+    runs-on: [self-hosted, wolfram]
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m unittest tests/test_local_market_scheduler.py
+  darwin-fixture:
+    runs-on: [self-hosted, darwin]
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m unittest tests/test_local_market_scheduler.py
