@@ -407,6 +407,15 @@ def cycle(base=BASE, fetch_all=issues, fetch_one=fresh_issue, codex=None, client
             raise ValueError("invalid activation mode")
         watcher, dispatcher, reporter = components()
         dispatcher.run_reporter = lambda run, status: publish(run, status, watcher, reporter, client)
+        # Replay bound continuations only after a task outcome exists; never rerun work.
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        from continuation.queue import pending as pending_continuations, acknowledge
+        for item in pending_continuations(state / "continuations"):
+            run = Path(item["run_dir"])
+            if (run / "task-outcome.json").exists():
+                result = publish(run, "TASK_OUTCOME", watcher, reporter, client)
+                if result in {"posted", "already_reported"}:
+                    acknowledge(state / "continuations", item["task_id"], item["source_digest"], item["lease_id"])
         items = fetch_all()
         ids = {}
         for item in items:

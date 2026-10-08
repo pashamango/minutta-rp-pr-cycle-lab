@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "type":"object","required":["project_id","status","rp","research","synthesis","ic_decision","founder_charter","investor_report"],
+  "properties":{"project_id":{"type":"string"},"status":{"enum":["IDEA","RP","RESEARCH","SYNTHESIS","IC_DECISION","FOUNDER_CHARTER","PROJECT_STATUS"]},"rp":{"type":["object","null"]},"research":{"type":"array"},"synthesis":{"type":["object","null"]},"ic_decision":{"type":["object","null"]},"founder_charter":{"type":["object","null"]},"investor_report":{"type":["object","null"]}}
+}
