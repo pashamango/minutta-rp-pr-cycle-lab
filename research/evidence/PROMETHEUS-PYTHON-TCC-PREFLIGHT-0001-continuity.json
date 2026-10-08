@@ -1,0 +1,11 @@
+{
+  "protocol": "SUCCESSOR_CONTINUITY/v1",
+  "task_id": "PROMETHEUS-PYTHON-TCC-PREFLIGHT-0001",
+  "source_sha256": "ed1358af6a1b7d1e0318b17c2831cb7b456fe039a63c44be87d3004a448af5d6",
+  "lease_id": "8a536153bdbc4919a1d7b3b24fc18208",
+  "predecessor_issue": 221,
+  "base_branch": "main",
+  "base_head": "99dc7c32380b5cee72a8a35ab9a29e54b34c5dd8",
+  "completion_asserted": false,
+  "continuity_only": true
+}

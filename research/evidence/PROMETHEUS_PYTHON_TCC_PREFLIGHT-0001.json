@@ -1,0 +1,34 @@
+{
+  "protocol": "PROMETHEUS_PYTHON_TCC_PREFLIGHT/v1",
+  "task_id": "PROMETHEUS-PYTHON-TCC-PREFLIGHT-0001",
+  "source_sha256": "ed1358af6a1b7d1e0318b17c2831cb7b456fe039a63c44be87d3004a448af5d6",
+  "lease_id": "8a536153bdbc4919a1d7b3b24fc18208",
+  "verdict": "PYTHON_TCC_ACTIVE",
+  "predecessor": {
+    "task_id": "PYTHON-TCC-PREFLIGHT-0001",
+    "source_sha256": "790e839483a4a696ecdc1ddea7247105fa6dae6e279427ef6e5bc30e56958ab5",
+    "lease_id": "3c0de68a44884dde941b3a1788955ad4",
+    "stdout_sha256": "de67e8909abb9d2bd6a12c50db22e479d7e93cad683941ecc3a0457dde4d5f52",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "result_sha256": "f501780e2f9cad4cc2ab2d02d4510b98eb5e31ee652a34fec27436f7d4cc2f6c",
+    "task_outcome_sha256": "a3931219617ea17ae0683f11333061400a7aabf8364c9a9a0dc1bceb91bc1a2a"
+  },
+  "observations": {
+    "runtime_class": "CPython",
+    "runtime_version": "3.12.0",
+    "runtime_identity_changed": false,
+    "documents_metadata_boundary": "granted",
+    "storage_worker_state": "granted",
+    "additional_configured_boundary": "granted",
+    "prompt_observed": false,
+    "denial_observed": false,
+    "bound_task_outcome_present": true,
+    "bound_task_outcome_status": "completed",
+    "bound_task_outcome_terminal": "TASK_COMPLETED",
+    "first_missing_reporting_transition": "TASK_OUTCOME reporter publication",
+    "reporting_failure": "ValueError"
+  },
+  "retry_safety": "Do not rerun protected-resource probes; retained bound evidence is sufficient.",
+  "requires_pasha": false,
+  "diagnostic_only": true
+}
