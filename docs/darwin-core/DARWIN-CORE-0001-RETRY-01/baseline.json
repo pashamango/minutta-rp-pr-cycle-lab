@@ -1,0 +1,175 @@
+{
+  "protocol": "darwin-operational-baseline/v1",
+  "task_id": "DARWIN-CORE-0001-RETRY-01",
+  "status": "blocked",
+  "executor": "Wolfram.local",
+  "target": "Darwin (not reached or identified)",
+  "source_issue": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/48",
+  "lease_id": "d48a651cf24c427782210bda10708338",
+  "source_sha256": "67e693e5d875ef33cd1d36e6814df8cab217dfaf941eb884753b616a008ce3f9",
+  "timing": {
+    "dispatch_claimed_at": "2026-09-05T20:55:07.401461+00:00",
+    "preflight_ended_at": "2026-09-05T20:56:48.375496+00:00",
+    "evidence_finalized_at": "2026-09-05T20:59:35.861886+00:00",
+    "elapsed_from_claim_seconds": 268.46,
+    "individual_check_timing_note": "Null elapsed or observation timestamp means not instrumented; recorded_at is evidence transcription time. Skipped target checks have elapsed 0."
+  },
+  "checks": [
+    {
+      "id": "local_policy",
+      "status": "PASS",
+      "ran": true,
+      "detail": "Installed policy and merged runbook read; no applicable AGENTS.md found in checked task/repository ancestor paths. Merged origin/main verified at 65a40e06a340b64b1ce060265a79ce1ba50fcb77.",
+      "provenance": "agent-mailbox/config/policy.yaml; origin/main:CHATGPT-MAILBOX-RUNBOOK.md",
+      "observed_at": null,
+      "elapsed_seconds": null,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "executor_identity",
+      "status": "PASS",
+      "ran": true,
+      "detail": "Wolfram.local; macOS 26.6.2 build 25G83; arm64. These are executor observations, not Darwin measurements.",
+      "provenance": "local hostname; sw_vers; uname -m",
+      "observed_at": null,
+      "elapsed_seconds": null,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "cli_version",
+      "status": "PASS",
+      "ran": true,
+      "detail": "codex-cli 0.153.4",
+      "provenance": "/opt/homebrew/bin/codex --version",
+      "observed_at": null,
+      "elapsed_seconds": null,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "model_metadata",
+      "status": "PASS",
+      "ran": true,
+      "detail": "Installed run header: model gpt-6-astra; provider openai; reasoning effort low. Owner-reported interactive Max does not match this run header. Terminal process success is pending.",
+      "provenance": "Allowlisted header fields from this lease codex.stderr.log (first 30 lines only)",
+      "observed_at": "2026-09-05T20:59:16.848620+00:00",
+      "elapsed_seconds": null,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "darwin_tailnet_ssh",
+      "status": "FAIL",
+      "ran": true,
+      "detail": "ssh: connect to host 100.96.49.15 port 22: Operation timed out; exit 255. Target identity command did not execute.",
+      "provenance": "Documented macbook3 route; SSH BatchMode=yes StrictHostKeyChecking=yes ConnectTimeout=10 ConnectionAttempts=1; outer timeout=20s",
+      "observed_at": "2026-09-05T20:56:08.315337+00:00",
+      "elapsed_seconds": 10.099
+    },
+    {
+      "id": "darwin_lan_ssh",
+      "status": "FAIL",
+      "ran": true,
+      "detail": "ssh: connect to host 10.57.5.168 port 22: Operation timed out; exit 255. Target identity command did not execute.",
+      "provenance": "Documented macbook3-lan fallback; same SSH bounds",
+      "observed_at": "2026-09-05T20:56:38.282496+00:00",
+      "elapsed_seconds": 10.093
+    },
+    {
+      "id": "target_identity",
+      "status": "UNKNOWN",
+      "ran": false,
+      "detail": "Darwin hostname, macOS and hardware unverified.",
+      "provenance": "Skipped: Darwin access preflight failed",
+      "observed_at": null,
+      "elapsed_seconds": 0,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "uptime_disk_memory",
+      "status": "UNKNOWN",
+      "ran": false,
+      "detail": "No uptime, free disk or memory pressure evidence.",
+      "provenance": "Skipped: Darwin access preflight failed",
+      "observed_at": null,
+      "elapsed_seconds": 0,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "coordinator_heartbeat",
+      "status": "UNKNOWN",
+      "ran": false,
+      "detail": "No launchd jobs, mailbox heartbeat, last success or stale/error evidence.",
+      "provenance": "Skipped: Darwin access preflight failed",
+      "observed_at": null,
+      "elapsed_seconds": 0,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "forgejo_health_listeners",
+      "status": "UNKNOWN",
+      "ran": false,
+      "detail": "No process, version, health or listener evidence. Loopback ports 3001 and 8942 are intended only.",
+      "provenance": "Skipped: Darwin access preflight failed",
+      "observed_at": null,
+      "elapsed_seconds": 0,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "tailscale_serve_funnel",
+      "status": "UNKNOWN",
+      "ran": false,
+      "detail": "No Darwin Tailscale status, Serve/Funnel or exposure evidence. No phone test.",
+      "provenance": "Skipped: Darwin access preflight failed",
+      "observed_at": null,
+      "elapsed_seconds": 0,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "backups_restore",
+      "status": "UNKNOWN",
+      "ran": false,
+      "detail": "No mechanism, last backup age, destination or restore-test evidence.",
+      "provenance": "Skipped: Darwin access preflight failed",
+      "observed_at": null,
+      "elapsed_seconds": 0,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "canonical_git_integrity",
+      "status": "UNKNOWN",
+      "ran": false,
+      "detail": "Canonical paths unverified; no git fsck ran.",
+      "provenance": "Skipped: Darwin access preflight failed",
+      "observed_at": null,
+      "elapsed_seconds": 0,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "branch_gatekeeper_safeguards",
+      "status": "UNKNOWN",
+      "ran": false,
+      "detail": "No observed branch protection or VERIFY_ONLY/no-automerge evidence.",
+      "provenance": "Skipped: Darwin access preflight failed",
+      "observed_at": null,
+      "elapsed_seconds": 0,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    },
+    {
+      "id": "recent_errors",
+      "status": "UNKNOWN",
+      "ran": false,
+      "detail": "No target log reads; no error counts inferred.",
+      "provenance": "Skipped: Darwin access preflight failed",
+      "observed_at": null,
+      "elapsed_seconds": 0,
+      "recorded_at": "2026-09-05T20:58:19.122045+00:00"
+    }
+  ],
+  "blocker": "Both documented existing SSH routes timed out; Darwin identity unavailable.",
+  "next_steps": [
+    "Owner: check Darwin locally for power, Ethernet and existing Tailscale/Remote Login health; restore the previously established route without creating a new access path.",
+    "After owner-coordinated access recovery, request a separately admitted baseline task; no automatic retry.",
+    "Use that baseline to prioritize heartbeat/error monitoring, backup age and restore-test evidence, then bounded reliability/optimization recommendations. No fixes authorized here."
+  ],
+  "main_bottleneck": "Darwin SSH reachability; two bounded connection attempts consumed 20.192 seconds.",
+  "notification": "Authenticated PR author and repository owner are pashamango. Existing GitHub PR path only; phone/push notification not verified."
+}
