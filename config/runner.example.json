@@ -1,0 +1,1 @@
+{"db_path":"~/.local/state/chitakasha/runner.sqlite3","local":{"url":"http://127.0.0.1:11434","model":"gemma4:latest","think":false},"external":{"provider":"gemini","free_only":true,"secret_handle":"keychain://chitakasha/gemini-api"},"billing":{"must_be_unlinked":true,"paid":false}}
