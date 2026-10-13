@@ -25,7 +25,7 @@ GENESIS = '0' * 64
 DEFAULT_ROOT = '~/.local/share/darwin-prometheus'
 DEFAULT_GOVERNOR_DB = '~/.local/share/token-governor/observations.sqlite3'
 MAX_EVENT_BYTES = 8192
-ALLOWED = {'quota.observation', 'quota.alert', 'host.health'}
+ALLOWED = {'quota.observation', 'quota.alert', 'host.health', 'host.snapshot'}
 HEX64 = re.compile(r'^[0-9a-f]{64}$')
 DATE_FILE = re.compile(r'^\d{4}-\d{2}-\d{2}\.jsonl$')
 
@@ -87,6 +87,49 @@ def valid_payload(event_type, payload):
             v=payload[k]
             if isinstance(v,bool) or not isinstance(v,int) or v<0: raise ValueError('Bad disk')
         if payload['disk_free_bytes']>payload['disk_total_bytes']:raise ValueError('Free > total')
+    elif event_type == 'host.snapshot':
+        required={'schema','node_role','sampled_at','metrics_status','services',
+                  'load_1m','load_5m','load_15m','cpu_logical',
+                  'swap_used_bytes','swap_total_bytes','disk_free_bytes','disk_total_bytes'}
+        if set(payload) != required or payload.get('schema') != 'chitakasha.prometheus.host-snapshot/v1':
+            raise ValueError('Unknown host snapshot schema')
+        if payload['node_role'] not in {'darwin','wolfram'}:
+            raise ValueError('Unknown node role')
+        validate_time(payload['sampled_at'])
+        states={'SOURCE_READ_LOCAL','READ_BLOCKED','NOT_SUPPORTED'}
+        if not isinstance(payload['metrics_status'],dict) or set(payload['metrics_status']) != {'load','cpu','swap','disk'}:
+            raise ValueError('Unexpected metric statuses')
+        if any(v not in states for v in payload['metrics_status'].values()):
+            raise ValueError('Invalid source status')
+        services={'tailscale','forgejo','ollama','governor_push','prometheus_ledger'}
+        service_states={'BACKEND_RUNNING','BACKEND_STOPPED','TCP_ACCEPTING',
+                        'TCP_REFUSED','LAUNCHD_REGISTERED','NOT_CONFIGURED','READ_BLOCKED'}
+        if not isinstance(payload['services'],dict) or set(payload['services']) != services:
+            raise ValueError('Unexpected service keys')
+        if any(v not in service_states for v in payload['services'].values()):
+            raise ValueError('Invalid service status')
+        for name in ('load_1m','load_5m','load_15m'):
+            v=payload[name]
+            if v is not None and (type(v) not in (int,float) or not 0<=v<=100000):
+                raise ValueError('Invalid load')
+        c=payload['cpu_logical']
+        if c is not None and (type(c) is not int or not 0<c<4096):
+            raise ValueError('Invalid CPU')
+        for name in ('swap_used_bytes','swap_total_bytes','disk_free_bytes','disk_total_bytes'):
+            v=payload[name]
+            if v is not None and (type(v) is not int or v<0):
+                raise ValueError('Invalid byte count')
+        for used,total in (('swap_used_bytes','swap_total_bytes'),('disk_free_bytes','disk_total_bytes')):
+            u,t=payload[used],payload[total]
+            if (u is None)!=(t is None) or (u is not None and u>t):
+                raise ValueError('Invalid capacity pair')
+        metric_fields={'load':('load_1m','load_5m','load_15m'),
+                       'cpu':('cpu_logical',), 'swap':('swap_used_bytes','swap_total_bytes'),
+                       'disk':('disk_free_bytes','disk_total_bytes')}
+        for kind,fields in metric_fields.items():
+            available=payload['metrics_status'][kind]=='SOURCE_READ_LOCAL'
+            if any((payload[field] is None)==available for field in fields):
+                raise ValueError('Inconsistent metric status')
     else: raise ValueError('Unknown event type')
 
 
