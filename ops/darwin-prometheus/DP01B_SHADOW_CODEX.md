@@ -1,0 +1,9 @@
+# Codex handoff — DP-01B shadow / MIN-51
+
+User's standing authorized scope: read-only host telemetry, a separate unprivileged Darwin shadow agent after staging acceptance, private source escrow via existing Wolfram→Darwin SSH. **Never overwrite/modify E1 production ledger, existing governor, Wolfram collector, Tailscale/DNS, SSH config, sudo/TCC or model effort.**
+
+1. Fetch review branch `agent/darwin-prometheus/dp-01b-shadow-20261013` and read `ops/darwin-prometheus/DP01B_SHADOW_RUNBOOK.md`. Verify exact commit against connected source and compare contents to deployed staging artifacts.
+2. On Darwin, create a **separate staging directory and data root**. Run all tests. Confirm E1 journal and checkpoint before/after disposable smoke tests. Do not append `host.snapshot` to E1 root.
+3. Test first real Darwin snapshot into disposable E2 root, then create only the new shadow plist and enable it using the existing GUI user launchd domain. Verify new agent's first receipt and two independent reader verifications, then report `SHADOW_RUNNING_UNATTENDED_PENDING` until a later natural interval finishes. No Work/API calls.
+4. Independently ask Wolfram Codex to fingerprint and privately transfer only the actual loaded `push_first_collector.py` to Darwin, using outbound strict SSH. Scan and manually review **before any repository publication**; sha256 must match `a916cdffa81312b12ff1761dc5f81fbb30dcb04670c52ad02e08eeee07f22f81`. Never include raw source in public receipt or ChatGPT output.
+5. Return `DP01B_SHADOW_ACCEPTANCE_RECEIPT/v1` and `WOLFRAM_SOURCE_ESCROW_RECEIPT/v1`, discriminating `STAGED`, `SHADOW_RUNNING`, `UNATTENDED_VERIFIED`, `PUBLISH_BLOCKED` and `DONE` correctly. Do not conflate CodexBar with ChatGPT Work quota.
