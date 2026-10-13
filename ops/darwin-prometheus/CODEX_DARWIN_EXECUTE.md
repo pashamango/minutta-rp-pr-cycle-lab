@@ -1,0 +1,15 @@
+# Darwin Codex execution request: DP-01 Event Ledger acceptance
+
+Authorization: Pasha approved DP-01 build/test and the Token Governor #511 follow-up. You are executing on Darwin; this GitHub branch contains **reference source**, not automatically deployed host state.
+
+1. Fetch and read this folder from review branch, record exact SHA and verify source/diffs. Never overwrite existing Governor, Wolfram's active push agent or SSH keys; do not open a new external port or start Work.
+2. Inspect `~/token-governor/governor.py`, the existing private SQLite schema and observed time(s), and current permissions. **Do not print credential-bearing content or post raw quota JSON**.
+3. Copy `event_ledger.py`, `run_cycle.py`, `test_event_ledger.py`, `install_ledger_launchagent.py` to `~/darwin-prometheus` under `umask 077`. Run 20/20 synthetic unit tests. Run the first real `sync-governor`, `verify`, `project`, `checkpoint`, `verify`, and `run_cycle` with existing source. Save sanitized receipts.
+4. Observe current Wolfram push agent status and delivery without changing it; distinguish only one real measurement from two truly different provider `observed_at` timestamps. If one, mark `SECOND_OBSERVATION_PENDING` and verify after its next normal hourly run; do not fake or force cloud usage.
+5. If all existing-source checks pass, configure Darwin-only user LaunchAgent `org.chitakasha.darwin-prometheus-ledger`. Verify that it is loaded and has a real run receipt. If GUI domain unavailable, stop before claiming that it is scheduled.
+6. Compare actual deployed Wolfram `push_quota.py` to reference `ops/token-governor/push_quota.py` in this branch and document SHA-256 and differences. Do **not** replace already working files without a reviewed need. Unit tests here may not match the exact deployed file.
+7. Test corruption, duplicate, checkpoint and rebuild behaviors on a disposable temporary ledger, never damage real quota data. To prove restart, rebuild derived SQLite from the real append-only journal without changing journal entries. Test read-only source loss using a test DB path, not disconnecting Tailscale.
+8. Capture anonymized `DP01_DEPLOYMENT_RECEIPT/v1` with: exact branch commit, Darwin/Python versions, observed count and distinct timestamps, last sync and hash chain tip, checkpoint SHA-256, projection row count, launchd plist/loaded/last run, 20 unit tests + full Governor suite, quota confidence, footprint, and all blockers. Emit no private user paths, tokens, IPs, OAuth identifiers or passwords to GitHub.
+9. Optionally publish one sanitized receipt in https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/511 **only if authenticated `gh` is already available**. Otherwise produce a locally durable receipt for ChatGPT plugin publication. Do not claim GitHub post without provider result.
+
+**Success**: at least one actual Governor observation preserved into private hash-chain + derived view on Darwin; later hourly run confirmed separately. DP-01 E1 can be `HOST_DONE`, DP-02 Work mapping remains separate `UNVERIFIED_FOR_WORK`. Keep source #511 open unless all defined acceptance criteria pass.
