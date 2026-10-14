@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import sqlite3
+import sys
 
 import event_ledger as e
 import host_adapter as a

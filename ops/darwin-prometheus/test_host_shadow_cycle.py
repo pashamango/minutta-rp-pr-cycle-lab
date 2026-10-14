@@ -5,6 +5,9 @@ import tempfile
 import unittest
 from unittest.mock import patch
 import plistlib
+import json
+import subprocess
+import sys
 
 import event_ledger as e
 import host_adapter as a
@@ -85,6 +88,24 @@ class ShadowTests(unittest.TestCase):
         with patch.object(a,'collect',return_value=dummy('2026-10-13T23:16:00Z')):
             with self.assertRaises(ValueError):h.run(str(self.shadow))
         self.assertEqual(self.old.joinpath('sentinel').read_bytes(),b'original E1 production ledger')
+
+    def test_real_cli_help_smoke(self):
+        # Exercise the actual Python entrypoint, not only imported run().
+        completed=subprocess.run([sys.executable, str(Path(h.__file__).resolve()), '--help'],
+                                 capture_output=True, text=True, timeout=20, check=False)
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertIn('--root', completed.stdout)
+
+    def test_real_cli_writes_disposable_shadow_ledger(self):
+        completed=subprocess.run([sys.executable, str(Path(h.__file__).resolve()),
+                                  '--root', str(self.shadow)],
+                                 capture_output=True, text=True, timeout=30, check=False)
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        report=json.loads(completed.stdout)
+        self.assertEqual(report['status'], 'VERIFIED')
+        self.assertEqual(report['mode'], 'SHADOW_ONLY')
+        self.assertEqual(e.audit(self.shadow)['types']['host.snapshot'], 1)
+        self.assertEqual(list(self.old.iterdir()), [self.old/'sentinel'])
 
     def test_launchd_label_distinct(self):
         self.assertNotEqual(launch.LABEL,'org.chitakasha.darwin-prometheus-ledger')
