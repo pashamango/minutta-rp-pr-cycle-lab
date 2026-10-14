@@ -1,0 +1,309 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "Existing trusted local Prometheus datasource",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "dashboard": {
+    "id": null,
+    "uid": "simsim-muse-external-001",
+    "title": "SIMSIM / Darwin Prometheus — Muse External Agent",
+    "tags": [
+      "simsim",
+      "external-testimony",
+      "muse"
+    ],
+    "timezone": "browser",
+    "schemaVersion": 39,
+    "version": 1,
+    "refresh": "1m",
+    "time": {
+      "from": "now-7d",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "type": "text",
+        "title": "Evidence classification",
+        "gridPos": {
+          "h": 3,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "options": {
+          "mode": "markdown",
+          "content": "**Muse — external-agent testimony, not independently audited execution.** Drive file presence proves delivery of a document, not accuracy of its claims. `PRELIMINARY` reports before 23:30 PDT are not full-day statements. The JSON file is not read by Grafana."
+        }
+      },
+      {
+        "id": 2,
+        "title": "Muse weekly quota used (self-reported)",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 0,
+          "y": 3
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "simsim_muse_weekly_quota_used_percent",
+            "refId": "A",
+            "legendFormat": ""
+          }
+        ],
+        "description": "Source: subscription-status status; NOT ChatGPT Work quota.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 3,
+        "title": "Muse report freshness, hours",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 6,
+          "y": 3
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "(time() - simsim_muse_report_generated_timestamp_seconds) / 3600",
+            "refId": "A",
+            "legendFormat": ""
+          }
+        ],
+        "description": "How long since the embedded generated_at, independent of scrape timestamp.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "h"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 4,
+        "title": "Daily cron runs (self-reported)",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 3
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "simsim_muse_daily_runs",
+            "refId": "A",
+            "legendFormat": ""
+          }
+        ],
+        "description": "Daily report snapshots, not a cumulative Prometheus counter.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 5,
+        "title": "Reported failures",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 18,
+          "y": 3
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "simsim_muse_daily_failed + simsim_muse_daily_reported_errors",
+            "refId": "A",
+            "legendFormat": ""
+          }
+        ],
+        "description": "Sum of agent-reported failed runs and errors; may overlap; not a unique-incident count.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 6,
+        "title": "Daily runs per job",
+        "type": "bargauge",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 7
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "simsim_muse_daily_job_runs",
+            "refId": "A",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "description": "Only allowlisted bounded job names appear as labels.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 7,
+        "title": "Avg duration per job (seconds)",
+        "type": "bargauge",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 7
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "simsim_muse_daily_job_avg_duration_seconds",
+            "refId": "A",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "description": "Self-reported approximate duration, zero may be rounded (<1s).",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 8,
+        "title": "Session context usage",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 7,
+          "w": 12,
+          "x": 0,
+          "y": 15
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "simsim_muse_session_used_percent",
+            "refId": "A",
+            "legendFormat": ""
+          }
+        ],
+        "description": "Point-in-time session use; not the weekly subscription quota.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 9,
+        "title": "Nightly cutoff status",
+        "type": "stat",
+        "gridPos": {
+          "h": 7,
+          "w": 6,
+          "x": 12,
+          "y": 15
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "simsim_muse_report_cutoff_reached",
+            "refId": "A",
+            "legendFormat": ""
+          }
+        ],
+        "description": "1 means snapshot generated at/after 23:30 local on report date; not end-of-day completeness.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        }
+      },
+      {
+        "id": 10,
+        "title": "Reported job failures by job",
+        "type": "bargauge",
+        "gridPos": {
+          "h": 7,
+          "w": 6,
+          "x": 18,
+          "y": 15
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "targets": [
+          {
+            "expr": "simsim_muse_daily_job_failed",
+            "refId": "A",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "description": "Failure counts reported by Muse, not independently verified.",
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          },
+          "overrides": []
+        }
+      }
+    ]
+  },
+  "overwrite": false
+}

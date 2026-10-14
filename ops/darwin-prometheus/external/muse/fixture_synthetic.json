@@ -1,0 +1,29 @@
+{
+  "schema": "muse-telemetry/v1",
+  "report_date": "2026-10-13",
+  "generated_at": "2026-10-13T20:20:00-07:00",
+  "cron_runs": {
+    "total_runs": 3,
+    "total_succeeded": 2,
+    "total_failed": 1,
+    "by_job": {
+      "sample-job": {
+        "runs": 3,
+        "succeeded": 2,
+        "failed": 1,
+        "avg_duration_s": 12
+      }
+    }
+  },
+  "subscription": {
+    "usage_pct_of_weekly_limit": 5,
+    "resets_at": "2026-10-20T08:28:00-07:00"
+  },
+  "session_context": {
+    "used_pct": 30,
+    "available_pct": 70
+  },
+  "errors_anomalies": {
+    "count": 1
+  }
+}
