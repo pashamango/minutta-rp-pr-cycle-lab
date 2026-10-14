@@ -1,6 +1,6 @@
 # SIMSIM / Darwin Prometheus — Muse Independent Telemetry Bridge v0.1
 
-Status: **tested off-host with actual Muse JSON**, not installed on Darwin, no Grafana or Prometheus runtime confirmed. Python code, tests, synthetic fixture and Grafana dashboard are bundled as ZIP in the originating ChatGPT conversation and have **not yet been committed to this GitHub branch**; refer to SOURCE_BUNDLE_MANIFEST.md. See GitHub review branch / Linear tracking for deployment status.
+**2026-10-14 status:** DARWIN_MUSE_INGEST_HOST_PASS (reported by local Codex); 18/18 host tests, 1 real Muse report + 5 job aggregates, immutable ledger verified, duplicate rejected, private Prometheus textfile exported. **Grafana and Prometheus runtime remain GRAFANA_PENDING; nightly 23:30 recurrence unverified.** All code/tests/fixture/dashboard committed on this review branch. The pinned source commit is `d5e5c4ead524de0851b5e750853b8667baf4adc6`. The supplementary `RETRY_AFTER_RELAY.md` was added later (commit `153706168d34f5896ccf8f78bf7c3f2e1b9dea03`) and therefore does **not** exist at the pinned source commit. Source evidence is user-reported host receipt recorded at https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/511#issuecomment-6163442647.
 
 ## Confirmed Drive source
 
@@ -50,7 +50,7 @@ Muse scheduled exporter (claimed nightly 23:30 PDT)
 
 ## Wolfram source escrow remains independent
 
-The live Wolfram transport is still `push_first_collector.py` SHA-256 `a916cdffa81312b12ff1761dc5f81fbb30dcb04670c52ad02e08eeee07f22f81`. Before any private escrow transfer: re-attest local file, scan locally for secrets, human-reviewed authorization, transmit exactly one file via pre-existing Wolfram->Darwin SSH, re-hash on Darwin and keep in private nonpublic storage. No hot-swap with `push_quota.py`. Escrow is **PENDING** until a real host receipt.
+The live Wolfram transport is still `push_first_collector.py` SHA-256 `a916cdffa81312b12ff1761dc5f81fbb30dcb04670c52ad02e08eeee07f22f81`. Before any private escrow transfer: re-attest local file, scan locally for secrets, human-reviewed authorization, transmit exactly one file via pre-existing Wolfram->Darwin SSH, re-hash on Darwin and keep in private nonpublic storage. No hot-swap with `push_quota.py`. **Escrow HOST_PASS** per Wolfram/Darwin Codex report (SHA-256 matched on Darwin, scanner PASS, private 0600 copy); this is not permission to publish or merge the source. Private Forgejo review remains a separate gate in MIN-51.
 
 ## Fail-closed states
 
