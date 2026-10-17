@@ -30,6 +30,9 @@ from typing import Any, Callable, Iterable, Protocol
 UTC = dt.timezone.utc
 NICLI_JOB_SCHEMA = "NICLI_JOB/v1"
 NICLI_RECEIPT_SCHEMA = "NICLI_RUN_RECEIPT/v1"
+NICLI_SHADOW_ADMISSION_SCHEMA = "NICLI_SHADOW_ADMISSION/v1"
+DEFAULT_PINNED_MODEL = "Gemini 3.8 Flash Medium"
+DEFAULT_CLI_VERSION = "0.1.0"
 PROTECTED_BRANCHES = frozenset({"main", "master", "release", "production"})
 ALLOWED_REVIEWER_ROLES = frozenset({"GPT", "Muse"})
 ALLOWED_AUTH_LANES = {
@@ -101,6 +104,55 @@ class LinearIssueSnapshot:
     acceptance_commands: tuple[str, ...] = ()
     git_branch_name: str | None = None
 
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> LinearIssueSnapshot:
+        return cls(
+            issue_id=str(data["issue_id"]),
+            uuid=str(data.get("uuid", "")),
+            team_key=str(data.get("team_key", "")),
+            status=str(data.get("status", "")),
+            title=str(data.get("title", "")),
+            description=str(data.get("description", "")),
+            labels=tuple(str(x) for x in data.get("labels", ())),
+            updated_at=str(data.get("updated_at", "")),
+            parent_id=data.get("parent_id"),
+            parent_status=data.get("parent_status"),
+            parent_labels=tuple(str(x) for x in data.get("parent_labels", ())),
+            ic_decision_ref=data.get("ic_decision_ref"),
+            handoff_refs=tuple(str(x) for x in data.get("handoff_refs", ())),
+            blocked_by=tuple(dict(x) for x in data.get("blocked_by", ())),
+            source_repo=data.get("source_repo"),
+            source_commit=data.get("source_commit"),
+            allowed_paths=tuple(str(x) for x in data.get("allowed_paths", ())),
+            capabilities=tuple(str(x) for x in data.get("capabilities", ())),
+            acceptance_commands=tuple(str(x) for x in data.get("acceptance_commands", ())),
+            git_branch_name=data.get("git_branch_name"),
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "issue_id": self.issue_id,
+            "uuid": self.uuid,
+            "team_key": self.team_key,
+            "status": self.status,
+            "title": self.title,
+            "description": self.description,
+            "labels": list(self.labels),
+            "updated_at": self.updated_at,
+            "parent_id": self.parent_id,
+            "parent_status": self.parent_status,
+            "parent_labels": list(self.parent_labels),
+            "ic_decision_ref": self.ic_decision_ref,
+            "handoff_refs": list(self.handoff_refs),
+            "blocked_by": [dict(b) for b in self.blocked_by],
+            "source_repo": self.source_repo,
+            "source_commit": self.source_commit,
+            "allowed_paths": list(self.allowed_paths),
+            "capabilities": list(self.capabilities),
+            "acceptance_commands": list(self.acceptance_commands),
+            "git_branch_name": self.git_branch_name,
+        }
+
 
 @dataclass(frozen=True)
 class AdmissionDecision:
@@ -109,6 +161,15 @@ class AdmissionDecision:
     task_revision_hash: str
     blocker_code: str | None = None
     detail: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "admitted": self.admitted,
+            "issue_id": self.issue_id,
+            "task_revision_hash": self.task_revision_hash,
+            "blocker_code": self.blocker_code,
+            "detail": self.detail,
+        }
 
 
 @dataclass(frozen=True)

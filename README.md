@@ -29,6 +29,10 @@ tools/minutta-self-maintenance-check.sh --repo .
 
 New ChatGPT sessions should start with the canonical [ChatGPT mailbox runbook](CHATGPT-MAILBOX-RUNBOOK.md). A reusable Issue envelope is available in [the mailbox task template](templates/mailbox-task-v1.md).
 
+## NICLI Dispatcher v0.1 (MIN-74 / MIN-75)
+
+Deterministic control plane, SQLite transactional leases, and shadow admission for Linear candidate tasks. Model is pinned to Gemini 3.8 Flash Medium. See the [NICLI Dispatcher documentation](nicli_dispatcher/README.md) for architecture, gates, and CLI runbooks.
+
 ## Safety
 
 - Do not commit tokens, SSH keys, browser cookies, raw household logs or private

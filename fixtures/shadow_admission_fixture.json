@@ -1,0 +1,215 @@
+{
+  "description": "Deterministic shadow-admission fixture demonstrating admission gates (MIN-74 / MIN-75)",
+  "candidates": [
+    {
+      "issue_id": "MIN-68",
+      "uuid": "544f6b52-0af3-4243-bc27-575d077a75db",
+      "team_key": "MIN",
+      "status": "Todo",
+      "title": "[MIN-67.1] Semantics Gate: Freeze Exact Wheel Model",
+      "description": "Implement exact pure mathematical reference model in dark_math.",
+      "labels": [
+        "Role: Builder-Ready"
+      ],
+      "updated_at": "2026-10-16T22:15:58.118Z",
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch"
+      ],
+      "ic_decision_ref": "PRD-2-IC-2026-10-15",
+      "handoff_refs": [
+        "MIN-067_Execution_Plan.md",
+        "AGENT_HANDOFF_LOG.md",
+        "repo_workspace/ORIGIN.toml"
+      ],
+      "blocked_by": [],
+      "source_repo": "pashamango/minutta-rp-pr-cycle-lab",
+      "source_commit": "f0f420a000000000000000000000000000000000",
+      "allowed_paths": [
+        "dark_math/",
+        "tests/"
+      ],
+      "capabilities": [
+        "local-tests-only"
+      ],
+      "acceptance_commands": [
+        "python3 -m unittest"
+      ],
+      "git_branch_name": "minutta/min-68-min-671-semantics-gate-freeze-exact-wheel-model"
+    },
+    {
+      "issue_id": "MIN-69",
+      "uuid": "fb7bfe89-4087-459a-8b27-be77ace0a063",
+      "team_key": "MIN",
+      "status": "Todo",
+      "title": "[MIN-67.2] 2-Day Feasibility Spike: f64 Core and Bottom-Propagation",
+      "description": "Explore f64 arithmetic core and bottom propagation.",
+      "labels": [
+        "Role: Builder-Ready"
+      ],
+      "updated_at": "2026-10-16T22:20:00.000Z",
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch"
+      ],
+      "ic_decision_ref": "PRD-2-IC-2026-10-15",
+      "handoff_refs": [
+        "MIN-067_Execution_Plan.md"
+      ],
+      "blocked_by": [
+        {
+          "id": "MIN-68",
+          "status": "Todo"
+        }
+      ],
+      "source_repo": "pashamango/minutta-rp-pr-cycle-lab",
+      "source_commit": "f0f420a000000000000000000000000000000000",
+      "allowed_paths": [
+        "dark_math/"
+      ],
+      "capabilities": [
+        "local-tests-only"
+      ],
+      "acceptance_commands": [
+        "python3 -m unittest"
+      ],
+      "git_branch_name": "minutta/min-69-feasibility-spike"
+    },
+    {
+      "issue_id": "MIN-70",
+      "uuid": "8f3214a1-1234-4567-89ab-cdef01234567",
+      "team_key": "MIN",
+      "status": "Todo",
+      "title": "[MIN-67.3] Unscoped Exploration Spike",
+      "description": "Speculative exploration with undefined target repository.",
+      "labels": [
+        "Role: Builder-Ready"
+      ],
+      "updated_at": "2026-10-16T22:25:00.000Z",
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch"
+      ],
+      "ic_decision_ref": "PRD-2-IC-2026-10-15",
+      "handoff_refs": [
+        "MIN-067_Execution_Plan.md"
+      ],
+      "blocked_by": [],
+      "source_repo": null,
+      "source_commit": null,
+      "allowed_paths": [],
+      "capabilities": [
+        "local-tests-only"
+      ],
+      "acceptance_commands": [],
+      "git_branch_name": null
+    },
+    {
+      "issue_id": "MIN-71",
+      "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "team_key": "MIN",
+      "status": "Todo",
+      "title": "[MIN-67.4] Experimental Numeric Expansion",
+      "description": "Experimental numeric expansion held by oversight veto.",
+      "labels": [
+        "Role: Builder-Ready",
+        "Human-Hold"
+      ],
+      "updated_at": "2026-10-16T22:30:00.000Z",
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch"
+      ],
+      "ic_decision_ref": "PRD-2-IC-2026-10-15",
+      "handoff_refs": [
+        "MIN-067_Execution_Plan.md"
+      ],
+      "blocked_by": [],
+      "source_repo": "pashamango/minutta-rp-pr-cycle-lab",
+      "source_commit": "f0f420a000000000000000000000000000000000",
+      "allowed_paths": [
+        "dark_math/"
+      ],
+      "capabilities": [
+        "local-tests-only"
+      ],
+      "acceptance_commands": [
+        "python3 -m unittest"
+      ],
+      "git_branch_name": "minutta/min-71-experimental-numeric-expansion"
+    },
+    {
+      "issue_id": "MIN-72",
+      "uuid": "562678c8-dcc6-4058-8ac5-8e04918724a8",
+      "team_key": "MIN",
+      "status": "Todo",
+      "title": "Gemini nicli-worker/v1 tailnet fleet",
+      "description": "Candidate with unresolved architect-needed conflict on parent.",
+      "labels": [
+        "Role: Builder-Ready"
+      ],
+      "updated_at": "2026-10-16T22:35:00.000Z",
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch",
+        "Role: Architect-Needed"
+      ],
+      "ic_decision_ref": "PRD-2-IC-2026-10-15",
+      "handoff_refs": [
+        "MIN-067_Execution_Plan.md"
+      ],
+      "blocked_by": [],
+      "source_repo": "pashamango/minutta-rp-pr-cycle-lab",
+      "source_commit": "f0f420a000000000000000000000000000000000",
+      "allowed_paths": [
+        "fleet/"
+      ],
+      "capabilities": [
+        "local-tests-only"
+      ],
+      "acceptance_commands": [
+        "pytest"
+      ],
+      "git_branch_name": "minutta/min-72-fleet"
+    },
+    {
+      "issue_id": "MIN-73",
+      "uuid": "118050d7-5685-4383-ad86-d9e67d76f13b",
+      "team_key": "MIN",
+      "status": "In Progress",
+      "title": "NICLI-A — Darwin compatibility, native credentials and foreground canary",
+      "description": "Active in-progress task that cannot be claimed from Todo.",
+      "labels": [
+        "Role: Builder-Ready"
+      ],
+      "updated_at": "2026-10-16T22:40:00.000Z",
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch"
+      ],
+      "ic_decision_ref": "PRD-2-IC-2026-10-15",
+      "handoff_refs": [
+        "MIN-067_Execution_Plan.md"
+      ],
+      "blocked_by": [],
+      "source_repo": "pashamango/minutta-rp-pr-cycle-lab",
+      "source_commit": "f0f420a000000000000000000000000000000000",
+      "allowed_paths": [
+        "nicli/"
+      ],
+      "capabilities": [
+        "local-tests-only"
+      ],
+      "acceptance_commands": [
+        "pytest"
+      ],
+      "git_branch_name": "minutta/min-73-canary"
+    }
+  ]
+}

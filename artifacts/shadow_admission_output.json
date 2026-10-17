@@ -1,0 +1,147 @@
+{
+  "schema": "NICLI_SHADOW_ADMISSION/v1",
+  "generated_at": "2026-10-16T23:30:00Z",
+  "pinned_model": "Gemini 3.8 Flash Medium",
+  "cli_version": "0.1.0",
+  "auth_mode": "api_key",
+  "quota_bucket": "ai-studio-free-tier",
+  "max_wip": 1,
+  "summary": {
+    "total_evaluated": 6,
+    "admitted_count": 1,
+    "rejected_count": 5,
+    "model_calls": 0,
+    "rejections": {
+      "MIN-69": "UNMET_DEPENDENCY",
+      "MIN-70": "MISSING_REPOSITORY_OR_ACCEPTANCE",
+      "MIN-71": "VETO_OR_HOLD",
+      "MIN-72": "CONFLICTING_ROLE_STATE",
+      "MIN-73": "NOT_TODO_STATUS"
+    },
+    "rejection_breakdown": {
+      "CONFLICTING_ROLE_STATE": 1,
+      "MISSING_REPOSITORY_OR_ACCEPTANCE": 1,
+      "NOT_TODO_STATUS": 1,
+      "UNMET_DEPENDENCY": 1,
+      "VETO_OR_HOLD": 1
+    }
+  },
+  "decisions": [
+    {
+      "issue_id": "MIN-68",
+      "uuid": "544f6b52-0af3-4243-bc27-575d077a75db",
+      "team_key": "MIN",
+      "title": "[MIN-67.1] Semantics Gate: Freeze Exact Wheel Model",
+      "status": "Todo",
+      "labels": [
+        "Role: Builder-Ready"
+      ],
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch"
+      ],
+      "admitted": true,
+      "task_revision_hash": "fa8f543f0307a46d3e167aded9faa37d382fb93a60a7b6d01abb19ac7306144c",
+      "blocker_code": null,
+      "detail": null
+    },
+    {
+      "issue_id": "MIN-69",
+      "uuid": "fb7bfe89-4087-459a-8b27-be77ace0a063",
+      "team_key": "MIN",
+      "title": "[MIN-67.2] 2-Day Feasibility Spike: f64 Core and Bottom-Propagation",
+      "status": "Todo",
+      "labels": [
+        "Role: Builder-Ready"
+      ],
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch"
+      ],
+      "admitted": false,
+      "task_revision_hash": "ba3695d1edce0dab5521ba5130245977430849a193a5ca7c45b5483a6678b898",
+      "blocker_code": "UNMET_DEPENDENCY",
+      "detail": "blocked by MIN-68 (Todo)"
+    },
+    {
+      "issue_id": "MIN-70",
+      "uuid": "8f3214a1-1234-4567-89ab-cdef01234567",
+      "team_key": "MIN",
+      "title": "[MIN-67.3] Unscoped Exploration Spike",
+      "status": "Todo",
+      "labels": [
+        "Role: Builder-Ready"
+      ],
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch"
+      ],
+      "admitted": false,
+      "task_revision_hash": "001e8c37405ced0b382b2d0366fcf9f5d73d658b0355ac52b3bdddd82475db3a",
+      "blocker_code": "MISSING_REPOSITORY_OR_ACCEPTANCE",
+      "detail": "source_repo, source_commit, and acceptance_commands are mandatory"
+    },
+    {
+      "issue_id": "MIN-71",
+      "uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "team_key": "MIN",
+      "title": "[MIN-67.4] Experimental Numeric Expansion",
+      "status": "Todo",
+      "labels": [
+        "Role: Builder-Ready",
+        "Human-Hold"
+      ],
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch"
+      ],
+      "admitted": false,
+      "task_revision_hash": "4ef4a8f03dfe23c2b5511f5cbe36078ca9c9b9ede27d727b44ea5f5dd98e778c",
+      "blocker_code": "VETO_OR_HOLD",
+      "detail": "issue or parent has veto/hold state"
+    },
+    {
+      "issue_id": "MIN-72",
+      "uuid": "562678c8-dcc6-4058-8ac5-8e04918724a8",
+      "team_key": "MIN",
+      "title": "Gemini nicli-worker/v1 tailnet fleet",
+      "status": "Todo",
+      "labels": [
+        "Role: Builder-Ready"
+      ],
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch",
+        "Role: Architect-Needed"
+      ],
+      "admitted": false,
+      "task_revision_hash": "8e1ebd4ae9485555370070c42a3705f524083ab7827cde26862e9307302d2406",
+      "blocker_code": "CONFLICTING_ROLE_STATE",
+      "detail": "Architect-Needed label present on task or parent"
+    },
+    {
+      "issue_id": "MIN-73",
+      "uuid": "118050d7-5685-4383-ad86-d9e67d76f13b",
+      "team_key": "MIN",
+      "title": "NICLI-A — Darwin compatibility, native credentials and foreground canary",
+      "status": "In Progress",
+      "labels": [
+        "Role: Builder-Ready"
+      ],
+      "parent_id": "MIN-67",
+      "parent_status": "In Progress",
+      "parent_labels": [
+        "Role: PM-Watch"
+      ],
+      "admitted": false,
+      "task_revision_hash": "c35dfdfff0a4c1e80f9450c34231c8e6c91f35644b566bed28a7244a3949fc9c",
+      "blocker_code": "NOT_TODO_STATUS",
+      "detail": "In Progress"
+    }
+  ]
+}

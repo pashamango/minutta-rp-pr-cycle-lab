@@ -1,9 +1,13 @@
 """Deterministic Linear dispatcher, SQLite leases, and isolated worker harness (MIN-74 / NICLI-B)."""
 
+from .cli import parse_candidates_json, run_shadow_admission
 from .core import (
     ALLOWED_AUTH_LANES,
+    DEFAULT_CLI_VERSION,
+    DEFAULT_PINNED_MODEL,
     NICLI_JOB_SCHEMA,
     NICLI_RECEIPT_SCHEMA,
+    NICLI_SHADOW_ADMISSION_SCHEMA,
     AdmissionDecision,
     DispatcherConfig,
     DispatcherError,
@@ -24,8 +28,11 @@ from .core import (
 
 __all__ = [
     "ALLOWED_AUTH_LANES",
+    "DEFAULT_CLI_VERSION",
+    "DEFAULT_PINNED_MODEL",
     "NICLI_JOB_SCHEMA",
     "NICLI_RECEIPT_SCHEMA",
+    "NICLI_SHADOW_ADMISSION_SCHEMA",
     "AdmissionDecision",
     "DispatcherConfig",
     "DispatcherError",
@@ -42,4 +49,6 @@ __all__ = [
     "WorkerOutcome",
     "compute_task_revision_hash",
     "evaluate_admission",
+    "parse_candidates_json",
+    "run_shadow_admission",
 ]
