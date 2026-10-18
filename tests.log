@@ -1,0 +1,22 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.5, pytest-7.4.0, pluggy-1.0.0 -- /Users/pavelcherkashin/anaconda3/bin/python3
+rootdir: /Users/pavelcherkashin/ChitAkasha-Wolfram/worktrees/MIN-74-NICLI-B-0001
+plugins: web3-6.20.1, anyio-3.7.1
+collecting ... collected 14 items
+
+tests/test_nicli_dispatcher.py::NicliDispatcherTests::test_changed_spec_and_veto_at_boundaries PASSED [  7%]
+tests/test_nicli_dispatcher.py::NicliDispatcherTests::test_crash_restart_requires_isolation_and_fences_stale_generation PASSED [ 14%]
+tests/test_nicli_dispatcher.py::NicliDispatcherTests::test_credential_separation_protected_branch_guard_and_independent_qa_done PASSED [ 21%]
+tests/test_nicli_dispatcher.py::NicliDispatcherTests::test_duplicate_and_concurrent_claims_and_wip_one_limit PASSED [ 28%]
+tests/test_nicli_dispatcher.py::NicliDispatcherTests::test_empty_queue_and_admission_rejections_make_zero_model_calls PASSED [ 35%]
+tests/test_nicli_dispatcher.py::NicliDispatcherTests::test_missing_artifact_and_exit0_with_failed_tests_never_claim_done PASSED [ 42%]
+tests/test_nicli_dispatcher.py::NicliDispatcherTests::test_separate_api_free_tier_and_antigravity_pro_auth_quota_lanes PASSED [ 50%]
+tests/test_nicli_dispatcher.py::NicliDispatcherTests::test_timeout_full_disk_and_http_401_403_429_controls PASSED [ 57%]
+tests/test_nicli_dispatcher.py::NicliDispatcherTests::test_unknown_or_exhausted_quota_and_billing_fail_closed PASSED [ 64%]
+tests/test_nicli_cli.py::TestNicliCli::test_auth_and_quota_validation PASSED [ 71%]
+tests/test_nicli_cli.py::TestNicliCli::test_cli_execution_determinism PASSED [ 78%]
+tests/test_nicli_cli.py::TestNicliCli::test_fixture_shadow_admission_verdicts PASSED [ 85%]
+tests/test_nicli_cli.py::TestNicliCli::test_parse_candidates_shapes PASSED [ 92%]
+tests/test_nicli_cli.py::TestNicliCli::test_version_command PASSED       [100%]
+
+============================== 14 passed in 0.10s ==============================

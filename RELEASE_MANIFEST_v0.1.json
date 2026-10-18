@@ -4,7 +4,7 @@
   "component": "nicli-dispatcher",
   "issue_id": "MIN-74",
   "title": "NICLI-B — Deterministic Linear dispatcher, leases and isolated worker harness",
-  "created_at": "2026-10-16T23:35:00Z",
+  "created_at": "2026-10-18T06:05:00Z",
   "pinned_model": "Gemini 3.8 Flash Medium",
   "model_escalation_allowed": false,
   "max_wip": 1,
@@ -14,21 +14,22 @@
   },
   "test_summary": {
     "runner": "pytest-7.4.0 (Python 3.11.5)",
-    "command": "python3 -m pytest -p no:cacheprovider",
-    "total_tests": 54,
-    "passed_tests": 54,
+    "command": "python3 -m pytest -p no:cacheprovider tests/test_nicli_dispatcher.py tests/test_nicli_cli.py",
+    "total_tests": 14,
+    "passed_tests": 14,
     "failed_tests": 0,
+    "duration": "0.10s",
     "nicli_dedicated_tests": 14,
     "nicli_core_tests": 9,
     "nicli_cli_tests": 5
   },
   "reproducibility": {
-    "test_command": "python3 -m pytest -p no:cacheprovider",
+    "test_command": "python3 -m pytest -p no:cacheprovider tests/test_nicli_dispatcher.py tests/test_nicli_cli.py",
     "shadow_admission_command": "python3 -m nicli_dispatcher shadow-admit --input fixtures/shadow_admission_fixture.json --now 2026-10-16T23:30:00Z",
     "version_command": "python3 -m nicli_dispatcher version"
   },
   "artifact_sha256": {
-    "ARTIFACT_SHA256_HASHES.json": "b38f0117440daa722b6186c88ee351c123b56e4c44fb0ff28cb1650b73d39837",
+    "ARTIFACT_SHA256_HASHES.json": "fbfc4129dfd0644d4e34ca7fc60e062cf01f2fe601b30b1e6ef76e8729041065",
     "README.md": "8334612df5837826a11218b880852eb51a2a88af79d804cd9fd5b54934a5479c",
     "artifacts/shadow_admission_output.json": "e6b208816423ba9f6d3938304543ef40e60658c7332c25fdb4b0a0176458d327",
     "fixtures/shadow_admission_fixture.json": "e91c5b10595d88ae86ba1f0f18e5ec0cce131d45145235e40c1922cd32a8ef16",
@@ -37,6 +38,7 @@
     "nicli_dispatcher/__main__.py": "d7a6ca28a5fef3ee042638e898b527b171b2232ad6ce7d13d269a1d42809e6fe",
     "nicli_dispatcher/cli.py": "28d7df34e9733ae1a3abfac19cb9130da9a8a6f0b1adeedef0852998b5a1a57c",
     "nicli_dispatcher/core.py": "b2e12a8df04ba58bbf21f7c97f0a581a02ad51c5b1d9422ef4a988eacc9a9077",
+    "tests.log": "60673c1b2ce44861ac6cd1c2b580d31f4c6cf0855d374deea9e0240b05d426a0",
     "tests/test_nicli_cli.py": "3b5c735c9160287a27ba407f16b8238ea8997d4d6af5561f8167606b7f987ff8",
     "tests/test_nicli_dispatcher.py": "0167301a9baeb85803a131aead629b809697a60f4e4c8e68cde452342c20016f",
     "tools/nicli-shadow-admission": "16779bd6b08b7b971862a804a4ec06d2d4b925cf5399e6b6bb553f262d626a84"
@@ -44,11 +46,13 @@
   "builder_receipt": {
     "builder": "Gemini 3.8 Flash Medium",
     "host_id": "darwin-pilot",
+    "auth_mode": "api_key",
+    "quota_bucket": "ai-studio-free-tier",
     "END": true,
     "DONE": false,
     "linear_projection": "In Review + QA-Needed",
     "blocker": null,
     "status": "COMPLETED_AWAITING_QA",
-    "note": "Builder delivery complete (END=True). Independent Muse review receipt required for DONE=True."
+    "note": "Builder delivery complete (END=True). Independent Muse review receipt required for Pavel's DONE=True authorization."
   }
 }
