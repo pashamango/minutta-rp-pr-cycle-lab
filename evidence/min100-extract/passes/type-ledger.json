@@ -1,0 +1,5 @@
+{
+  "status": "provisional",
+  "records": 511,
+  "rule": "keyword routing plus claim-type/falsifiability heuristic; human/registry review required"
+}
