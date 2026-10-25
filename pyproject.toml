@@ -1,7 +1,7 @@
 [project]
-name = "openai-special-situations"
+name = "openai-corpdev"
 version = "0.1.0"
-description = "Deterministic CV and application package for OpenAI Deal Lead, Special Situations (MIN-210)"
+description = "Deterministic CV and application package for OpenAI Corporate Development, Deal Lead (MIN-209)"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [

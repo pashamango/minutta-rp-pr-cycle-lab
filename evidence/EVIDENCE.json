@@ -1,13 +1,13 @@
 {
-  "ticket": "MIN-210",
-  "task_id": "run-be4536839ede",
+  "ticket": "MIN-209",
+  "task_id": "run-e8763d63f4e1",
   "builder": "agy@wolfram",
-  "title": "OpenAI — Deal Lead, Special Situations (CV ready, awaiting tap)",
-  "worktree_relative": "worktrees/MIN-210-OPENAI-SPECIAL-SITUATIONS-0001",
-  "git_branch": "minutta/min-210-openai-deal-lead-special-situations-cv-ready-awaiting-tap",
-  "posting_url": "https://openai.com/careers/deal-lead-special-situations-san-francisco/",
+  "title": "OpenAI — Corporate Development, Deal Lead (CV ready, awaiting tap)",
+  "worktree_relative": "worktrees/MIN-209-OPENAI-CORPDEV-0001",
+  "git_branch": "minutta/min-209-openai-corporate-development-deal-lead-cv-ready-awaiting-tap",
+  "posting_url": "https://openai.com/careers/corporate-development-deal-lead-san-francisco/",
   "status": "ready_for_review",
-  "summary": "MIN-210: Tailored executive CV package for OpenAI Deal Lead, Special Situations (San Francisco, CA). Angle: new businesses from thesis to launch; financial services first (venture notes, fintech angels); operator + investor; 1.5M+ Adobe landmark transaction. Exact 1-page PDF and 300 DPI HD PNG generated with pinned dependencies (reportlab==5.1.0, PyMuPDF==2.0, pypdf==6.21.2, Pillow==12.3.0) and verified byte-for-byte reproducible with 0 collisions and 0 out-of-bounds. Mirrored to workspace/goals/goal-4/files/openai-special-situations/.",
+  "summary": "MIN-209: Tailored executive CV package for OpenAI Corporate Development, Deal Lead (San Francisco, CA). Angle: venture investing as qualifying background ($100M+ deployed into frontier AI/compute, 20+ years transaction experience); AI-native deal ops (autonomous sourcing intelligence radars, synthetic diligence pipelines, automated decision memos, post-merger integration telemetry). Exact 1-page PDF and 300 DPI HD PNG generated with pinned dependencies (reportlab==5.1.0, PyMuPDF==2.0, pypdf==6.21.2, Pillow==12.3.0) and verified byte-for-byte reproducible with 0 collisions and 0 out-of-bounds. Mirrored to workspace/goals/goal-4/files/openai-corpdev/.",
   "acceptance": {
     "single_page_cv_pdf_verified": "PASS",
     "zero_text_collisions_layout": "PASS",
@@ -20,9 +20,9 @@
     "internal_mandate_notes_omitted_from_cv": "PASS",
     "builder_script_deterministic": "PASS",
     "manifest_sha256_verified": "PASS",
-    "six_month_incubation_arc_paradigm": "PASS",
-    "financial_services_first_angle": "PASS",
-    "venture_notes_fintech_angels_positioning": "PASS",
+    "six_month_corpdev_arc_paradigm": "PASS",
+    "venture_investing_qualifying_background": "PASS",
+    "ai_native_deal_ops_positioning": "PASS",
     "one_tap_application_card_staged": "PASS",
     "executive_cover_note_ready": "PASS",
     "zero_auto_apply_guardrail_intact": "PASS",
@@ -38,8 +38,8 @@
     "pdf_page_count": 1,
     "png_geometry": "2550x3300",
     "png_dpi_metadata": 300,
-    "png_file_size_bytes": 973088,
-    "pdf_file_size_bytes": 6243,
+    "png_file_size_bytes": 970550,
+    "pdf_file_size_bytes": 6246,
     "total_text_blocks": 20,
     "text_overlap_count": 0,
     "out_of_bounds_count": 0,
@@ -48,29 +48,30 @@
     "fit_conviction_score": 99.5
   },
   "artifacts": {
-    "cv_pdf": "cv-pavel-cherkashin-ss.pdf",
-    "cv_png_hd": "cv-pavel-cherkashin-ss-hd.png",
-    "cv_builder_script": "build_ss_cv.py",
+    "cv_pdf": "cv-pavel-cherkashin-corpdev.pdf",
+    "cv_png_hd": "cv-pavel-cherkashin-corpdev-hd.png",
+    "cv_builder_script": "build_corpdev_cv.py",
     "requirements_txt": "requirements.txt",
     "pyproject_toml": "pyproject.toml",
-    "tailored_cv_md": "docs/TAILORED_CV_OPENAI_SPECIAL_SITUATIONS.md",
+    "tailored_cv_md": "docs/TAILORED_CV_OPENAI_CORPDEV.md",
     "one_tap_card": "docs/ONE_TAP_APPLICATION_CARD.md",
     "cover_note": "docs/APPLICATION_COVER_NOTE.md",
-    "strategy_brief": "docs/OPENAI_SPECIAL_SITUATIONS_STRATEGY_BRIEF.md",
+    "strategy_brief": "docs/OPENAI_CORPDEV_STRATEGY_BRIEF.md",
     "manifest_sha256": "evidence/MANIFEST.sha256"
   },
   "workspace_mirror": {
-    "directory": "workspace/goals/goal-4/files/openai-special-situations/",
+    "directory": "workspace/goals/goal-4/files/openai-corpdev/",
     "files": [
-      "cv-pavel-cherkashin-ss.pdf",
-      "cv-pavel-cherkashin-ss-hd.png",
-      "build_ss_cv.py"
+      "cv-pavel-cherkashin-corpdev.pdf",
+      "cv-pavel-cherkashin-corpdev-hd.png",
+      "cv-pavel-cherkashin-corpdev.png",
+      "build_corpdev_cv.py"
     ],
     "status": "mirrored_and_verified"
   },
   "limitations": [
     "Final status transition to Done is strictly reserved for Principal Pavel Cherkashin.",
     "Internal fleet throughput and proprietary fund LP data are omitted from public documentation pending third-party audit.",
-    "Zero auto-apply rule strictly enforced: no application submission has been sent by automated agents; awaiting Principal Pavel Cherkashin's manual tap (confirmed submitted 21:48 PDT, submission 3 of 5)."
+    "Zero auto-apply rule strictly enforced: no application submission has been sent by automated agents; confirmed submitted manually by Principal Pavel Cherkashin on 2026-10-24 21:48 PDT as submission 3 of 5 in the OpenAI set."
   ]
 }

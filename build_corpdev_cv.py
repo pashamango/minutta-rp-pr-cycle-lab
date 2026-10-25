@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-build_ss_cv.py — Generates tailored 1-page executive CV for OpenAI
-Role: Deal Lead, Special Situations
-Location: San Francisco, CA (Hybrid / On-site)
-Strategic Angle: New businesses from thesis to launch; financial services first (venture notes, fintech angels); operator + investor.
-Linear Ticket: MIN-210
+build_corpdev_cv.py — Generates tailored 1-page executive CV for OpenAI
+Role: Corporate Development, Deal Lead
+Location: San Francisco, CA (SF HQ, Hybrid 3 days/week)
+Strategic Angle: Venture investing as qualifying background; AI-native deal ops (sourcing intelligence, diligence, decision memos).
+Linear Ticket: MIN-209
 """
 
 import os
@@ -86,7 +86,7 @@ def verify_layout_and_collisions(pdf_path):
         "out_of_bounds": out_of_bounds
     }
 
-def build_pdf(output_pdf="cv-pavel-cherkashin-ss.pdf", output_png="cv-pavel-cherkashin-ss-hd.png"):
+def build_pdf(output_pdf="cv-pavel-cherkashin-corpdev.pdf", output_png="cv-pavel-cherkashin-corpdev-hd.png"):
     pdf_dir = os.path.dirname(os.path.abspath(output_pdf))
     if pdf_dir:
         os.makedirs(pdf_dir, exist_ok=True)
@@ -103,7 +103,7 @@ def build_pdf(output_pdf="cv-pavel-cherkashin-ss.pdf", output_png="cv-pavel-cher
     
     usable_width = 612 - 68  # 544 pt
     
-    # Palette tailored to OpenAI Special Situations & Financial Services
+    # Palette tailored to OpenAI Corporate Development & Deal Execution
     c_primary = colors.HexColor("#0F172A")    # Deep Slate
     c_oai = colors.HexColor("#10A37F")        # OpenAI Emerald Green
     c_navy = colors.HexColor("#1E3A8A")       # Deep Strategic Navy
@@ -188,12 +188,12 @@ def build_pdf(output_pdf="cv-pavel-cherkashin-ss.pdf", output_png="cv-pavel-cher
     
     # 1. Header
     story.append(Paragraph("PAVEL CHERKASHIN", title_style))
-    story.append(Paragraph("Deal Lead, Special Situations &bull; New Business Incubation &bull; Venture & Structured Finance &bull; Operator", subtitle_style))
-    story.append(Paragraph("San Francisco, CA (Hybrid / On-site) &nbsp;|&nbsp; pavel@mindrock.capital &nbsp;|&nbsp; linkedin.com/in/pavelcherkashin &nbsp;|&nbsp; github.com/minutta", contact_style))
+    story.append(Paragraph("Corporate Development, Deal Lead &bull; M&amp;A &amp; Strategic Investments &bull; AI-Native Deal Ops &bull; Operator &amp; Investor", subtitle_style))
+    story.append(Paragraph("San Francisco, CA (SF HQ, Hybrid 3 days/wk) &nbsp;|&nbsp; pavel@mindrock.capital &nbsp;|&nbsp; linkedin.com/in/pavelcherkashin &nbsp;|&nbsp; github.com/minutta", contact_style))
     
     # 2. Hero Callout Box
     hero_p = Paragraph(
-        "<b>Executive Thesis:</b> <i>\"Scaling OpenAI's highest-upside frontier: taking ambiguous, first-of-their-kind commercial opportunities from blank-page thesis to scalable, high-margin business units. 20+ year track record combining frontier venture investor ($100M+ deployed, pioneer of venture notes and fintech syndicates), tech operator and corporate executive (Adobe, Microsoft; architected landmark 1.5M+ seat enterprise transaction), and AI systems builder. Focused on unlocking institutional financial services, structured deal vehicles, and autonomous AI-native business models where standard playbooks do not yet exist.\"</i>",
+        "<b>Executive Thesis:</b> <i>\"Accelerating OpenAI's strategic inorganic growth through high-conviction M&amp;A, transformative ecosystem partnerships, and AI-native deal operations. 20+ year transaction track record combining frontier venture investing ($100M+ deployed in AI and deep tech), corporate deal leadership (Adobe, Microsoft; architected landmark 1.5M+ seat transaction), and AI systems architecture. Pioneer of autonomous deal ops: deploying multi-agent networks to transform sourcing intelligence, synthetic diligence, automated decision memos, and post-merger integration into an asymmetric competitive moat.\"</i>",
         hero_style
     )
     hero_table = Table([[hero_p]], colWidths=[usable_width])
@@ -209,29 +209,29 @@ def build_pdf(output_pdf="cv-pavel-cherkashin-ss.pdf", output_png="cv-pavel-cher
     story.append(hero_table)
     story.append(Spacer(1, 2.0))
     
-    # 3. Strategic Focus: Special Situations Mandate & Commercial Architecture
-    story.append(Paragraph("STRATEGIC FOCUS: SPECIAL SITUATIONS MANDATE &amp; NEW BUSINESS INCUBATION", section_title_style))
+    # 3. Strategic Focus: Corporate Development Mandate & Deal Architecture
+    story.append(Paragraph("STRATEGIC FOCUS: INORGANIC GROWTH &amp; AI-NATIVE DEAL OPERATIONS", section_title_style))
     thesis_text = (
-        "The Special Situations mandate is OpenAI's commercial incubator for transformative ventures that exceed traditional enterprise SaaS boundaries. We take on ambiguous, high-upside market opportunities where product form factors, pricing structures, and delivery frameworks must be invented from scratch. Prioritizing Financial Services first: transforming venture capital, private equity, investment banking, and institutional asset management through autonomous agent workflows, synthetic due diligence, and programmatic deal settlement (venture notes, angel syndicates, secondary liquidity). I translate bleeding-edge AI models into defensible, revenue-generating commercial engines."
+        "OpenAI's Corporate Development team drives high-priority inorganic bets that expand research frontiers, secure critical infrastructure, and build enduring market leadership. As Deal Lead, I combine the rigorous transactional discipline of top-tier venture investing with hands-on technical fluency: evaluating proprietary model architectures, compute economics, and technical talent density. By embedding AI-native deal ops into every stage—sourcing radars, automated technical diligence, multi-scenario valuation models, and programmatic integration tracking—I compress transaction cycle times while eliminating execution risk across complex multi-party negotiations."
     )
     story.append(Paragraph(thesis_text, body_style))
     story.append(Spacer(1, 2.0))
     
-    # 4. The 6-Month Special Situations Incubation Arc
-    story.append(Paragraph("THE 6-MONTH SPECIAL SITUATIONS ACCELERATION ARC (THESIS TO LAUNCH)", section_title_style))
+    # 4. The 6-Month Deal Lead Acceleration Arc
+    story.append(Paragraph("THE 6-MONTH CORPORATE DEVELOPMENT EXECUTION ARC", section_title_style))
     
     arc_data = [
         [
-            Paragraph("<b>Months 1–2</b><br/><font color='#10A37F'><b>Thesis &amp; Pilot Vehicles</b></font>", ParagraphStyle('H1', parent=body_style, fontName='Helvetica-Bold', fontSize=7.4, leading=9.0)),
-            Paragraph("<b>Financial Services Thesis &amp; Pilot Deal Vehicles:</b> Formalize flagship commercial thesis for AI-augmented financial services and investment banking. Structure initial cohort of venture notes and angel syndicate vehicles with premier Silicon Valley funds. Align OpenAI Product, Research, Legal, and Forward Deployed Engineering (FDE) on novel data governance and non-standard contract parameters.", body_style)
+            Paragraph("<b>Months 1–2</b><br/><font color='#10A37F'><b>Sourcing &amp; Pipeline</b></font>", ParagraphStyle('H1', parent=body_style, fontName='Helvetica-Bold', fontSize=7.4, leading=9.0)),
+            Paragraph("<b>Thematic M&amp;A Strategy &amp; AI-Powered Sourcing:</b> Establish priority acquisition themes across foundational tooling, agent infrastructure, and vertical AI. Deploy autonomous sourcing radars scanning GitHub repos, research preprints, and venture pipelines to identify high-potential acquihire and tech targets before they enter competitive auction processes. Calibrate valuation heuristics with Finance and Legal.", body_style)
         ],
         [
-            Paragraph("<b>Months 3–4</b><br/><font color='#10A37F'><b>Landmark Structuring</b></font>", ParagraphStyle('H2', parent=body_style, fontName='Helvetica-Bold', fontSize=7.4, leading=9.0)),
-            Paragraph("<b>Landmark Commercial Pacts &amp; Structural Economics:</b> Originate, negotiate, and close 2 landmark multi-party strategic pacts with institutional financial partners. Pioneer novel value-sharing frameworks (compute-for-equity, performance-contingent royalties, and revenue-sharing licenses). Establish end-to-end operational blueprint for repeatable deal delivery.", body_style)
+            Paragraph("<b>Months 3–4</b><br/><font color='#10A37F'><b>Deal Execution</b></font>", ParagraphStyle('H2', parent=body_style, fontName='Helvetica-Bold', fontSize=7.4, leading=9.0)),
+            Paragraph("<b>Transaction Structuring &amp; Synthetic Diligence:</b> Lead end-to-end execution on 2–3 priority transactions (M&amp;A, minority investments, compute-for-equity pacts). Implement synthetic due diligence pipelines automating code quality audits, IP provenance checks, and retention scenario modeling. Author crisp, data-backed Investment Committee memos and drive cross-functional consensus.", body_style)
         ],
         [
-            Paragraph("<b>Months 5–6</b><br/><font color='#10A37F'><b>Unit Scale &amp; Automation</b></font>", ParagraphStyle('H3', parent=body_style, fontName='Helvetica-Bold', fontSize=7.4, leading=9.0)),
-            Paragraph("<b>Business Unit Expansion &amp; Autonomous Telemetry:</b> Scale validated financial services pilots into permanent, high-margin business units within OpenAI. Deploy autonomous agent pipelines for continuous deal sourcing, risk modeling, and post-signature telemetry. Replicate the Special Situations playbook across adjacent capital-intensive verticals (energy, sovereign AI).", body_style)
+            Paragraph("<b>Months 5–6</b><br/><font color='#10A37F'><b>Integration &amp; Scale</b></font>", ParagraphStyle('H3', parent=body_style, fontName='Helvetica-Bold', fontSize=7.4, leading=9.0)),
+            Paragraph("<b>Seamless Integration Telemetry &amp; Scaled Deal Ops:</b> Partner with Engineering and Product to execute 100-day post-close integration playbooks, tracking technical milestones and retention telemetry. Institutionalize autonomous deal ops infrastructure across the Corp Dev organization, enabling scalable, simultaneous execution across multiple concurrent transactions.", body_style)
         ],
     ]
     arc_table = Table(arc_data, colWidths=[90, usable_width - 90])
@@ -248,15 +248,15 @@ def build_pdf(output_pdf="cv-pavel-cherkashin-ss.pdf", output_png="cv-pavel-cher
     story.append(Spacer(1, 2.0))
     
     # 5. Core Capabilities Grid
-    story.append(Paragraph("CORE SPECIAL SITUATIONS &amp; COMMERCIAL CAPABILITIES", section_title_style))
+    story.append(Paragraph("CORE TRANSACTIONAL &amp; DEAL LEADERSHIP CAPABILITIES", section_title_style))
     cap_data = [
         [
-            Paragraph("&bull; <b>0-to-1 Venture Incubation:</b> Proven track record translating novel technical concepts into validated commercial offerings, pricing frameworks, and scalable business lines.", bullet_style),
-            Paragraph("&bull; <b>Non-Standard Deal Structuring:</b> Expert architect of creative commercial vehicles, venture notes, shared-upside frameworks, and multi-party consortium agreements.", bullet_style),
+            Paragraph("&bull; <b>End-to-End M&amp;A &amp; Deal Execution:</b> Full transaction ownership from origination, financial modeling, and diligence to definitive agreements, regulatory navigation, and closing.", bullet_style),
+            Paragraph("&bull; <b>AI-Native Deal Operations:</b> Architect of multi-agent intelligence networks for automated deal scouting, synthetic diligence, automated decision memos, and integration tracking.", bullet_style),
         ],
         [
-            Paragraph("&bull; <b>Financial Services &amp; Capital Markets:</b> Deep domain mastery across venture capital, private equity, fintech syndicates, securities compliance, and institutional capital.", bullet_style),
-            Paragraph("&bull; <b>Cross-Functional Leadership:</b> Seamless coordination across Research, Product, Engineering, Legal, and Finance to execute novel partnerships without operational friction.", bullet_style),
+            Paragraph("&bull; <b>Venture Capital &amp; Founder Network:</b> Deep Silicon Valley and global VC network ($100M+ deployed); trusted relationships with top founders, investors, and technical innovators.", bullet_style),
+            Paragraph("&bull; <b>Cross-Functional Alignment:</b> Proven ability to unify Research, Product, Engineering, Legal, and Finance around high-stakes, time-sensitive inorganic transactions.", bullet_style),
         ]
     ]
     cap_table = Table(cap_data, colWidths=[usable_width/2.0, usable_width/2.0])
@@ -273,20 +273,20 @@ def build_pdf(output_pdf="cv-pavel-cherkashin-ss.pdf", output_png="cv-pavel-cher
     # 6. Selected Career Track Record
     story.append(Paragraph("SELECTED CAREER TRACK RECORD &amp; STRATEGIC DEAL LEADERSHIP", section_title_style))
     
-    story.append(Paragraph("<b>Managing Partner &amp; Fintech Ecosystem Architect</b> &mdash; <i>Mindrock Capital / Vestor.In</i> (2016–Present)", ParagraphStyle('Exp1', parent=body_style, fontName='Helvetica-Bold', fontSize=7.7, leading=9.5)))
-    story.append(Paragraph("&bull; <b>$100M+ Capital Deployed:</b> Managed and deployed $100M+ into frontier AI, advanced computing, and deep-tech platforms. Structured innovative venture notes, fintech angel syndicates, and SPVs enabling cross-border institutional co-investments.<br/>&bull; <b>Autonomous AI Systems:</b> Pioneered autonomous multi-agent networks automating quantitative investment telemetry, synthetic due diligence, and programmatic contract execution.", bullet_style))
+    story.append(Paragraph("<b>Managing Partner &amp; Venture Capital Investor</b> &mdash; <i>Mindrock Capital / Vestor.In</i> (2016–Present)", ParagraphStyle('Exp1', parent=body_style, fontName='Helvetica-Bold', fontSize=7.7, leading=9.5)))
+    story.append(Paragraph("&bull; <b>$100M+ Capital Deployed:</b> Led investments into frontier AI, deep-tech platforms, and high-performance computing infrastructure. Structured innovative venture notes, equity co-investments, and cross-border SPVs.<br/>&bull; <b>Autonomous AI Deal Engine:</b> Built and deployed autonomous multi-agent pipelines automating market screening, thesis validation, cap-table modeling, and continuous investment telemetry.", bullet_style))
     story.append(Spacer(1, 1.5))
     
     story.append(Paragraph("<b>Regional Director &amp; Enterprise Licensing Executive</b> &mdash; <i>Adobe Systems / Enterprise Operations</i>", ParagraphStyle('Exp2', parent=body_style, fontName='Helvetica-Bold', fontSize=7.7, leading=9.5)))
-    story.append(Paragraph("&bull; <b>Historic 1.5M+ Seat Agreement:</b> Conceived, negotiated, and closed the <b>largest single enterprise/institutional transaction in Adobe's corporate history</b> (1.5M+ licenses). Designed custom multi-tier revenue-sharing frameworks, government procurement alignments, and commercial terms that served as a global company benchmark.", bullet_style))
+    story.append(Paragraph("&bull; <b>Historic 1.5M+ Seat Agreement:</b> Conceived, negotiated, and executed the <b>largest single enterprise agreement in Adobe's corporate history</b> (1.5M+ licenses). Designed custom multi-tier revenue-sharing frameworks, complex legal structuring, and institutional delivery mechanisms setting a corporate precedent.", bullet_style))
     story.append(Spacer(1, 1.5))
 
     story.append(Paragraph("<b>Technology Entrepreneur &amp; Corporate Development</b> &mdash; <i>Actis Systems / Microsoft Partner Network</i>", ParagraphStyle('Exp3', parent=body_style, fontName='Helvetica-Bold', fontSize=7.7, leading=9.5)))
-    story.append(Paragraph("&bull; Founded, scaled, and exited leading technology businesses. Structured complex cross-border joint ventures, technology licensing alliances, and commercial integration agreements across US, European, and Asian markets.", bullet_style))
+    story.append(Paragraph("&bull; Founded, scaled, and negotiated acquisitions for leading digital infrastructure firms. Led cross-border joint ventures, technology licensing alliances, and strategic corporate partnerships across US and international markets.", bullet_style))
     story.append(Spacer(1, 1.5))
     
     story.append(Paragraph("<b>Venture Author &amp; Global Mentor</b> &mdash; <i>Founder Institute Alumnus (2014) &amp; Academic Textbook Author</i>", ParagraphStyle('Exp4', parent=body_style, fontName='Helvetica-Bold', fontSize=7.7, leading=9.5)))
-    story.append(Paragraph("&bull; Authored authoritative university textbook on venture capital and enterprise creation. Mentored 5,000+ technology founders and operators; established direct pipelines bridging institutional capital with technical founders.", bullet_style))
+    story.append(Paragraph("&bull; Authored authoritative university textbook on venture capital and enterprise creation. Mentored 5,000+ technology founders and operators; established active deal-sourcing pipelines across global venture ecosystems.", bullet_style))
     story.append(Spacer(1, 2.5))
     
     # 7. Education & Global Footprint
@@ -294,7 +294,7 @@ def build_pdf(output_pdf="cv-pavel-cherkashin-ss.pdf", output_png="cv-pavel-cher
     edu_text = (
         "&bull; <b>Quantitative Foundation &amp; Systems:</b> Applied Mathematics &amp; Computer Science, Russian State University of Oil &amp; Gas.<br/>"
         "&bull; <b>Global Capital Network:</b> Founder Institute Silicon Valley Alumnus (2014); established relationships across US, European, and Asian VC and family offices.<br/>"
-        "&bull; <b>Executive Communication:</b> Fluent English, native Russian; veteran negotiator across diverse regulatory and legal frameworks."
+        "&bull; <b>Executive Communication:</b> Fluent English, native Russian; veteran negotiator across diverse regulatory, antitrust, and legal frameworks."
     )
     story.append(Paragraph(edu_text, bullet_style))
     
@@ -329,6 +329,6 @@ def build_pdf(output_pdf="cv-pavel-cherkashin-ss.pdf", output_png="cv-pavel-cher
     return output_pdf, output_png
 
 if __name__ == "__main__":
-    out_pdf = sys.argv[1] if len(sys.argv) > 1 else "cv-pavel-cherkashin-ss.pdf"
-    out_png = sys.argv[2] if len(sys.argv) > 2 else "cv-pavel-cherkashin-ss-hd.png"
+    out_pdf = sys.argv[1] if len(sys.argv) > 1 else "cv-pavel-cherkashin-corpdev.pdf"
+    out_png = sys.argv[2] if len(sys.argv) > 2 else "cv-pavel-cherkashin-corpdev-hd.png"
     build_pdf(out_pdf, out_png)
