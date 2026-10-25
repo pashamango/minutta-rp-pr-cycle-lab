@@ -1,10 +1,23 @@
 {
   "ticket": "MIN-209",
-  "task_id": "run-e8763d63f4e1",
+  "run_id": "run-e8763d63f4e1",
+  "timestamp": "2026-10-24T23:06:00-07:00",
   "builder": "agy@wolfram",
   "title": "OpenAI — Corporate Development, Deal Lead (CV ready, awaiting tap)",
   "worktree_relative": "worktrees/MIN-209-OPENAI-CORPDEV-0001",
-  "git_branch": "minutta/min-209-openai-corporate-development-deal-lead-cv-ready-awaiting-tap",
+  "git": {
+    "commit": "bbcbdb82f938116c74151fd962123b01e4a32dd0",
+    "branch": "minutta/min-209-openai-corporate-development-deal-lead-cv-ready-awaiting-tap",
+    "remotes": {
+      "lab": "https://github.com/pashamango/minutta-rp-pr-cycle-lab.git"
+    },
+    "worktree": "/Users/pavelcherkashin/ChitAkasha-Wolfram/worktrees/MIN-209-OPENAI-CORPDEV-0001"
+  },
+  "candidate": {
+    "name": "Pavel Cherkashin",
+    "email": "pavel@mindrock.capital",
+    "positioning": "Venture investing as qualifying background ($100M+ deployed, 20+ years transaction experience); AI-native deal ops (sourcing intelligence, diligence, decision memos); Adobe 1.5M+ seat landmark deal blueprint"
+  },
   "posting_url": "https://openai.com/careers/corporate-development-deal-lead-san-francisco/",
   "status": "ready_for_review",
   "summary": "MIN-209: Tailored executive CV package for OpenAI Corporate Development, Deal Lead (San Francisco, CA). Angle: venture investing as qualifying background ($100M+ deployed into frontier AI/compute, 20+ years transaction experience); AI-native deal ops (autonomous sourcing intelligence radars, synthetic diligence pipelines, automated decision memos, post-merger integration telemetry). Exact 1-page PDF and 300 DPI HD PNG generated with pinned dependencies (reportlab==5.1.0, PyMuPDF==2.0, pypdf==6.21.2, Pillow==12.3.0) and verified byte-for-byte reproducible with 0 collisions and 0 out-of-bounds. Mirrored to workspace/goals/goal-4/files/openai-corpdev/.",
@@ -48,8 +61,19 @@
     "fit_conviction_score": 99.5
   },
   "artifacts": {
-    "cv_pdf": "cv-pavel-cherkashin-corpdev.pdf",
-    "cv_png_hd": "cv-pavel-cherkashin-corpdev-hd.png",
+    "cv_pdf": {
+      "filename": "cv-pavel-cherkashin-corpdev.pdf",
+      "sha256": "05f82c35cb2753bc9398f385ca84893ed416d64775af03f9048f55f0d36956bc",
+      "page_count": 1,
+      "bytes": 6246
+    },
+    "cv_png_hd": {
+      "filename": "cv-pavel-cherkashin-corpdev-hd.png",
+      "sha256": "4467a9d42f6a515e38018077709b73a61cbe2caaf9ca55ddf2d682eeaa4f0171",
+      "resolution": "2550x3300",
+      "dpi": 300,
+      "bytes": 970550
+    },
     "cv_builder_script": "build_corpdev_cv.py",
     "requirements_txt": "requirements.txt",
     "pyproject_toml": "pyproject.toml",
