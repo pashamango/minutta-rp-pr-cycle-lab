@@ -1,0 +1,9 @@
+[package]
+name = "polymarket_us_signer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ed25519-dalek = { version = "2.2.0", default-features = false, features = ["fast"] }
+base64 = "0.22"
+hex = "0.4"
