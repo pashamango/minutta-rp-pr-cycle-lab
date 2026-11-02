@@ -124,7 +124,7 @@
       "canonical_invariant_id": "CANONICAL-05",
       "lineage_type": "CANONICAL_ORIGIN",
       "parent_claim_id": null,
-      "merge_rule": "Origin claim formalizing dispatch boundary vs leaf process exit status 137."
+      "merge_rule": "Durable dispatch receipt binding leaf PID/PPID and kernel telemetry across membrane."
     }
   },
   {
@@ -178,8 +178,8 @@
     "epistemic_label": "hypothesis",
     "statement": "A defensible directional definition is: Golden Trinity is an ordered three-stage representation\u2014retained Context C, present Behavior B, future Value V\u2014in which successive semantic capacity grows self-similarly and the future stage conserves/combines the two preceding stages. Under those axioms the role assignment is fixed as C:B:V = 1:\u03c6:\u03c6\u00b2; it must not be selected post hoc.",
     "assumptions": [
-      "Cognitive task execution follows an irreversible three-phase pipeline: retained past, present action, prospective value.",
-      "Successive semantic capacity expands self-similarly with golden ratio scaling."
+      "Cognitive task execution follows an irreversible three-phase pipeline: retained past Context C, present Behavior B action, and prospective Value V.",
+      "Successive semantic capacity expands self-similarly with golden ratio scaling across Context, Behavior, and Value stages."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY is fully explained by selection bias or unstructured noise.",
@@ -306,8 +306,8 @@
     "epistemic_label": "hypothesis",
     "statement": "Use `evidence bits = log2(e-process wealth)` as a candidate *scientific accounting layer*, not as ownership or money itself. Valid sequential evidence then has no positive expected drift under the null, while true distinguishability accumulates at a rate tied to relative entropy. Keep attribution/credit and currency issuance as separate downstream layers.",
     "assumptions": [
-      "Evidence bits measure accumulated information divergence from the null hypothesis.",
-      "Accounting layer can be strictly decoupled from economic currency minting and token ownership."
+      "Evidence bits = log2(e-process wealth) measure accumulated information divergence from the null hypothesis.",
+      "Scientific accounting layer can be strictly decoupled from economic currency minting and token ownership."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS / SCIENCE + OPEN-MONEY is fully explained by selection bias or unstructured noise.",
@@ -351,8 +351,8 @@
     "epistemic_label": "hypothesis",
     "statement": "Credential safety requires a three-identity invariant: organizational actor/role, provider principal/account, and resource/verb scope are orthogonal bindings. Substituting one for another creates an ambiguous grant even when no secret is exposed.",
     "assumptions": [
-      "Identity dimensions in multi-agent systems are orthogonal and non-substitutable.",
-      "Security boundaries require separate verification for executing role, paying principal, and access scope."
+      "Identity dimensions in multi-agent systems are orthogonal and non-substitutable across organizational roles, provider principals, and machine runtime execution identities.",
+      "Security boundaries require separate verification for executing role, paying principal, and machine runtime access scope."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / CREDENTIALS + GOVERNANCE is fully explained by selection bias or unstructured noise.",
@@ -382,7 +382,7 @@
       "canonical_invariant_id": "CANONICAL-05",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-003",
-      "merge_rule": "Establishes three-identity credential invariant for remote dispatch."
+      "merge_rule": "Enforces three-identity credential invariant (role, principal, runtime identity) on dispatch boundary."
     }
   },
   {
@@ -637,7 +637,7 @@
       "canonical_invariant_id": "CANONICAL-06",
       "lineage_type": "CANONICAL_ORIGIN",
       "parent_claim_id": null,
-      "merge_rule": "Treats shared agent memory as untrusted commons."
+      "merge_rule": "Shared agent memory treated as untrusted commons requiring witness receipts."
     }
   },
   {
@@ -722,7 +722,7 @@
       "canonical_invariant_id": "CANONICAL-06",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-015",
-      "merge_rule": "Enforces two-phase Git evidence binding for committed reports."
+      "merge_rule": "Two-phase Git binding (committed report + signed checkpoint) in untrusted commons."
     }
   },
   {
@@ -762,9 +762,9 @@
     "canonical_invariant_id": "CANONICAL-06",
     "duplicate_lineage": {
       "canonical_invariant_id": "CANONICAL-06",
-      "lineage_type": "REFINEMENT",
-      "parent_claim_id": "CLAIM-017",
-      "merge_rule": "Defines linear evidence resource discipline in branch propagation."
+      "lineage_type": "CANONICAL_ORIGIN",
+      "parent_claim_id": null,
+      "merge_rule": "Scientific observations modeled as linear evidence resources (non-duplicable consumable tokens)."
     }
   },
   {
@@ -802,12 +802,12 @@
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
     "cluster_id": "Cluster-1",
     "source_sha256": "53fbb333b171b64466e5628a5b00e3fc2a88f574f8c643bf7a6fbcab68184bb2",
-    "canonical_invariant_id": "CANONICAL-02",
+    "canonical_invariant_id": "CANONICAL-01",
     "duplicate_lineage": {
-      "canonical_invariant_id": "CANONICAL-02",
-      "lineage_type": "CANONICAL_ORIGIN",
-      "parent_claim_id": null,
-      "merge_rule": "Separates evidence ancestry algebra from evidence strength."
+      "canonical_invariant_id": "CANONICAL-01",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-016",
+      "merge_rule": "Separates evidence ancestry algebra from evidence strength within Git-like DAG."
     }
   },
   {
@@ -844,12 +844,12 @@
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
     "cluster_id": "Cluster-1",
     "source_sha256": "fdae055cdab69f0cc864f5ee6e3bd2fdb6fce11c9548e9aa80d457eca8ce4e3e",
-    "canonical_invariant_id": "CANONICAL-02",
+    "canonical_invariant_id": "CANONICAL-01",
     "duplicate_lineage": {
-      "canonical_invariant_id": "CANONICAL-02",
+      "canonical_invariant_id": "CANONICAL-01",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-019",
-      "merge_rule": "Introduces nilpotent shadow provenance for composability."
+      "merge_rule": "Introduces nilpotent shadow provenance to prevent duplicate evidence products."
     }
   },
   {
@@ -891,7 +891,7 @@
       "canonical_invariant_id": "CANONICAL-06",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-018",
-      "merge_rule": "Distinguishes consumable evidence from reusable knowledge."
+      "merge_rule": "Type-level distinction between consumable evidence tokens and reusable citation knowledge."
     }
   },
   {
@@ -931,9 +931,9 @@
     "canonical_invariant_id": "CANONICAL-06",
     "duplicate_lineage": {
       "canonical_invariant_id": "CANONICAL-06",
-      "lineage_type": "REFINEMENT",
-      "parent_claim_id": "CLAIM-021",
-      "merge_rule": "Binds orthogonal content identity and issuer capability."
+      "lineage_type": "CANONICAL_ORIGIN",
+      "parent_claim_id": null,
+      "merge_rule": "Orthogonal bindings for durable evidence: content identity digest and issuer capability."
     }
   },
   {
@@ -1144,7 +1144,7 @@
       "canonical_invariant_id": "CANONICAL-06",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-022",
-      "merge_rule": "Constructs typed capability tuple (digest, issuer_cap, lineage, policy)."
+      "merge_rule": "Formal 4-tuple capability struct E=(content_digest, issuer_capability, lineage, reuse_policy)."
     }
   },
   {
@@ -1186,7 +1186,7 @@
       "canonical_invariant_id": "CANONICAL-06",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-027",
-      "merge_rule": "Enforces attenuation-only capability discipline."
+      "merge_rule": "Attenuation-only capability discipline: derivations may narrow rights, never expand."
     }
   },
   {
@@ -1209,7 +1209,9 @@
       "Derived conclusions claiming broader operational domains or higher confidence intervals than primary empirical measurements.",
       "Unsound deductive leaps escaping capability bounds."
     ],
-    "duplicates": [],
+    "duplicates": [
+      "CLAIM-028"
+    ],
     "applications": [
       "Epistemic capability bounds for automated reasoning engines",
       "Propagation of empirical uncertainty through deductive proof graphs",
@@ -1227,9 +1229,9 @@
     "canonical_invariant_id": "CANONICAL-06",
     "duplicate_lineage": {
       "canonical_invariant_id": "CANONICAL-06",
-      "lineage_type": "REFINEMENT",
+      "lineage_type": "SEMANTIC_DUPLICATE",
       "parent_claim_id": "CLAIM-028",
-      "merge_rule": "Specifies authority narrowing under derivation."
+      "merge_rule": "Semantic duplicate specializing attenuating capabilities to scientific derivation trees."
     }
   },
   {
@@ -1270,8 +1272,8 @@
     "duplicate_lineage": {
       "canonical_invariant_id": "CANONICAL-06",
       "lineage_type": "REFINEMENT",
-      "parent_claim_id": "CLAIM-029",
-      "merge_rule": "Models evidence policy as product semilattice E=(R,O,L)."
+      "parent_claim_id": "CLAIM-028",
+      "merge_rule": "Product semilattice E=(R,O,L) governing monotone rights restriction."
     }
   },
   {
@@ -1314,7 +1316,7 @@
       "canonical_invariant_id": "CANONICAL-06",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-030",
-      "merge_rule": "Propagates attenuating capability state as CRDT across hosts."
+      "merge_rule": "Attenuating CRDT join across multi-host schedulers for deterministic convergence."
     }
   },
   {
@@ -1399,7 +1401,7 @@
       "canonical_invariant_id": "CANONICAL-06",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-031",
-      "merge_rule": "Places cross-host coordination by semantic monotonicity."
+      "merge_rule": "Scheduler mailbox coordination placed by semantic monotonicity rather than component boundary."
     }
   },
   {
@@ -1484,7 +1486,7 @@
       "canonical_invariant_id": "CANONICAL-06",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-028",
-      "merge_rule": "Replaces revocation with monotone bounded supersession."
+      "merge_rule": "Monotone supersession: capability revocation via bounded epoch and predecessor hash chaining."
     }
   },
   {
@@ -1610,8 +1612,8 @@
     "duplicate_lineage": {
       "canonical_invariant_id": "CANONICAL-06",
       "lineage_type": "EMPIRICAL_INSTANCE",
-      "parent_claim_id": "CLAIM-033",
-      "merge_rule": "Applies order-independent BC-UR transport to air-gapped sync."
+      "parent_claim_id": "CLAIM-031",
+      "merge_rule": "BC-UR fountain coding as unopinionated frame transport for CRDT semilattice payloads."
     }
   },
   {
@@ -1692,12 +1694,12 @@
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
     "cluster_id": "Cluster-3",
     "source_sha256": "677b6d52deeba275d477468063def96ed0e1ab0b8e30bba252b9f98636684707",
-    "canonical_invariant_id": "CANONICAL-05",
+    "canonical_invariant_id": "CANONICAL-02",
     "duplicate_lineage": {
-      "canonical_invariant_id": "CANONICAL-05",
-      "lineage_type": "REFINEMENT",
-      "parent_claim_id": "CLAIM-003",
-      "merge_rule": "Enforces redundancy != value across dispatch and storage."
+      "canonical_invariant_id": "CANONICAL-02",
+      "lineage_type": "CANONICAL_ORIGIN",
+      "parent_claim_id": null,
+      "merge_rule": "Enforces redundancy != value: orthogonal recoverability and epistemic value."
     }
   },
   {
@@ -1776,12 +1778,12 @@
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
     "cluster_id": "Cluster-3",
     "source_sha256": "e74f348c7f916ffa3f04be82ec692989b9a8043c6b9d284b15a22e7a36c5a183",
-    "canonical_invariant_id": "CANONICAL-05",
+    "canonical_invariant_id": "CANONICAL-02",
     "duplicate_lineage": {
-      "canonical_invariant_id": "CANONICAL-05",
+      "canonical_invariant_id": "CANONICAL-02",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-040",
-      "merge_rule": "Tracks availability multiplicity orthogonally from evidence rank."
+      "merge_rule": "Tracks availability multiplicity orthogonally from linear evidence rank."
     }
   },
   {
@@ -1860,12 +1862,12 @@
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
     "cluster_id": "Cluster-3",
     "source_sha256": "16da46ee1babe26ec66e10f953fcb82ac6e5c6b0bf4dfa030bceb0d9feb538dc",
-    "canonical_invariant_id": "CANONICAL-05",
+    "canonical_invariant_id": "CANONICAL-02",
     "duplicate_lineage": {
-      "canonical_invariant_id": "CANONICAL-05",
+      "canonical_invariant_id": "CANONICAL-02",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-042",
-      "merge_rule": "Separates resilience value from novelty value in schedulers."
+      "merge_rule": "Separates resilience value (service fees) from novelty value (epistemic capital)."
     }
   },
   {
@@ -1902,12 +1904,12 @@
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
     "cluster_id": "Cluster-3",
     "source_sha256": "4aa72d509446f70815bd12fea42830f60d4dfef6959e38ac4a35a0e7627c0c9d",
-    "canonical_invariant_id": "CANONICAL-05",
+    "canonical_invariant_id": "CANONICAL-02",
     "duplicate_lineage": {
-      "canonical_invariant_id": "CANONICAL-05",
+      "canonical_invariant_id": "CANONICAL-02",
       "lineage_type": "REFINEMENT",
       "parent_claim_id": "CLAIM-044",
-      "merge_rule": "Maintains 3 orthogonal ledgers: resilience, novelty, target evidence."
+      "merge_rule": "Maintains three orthogonal ledgers: resilience, source rank, and target-relevant evidence."
     }
   }
 ]

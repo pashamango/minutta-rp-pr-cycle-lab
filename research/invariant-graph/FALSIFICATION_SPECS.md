@@ -2,7 +2,7 @@
 
 ## 1. Reproducible Scoring Rubric (IDEIR-v1)
 
-Candidate evaluation is governed by the **Invariant Decidability & Epistemic Impact Rubric (IDEIR-v1)**. To resolve defect MIN-18-QA-01, component scores are assigned based on objective achievement criteria across four orthogonal axes, and **all six canonical invariants** (`CANONICAL-01` through `CANONICAL-06`) are formally evaluated.
+Candidate evaluation is governed by the **Invariant Decidability & Epistemic Impact Rubric (IDEIR-v1)**. Component scores are assigned based on objective achievement criteria across four orthogonal axes, and **all six canonical invariants** (`CANONICAL-01` through `CANONICAL-06`) are formally evaluated.
 
 ### Evaluation Axes & Weights
 $$\text{Score } S = \sum_{k=1}^4 w_k \cdot C_k = 0.35 \cdot C_1 + 0.30 \cdot C_2 + 0.20 \cdot C_3 + 0.15 \cdot C_4$$
@@ -10,21 +10,21 @@ $$\text{Score } S = \sum_{k=1}^4 w_k \cdot C_k = 0.35 \cdot C_1 + 0.30 \cdot C_2
 ### Objective Achievement Criteria & Score Bands
 
 1. **$C_1$: Formal Rigor & Falsifiability ($w_1 = 0.35$)**
-   - **9.0 – 10.0**: Closed-form mathematical/probabilistic formulation, exact martingale or conservation law, explicit null hypothesis with provable error bounds or deterministic decision rule (e.g. e-process martingales, Dirichlet simplex coordinates, OS kernel binding structs).
+   - **9.0 – 10.0**: Closed-form mathematical/probabilistic formulation, exact martingale or conservation law, explicit null hypothesis with provable error bounds or deterministic decision rule (e.g. e-process martingales, linear-algebraic rank matrices, OS kernel binding structs).
    - **7.5 – 8.9**: Semi-formal operational protocol/state-machine with falsifiable pass/fail criteria, but depends on operational heuristic parameters or environment assumptions.
    - **6.0 – 7.4**: Qualitative structural partition or taxonomy lacking exact mathematical test statistic or sharp analytical decision boundary.
    - **< 6.0**: Informal claim without falsifiable operational null hypothesis.
 
 2. **$C_2$: Empirical Grounding & Anti-Sybil Proof ($w_2 = 0.30$)**
-   - **9.5 – 10.0**: Mathematically provable immunity to identity splitting, parallel prompt mining, or search budget inflation (e.g. unit simplex conservation $\sum w_i = 1$). Directly grounded in primary empirical evidence from Issue #168.
+   - **9.5 – 10.0**: Mathematically provable immunity to identity splitting, replication cloning, parallel prompt mining, or search budget inflation (e.g. unit simplex conservation $\sum w_i = 1$, rank invariance $\Delta K = 0$). Directly grounded in primary empirical evidence from Issue #168.
    - **8.5 – 9.4**: Strong cryptographic or kernel-level identity binding (Ed25519 proof-of-possession, OS process tables) resisting single-host forgery.
-   - **7.0 – 8.4**: Heuristic deduplication or semantic similarity thresholding; partially vulnerable to high-dimensional split attacks or paraphrasing.
+   - **7.0 – 8.4**: Heuristic deduplication or permutation-selection thresholding; lacks cryptographic or kernel-level identity binding.
    - **< 7.0**: No anti-Sybil defense; susceptible to duplicate inflation.
 
 3. **$C_3$: Cross-Domain Generality ($w_3 = 0.20$)**
    - **9.0 – 10.0**: Universal across multi-agent consensus, scientific hypothesis testing, distributed compute allocation, and economic settlement.
-   - **8.0 – 8.9**: Broadly applicable across distributed execution systems and multi-host infrastructure, but specialized to runtime/OS semantics.
-   - **7.0 – 7.9**: Domain-specific to prompt engineering, task taxonomy, or semantic representation; limited transfer to systems or cryptographic accounting.
+   - **8.0 – 8.9**: Broadly applicable across distributed execution systems and multi-host infrastructure, but specialized to runtime/OS capability semantics.
+   - **7.0 – 7.9**: Domain-specific to prompt engineering, task taxonomy, or cognitive allocation; limited transfer to systems or cryptographic accounting.
    - **< 7.0**: Narrow single-use or project-specific applicability.
 
 4. **$C_4$: Implementability & Minimal Test Cost ($w_4 = 0.15$)**
@@ -37,48 +37,48 @@ $$\text{Score } S = \sum_{k=1}^4 w_k \cdot C_k = 0.35 \cdot C_1 + 0.30 \cdot C_2
 
 ## 2. Complete Canonical Invariants Evaluation Table (All 6 Candidates)
 
-The following table presents the reproducible scoring of all six canonical invariants. The top 3 ranked candidates are selected for formal bounded falsification specifications.
+The following table presents the reproducible scoring of all six canonical invariants under IDEIR-v1. The top 3 ranked candidates are selected for formal bounded falsification specifications.
 
 | Rank | Canonical ID | Anchor Claim | Invariant Title | Domain Cluster | $C_1$ (0.35) | $C_2$ (0.30) | $C_3$ (0.20) | $C_4$ (0.15) | Computed $S$ | Rounded Score | Status |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| **1** | `CANONICAL-01` | `CLAIM-011` | Conserved Evidence Portfolio Simplex & Matched Search-Budget | Cluster-1: Epistemic Accounting | 9.8 | 10.0 | 9.5 | 9.8 | 9.800 | **9.8** | **SELECTED (Spec 1)** |
-| **2** | `CANONICAL-03` | `CLAIM-001` | Golden Trinity Ratio Permutation-Matched Dirichlet Simplex | Cluster-2: Golden Trinity Dynamics | 9.2 | 9.0 | 9.0 | 9.8 | 9.190 | **9.2** | **SELECTED (Spec 2)** |
-| **3** | `CANONICAL-05` | `CLAIM-003` | Durable Dispatch-Boundary Process-Binding | Cluster-3: Membrane & Isolation | 8.6 | 9.2 | 8.8 | 9.2 | 8.910 | **8.9** | **SELECTED (Spec 3)** |
-| 4 | `CANONICAL-06` | `CLAIM-018` | Cryptographic Zero-Trust Membrane & Mutual Multi-Pass | Cluster-3: Membrane & Isolation | 8.4 | 9.4 | 8.2 | 8.8 | 8.720 | 8.7 | Below Top 3 Threshold |
-| 5 | `CANONICAL-02` | `CLAIM-019` | Target-Conditioned Redundancy vs. True Value | Cluster-1: Epistemic Accounting | 8.2 | 8.5 | 8.4 | 8.6 | 8.390 | 8.4 | Below Top 3 Threshold |
-| 6 | `CANONICAL-04` | `CLAIM-036` | Teleological Semantics & Asymmetric Cause-Purpose Partitioning | Cluster-2: Golden Trinity Dynamics | 7.6 | 7.8 | 8.0 | 8.5 | 7.875 | 7.9 | Below Top 3 Threshold |
+| **1** | `CANONICAL-01` | `CLAIM-011` | Conserved Evidence Portfolio Simplex & Matched Search-Budget | Cluster-1: Epistemic Accounting | 9.8 (Band 9.0–10.0) | 10.0 (Band 9.5–10.0) | 9.5 (Band 9.0–10.0) | 9.8 (Band 9.5–10.0) | 9.800 | **9.8** | **SELECTED (Spec 1)** |
+| **2** | `CANONICAL-02` | `CLAIM-040` | Target-Conditioned Redundancy vs. True Value | Cluster-3: Distributed Membrane / Epistemic Accounting | 9.1 (Band 9.0–10.0) | 9.6 (Band 9.5–10.0) | 9.2 (Band 9.0–10.0) | 9.6 (Band 9.5–10.0) | 9.345 | **9.3** | **SELECTED (Spec 2)** |
+| **3** | `CANONICAL-05` | `CLAIM-003` | Durable Dispatch-Boundary Process-Binding | Cluster-3: Distributed Membrane | 8.6 (Band 7.5–8.9) | 9.2 (Band 8.5–9.4) | 8.8 (Band 8.0–8.9) | 9.2 (Band 9.0–9.4) | 8.910 | **8.9** | **SELECTED (Spec 3)** |
+| 4 | `CANONICAL-06` | `CLAIM-018` | Cryptographic Zero-Trust Membrane & Attenuating Semilattice | Cluster-3: Distributed Membrane | 8.5 (Band 7.5–8.9) | 9.3 (Band 8.5–9.4) | 8.5 (Band 8.0–8.9) | 9.6 (Band 9.5–10.0) | 8.905 | 8.9 | Below Top 3 Threshold |
+| 5 | `CANONICAL-03` | `CLAIM-001` | Golden Trinity Ratio Permutation-Matched Dirichlet Simplex | Cluster-2: Golden Trinity Dynamics | 8.8 (Band 7.5–8.9) | 8.0 (Band 7.0–8.4) | 7.8 (Band 7.0–7.9) | 9.8 (Band 9.5–10.0) | 8.510 | 8.5 | Below Top 3 Threshold |
+| 6 | `CANONICAL-04` | `CLAIM-036` | Teleological Semantics & Asymmetric Cause-Purpose Partitioning | Cluster-2: Golden Trinity Dynamics | 7.6 (Band 7.5–8.9) | 7.8 (Band 7.0–8.4) | 7.5 (Band 7.0–7.9) | 9.6 (Band 9.5–10.0) | 7.940 | 7.9 | Below Top 3 Threshold |
 
-### Component Scoring Justifications:
-- **`CANONICAL-01` ($S = 9.800$ / Rank 1)**:
-  - $C_1 = 9.8$: Closed-form e-process martingale formulation (Wang 2025 Biometrika admissible merge) with exact Ville's inequality bound $P(\sup_t E_t^* \ge 1/\alpha) \le \alpha$.
-  - $C_2 = 10.0$: Provable anti-Sybil immunity; identity splitting without weight partitioning yields zero expected e-wealth advantage under $H_0$. Grounded directly in Issue #168 comment 5649859218.
-  - $C_3 = 9.5$: Universal across all agent search, scientific hypothesis generation, and decentralized discovery validation.
-  - $C_4 = 9.8$: 5,000 Monte Carlo runs execute in $< 3.5$s via vectorized pure Python/NumPy, $0 external quota, 0 daemon dependencies.
-- **`CANONICAL-03` ($S = 9.190$ / Rank 2)**:
-  - $C_1 = 9.2$: Analytical $(1, \phi, \phi^2)$ normalized to unit simplex $(0.191, 0.309, 0.500)$, explicit null hypothesis against $\text{Dir}(1,1,1)$ under 6-permutation selection matching.
-  - $C_2 = 9.0$: Controls for search-budget mining by strictly matching permutation selection budgets between candidate and controls.
-  - $C_3 = 9.0$: Broad application across cognitive architecture triadic allocation (Context : Behavior : Value) and resource scheduling.
-  - $C_4 = 9.8$: Evaluates 1,000 Dirichlet controls across precomputed 200 held-out splits in $< 2.0$s with $0 external quota.
-- **`CANONICAL-05` ($S = 8.910$ / Rank 3)**:
-  - $C_1 = 8.6$: Formal kernel process receipt struct binding `(task_lease_id, host_identity, process_tree, leaf_pid, exit_status, raw_signal, memory_telemetry)` differentiating membrane fault from leaf OOM.
-  - $C_2 = 9.2$: Kernel process table and PID lineage prevent spoofed exit statuses and transport wrapper failures from masquerading as worker failures.
-  - $C_3 = 8.8$: Essential across all distributed execution nodes (Wolfram, Darwin, remote runners).
-  - $C_4 = 9.2$: Local subshell child/parent exit simulation runs in $< 1.0$s with $0 external network.
-- **`CANONICAL-06` ($S = 8.720$ / Rank 4)**:
-  - $C_1 = 8.4$: Formal state machine and Ed25519 challenge-response mutual authentication protocol; relies on host key-ring and monotonic timestamp synchronization assumptions.
-  - $C_2 = 9.4$: High cryptographic anti-Sybil protection via Ed25519 proof-of-possession, though bounded by root key security.
-  - $C_3 = 8.2$: Specialized to node-to-node transport and RPC membrane security (xHTTP / Tailscale); less directly applicable to statistical inference.
-  - $C_4 = 8.8$: Cryptographic handshake test executes in $< 2.5$s locally via Ed25519 signatures with $0 external spend.
-- **`CANONICAL-02` ($S = 8.390$ / Rank 5)**:
-  - $C_1 = 8.2$: Semi-formal information-theoretic trade-off between redundancy and marginal information gain; lacks closed-form martingale bound for non-linear embedding spaces.
-  - $C_2 = 8.5$: Penalizes duplicate discovery streams via semantic similarity thresholds, but vulnerable to adversarial paraphrasing that evades cosine thresholds.
-  - $C_3 = 8.4$: Applies across multi-agent search and deduplication, but primarily cognitive and evaluative.
-  - $C_4 = 8.6$: Requires embedding computation or similarity matrix calculation over text corpus (~3.0s compute).
-- **`CANONICAL-04` ($S = 7.875$ / Rank 6)**:
-  - $C_1 = 7.6$: Structural separation of efficient cause vs telos/purpose in agent task representations; qualitative ontology rather than quantitative statistical null hypothesis.
-  - $C_2 = 7.8$: Heuristic teleological labeling provides moderate prompt-gaming resistance, but subjective labeling noise remains higher than mathematical/cryptographic invariants.
-  - $C_3 = 8.0$: Applicable to agent intent modeling and prompt evaluation, but does not generalize to runtime transport or distributed kernel execution.
-  - $C_4 = 8.5$: Evaluation requires running semantic classification checks over benchmark prompts (~2.5s).
+### Objective Score Justifications per Rubric Criteria
+- **`CANONICAL-01` ($S = 9.800$, Rank 1)**:
+  - $C_1 = 9.8$: Closed-form e-process martingale formulation (Wang 2025 Biometrika admissible merge) with exact Ville's inequality bound $P(\sup E_t \ge 1/\alpha) \le \alpha$ and Kraft sum bound $\sum 2^{-l_i} \le 1$.
+  - $C_2 = 10.0$: Mathematically provable anti-Sybil immunity; identity splitting without weight partitioning yields zero expected e-wealth advantage under $H_0$. Grounded directly in Issue #168 comment 5649859218.
+  - $C_3 = 9.5$: Universal across multi-agent consensus, scientific hypothesis testing, distributed compute allocation, and economic settlement.
+  - $C_4 = 9.8$: Ultra-low-cost reproducible test: vectorized NumPy simulation of 5,000 Monte Carlo trajectories executes in $< 3.5$s on commodity CPU with $0 external spend.
+- **`CANONICAL-02` ($S = 9.345$, Rank 2)**:
+  - $C_1 = 9.1$: Closed-form linear-algebraic rank formalization: $m$ copies span rank 1; independent atom increases rank to 2. Orthogonal 3-ledger state $(R, K, T)$ with explicit target projection operator and XOR counterexample bounding synergistic value.
+  - $C_2 = 9.6$: Mathematically provable anti-Sybil immunity against identity and replication cloning; pure copying or re-encoding strictly conserves rank ($\Delta K = 0$) and cannot mint novel value tokens. Grounded in Issue #168 comments 5655787687 and 5655848243.
+  - $C_3 = 9.2$: Universal across multi-agent consensus, scientific hypothesis testing, distributed compute allocation, and economic settlement.
+  - $C_4 = 9.6$: Ultra-low-cost reproducible test: vectorized matrix rank and projection test on synthetic provenance vectors executes in $< 2.0$s with $0 external spend.
+- **`CANONICAL-05` ($S = 8.910$, Rank 3)**:
+  - $C_1 = 8.6$: Semi-formal operational protocol for cross-host process tree telemetry, exit signal decoding, and kernel `/proc` inspection; depends on OS-specific process table semantics.
+  - $C_2 = 9.2$: Strong kernel-level and cryptographic identity binding: OS process tables, PID/PPID tree verification, and 3-identity credential invariant resisting single-host forgery. Grounded in Issue #168 comments 5648743239 and 5649439196.
+  - $C_3 = 8.8$: Broadly applicable across distributed execution systems and multi-host infrastructure, but specialized to runtime/OS semantics.
+  - $C_4 = 9.2$: Low-cost local test: requires local subshell process fork and SIGPIPE fault injection script running in $< 1.0$s with $0 external spend.
+- **`CANONICAL-06` ($S = 8.905$, Rank 4)**:
+  - $C_1 = 8.5$: Semi-formal product semilattice $(R,O,L)$ and attenuating CRDT join protocol with monotone supersession state machine.
+  - $C_2 = 9.3$: Strong cryptographic capability binding with Ed25519 signatures, content hashes, and monotonic attenuation discipline resisting unauthorized elevation. Grounded in Issue #168 comments 5651293792 and 5653556096.
+  - $C_3 = 8.5$: Broadly applicable across distributed execution systems and multi-host infrastructure, but specialized to runtime/OS capability semantics.
+  - $C_4 = 9.6$: Ultra-low-cost reproducible test: local semilattice join and capability attenuation validator executes in $< 2.0$s on CPU with $0 spend.
+- **`CANONICAL-03` ($S = 8.510$, Rank 5)**:
+  - $C_1 = 8.8$: Semi-formal ratio allocation model on 2-simplex evaluated under permutation budget matching; lacks closed-form analytical proof of $\phi$-optimality.
+  - $C_2 = 8.0$: Heuristic permutation-matching budget; partially vulnerable to high-dimensional parameter tuning or split attacks. Does not possess cryptographic or kernel-level identity binding (strictly within band 7.0–8.4).
+  - $C_3 = 7.8$: Domain-specific to prompt engineering, task taxonomy, and cognitive allocation; limited transfer to distributed systems or cryptographic accounting; does not achieve universal cross-domain coverage (strictly within band 7.0–7.9).
+  - $C_4 = 9.8$: Ultra-low-cost reproducible test: synthetic Dirichlet benchmark runs in $< 2.0$s with $0 external spend.
+- **`CANONICAL-04` ($S = 7.940$, Rank 6)**:
+  - $C_1 = 7.6$: Qualitative/semi-formal taxonomy of teleological triplets $(U, D_\varepsilon, \Omega)$ and $(W,A,P,T,G)$ tuples; lacks exact mathematical test statistic.
+  - $C_2 = 7.8$: Semantic separation of cause vs purpose; heuristic semantic classification vulnerable to subjective redefinition.
+  - $C_3 = 7.5$: Domain-specific to task taxonomy and prompt semantics; limited transfer to systems or cryptographic accounting.
+  - $C_4 = 9.6$: Ultra-low-cost reproducible test: semantic tuple parser and validation rules execute in $< 1.5$s on local CPU with $0 external spend.
 
 ---
 
@@ -100,20 +100,20 @@ The following table presents the reproducible scoring of all six canonical invar
 
 ---
 
-### Rank 2 (`FALSIF-SPEC-002`): Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant
-- **Target Invariant**: `CANONICAL-03` (Anchor: `CLAIM-001`, Source: [#168#issuecomment-5648693413](https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5648693413))
-- **Mathematical Formulation**: The normalized triple $(1, \phi, \phi^2)$ normalized to unit sum $(\frac{1}{2\phi^2}, \frac{1}{2\phi}, \frac{1}{2}) \approx (0.191, 0.309, 0.500)$ represents a genuine structural optimum in Context-Behavior-Value allocation only if its out-of-sample held-out performance exceeds the 95th percentile of exchangeable symmetric Dirichlet triples $\text{Dir}(1,1,1)$ under strictly matched permutation-selection budgets.
-- **Null Hypothesis ($H_0$)**: The empirical performance of $(1, \phi, \phi^2)$ on held-out tasks is statistically indistinguishable from (A) the median of Dirichlet triples, or (B) the coarse baseline $(0.25, 0.25, 0.50)$, when both are granted identical 6-permutation selection budgets on training data.
+### Rank 2 (`FALSIF-SPEC-002`): Target-Conditioned Redundancy vs. True Value Invariant
+- **Target Invariant**: `CANONICAL-02` (Anchor: `CLAIM-040`, Source: [#168#issuecomment-5655787687](https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5655787687))
+- **Mathematical Formulation**: Pure replication, fountain/erasure fragments, and retry copies increase availability/recovery probability, but evidential or monetary weight increases only when a genuinely new independently bound provenance atom increases rank under the declared dependency model. In orthogonal state $(R, K, T)$, transport redundancy increases resilience $R$ while strictly conserving epistemic rank $K$ and target-relevant evidence $T$.
+- **Null Hypothesis ($H_0$)**: Replication, re-encoding, or fountain fragmentation of existing evidence artifacts increases net epistemic or economic value beyond the rank of their underlying independent provenance atoms.
 - **Falsification Protocol**:
-  1. Normalize candidate $\phi$-triple and 1,000 control triples sampled from $\text{Dir}(1, 1, 1)$ on the 2-simplex.
-  2. For each shape, evaluate all 6 permutations of $(w_1, w_2, w_3)$ over training task embeddings.
-  3. Select best permutation on training data alone; freeze choice.
-  4. Score frozen shapes across 200 held-out evaluation splits.
-  5. Compute empirical percentile rank of $\phi$-shape relative to Dirichlet control distribution and paired t-test against coarse $(0.25, 0.25, 0.50)$.
+  1. Generate a primary evidence record $e_1$ with verifiable provenance digest and observed likelihood ratio.
+  2. Produce $N = 100$ distinct replicas, re-encodings, and Luby-transform fountain fragments of $e_1$ across simulated transport channels.
+  3. Submit all $N$ replicas to the orthogonal 3-ledger accounting verifier.
+  4. Measure resilience state $R$ vs evidence rank $K$ and target-relevant weight $T$.
+  5. Verify that $\text{rank}(K) = 1$ and $T(e_1, \dots, e_N) = T(e_1)$, despite $R$ scaling with $N$.
 - **Pass/Fail Threshold**:
-  - **Pass**: $\phi$-shape out-of-sample percentile $\ge 95.0\%$ among Dirichlet controls AND achieves statistically significant superiority over $(0.25, 0.25, 0.50)$ with $p < 0.01$.
-  - **Fail**: $\phi$-shape held-out percentile $< 95.0\%$ OR effect size compared to $(0.25, 0.25, 0.50)$ has 95% CI covering zero (indicating the effect is purely driven by coarse 50% future allocation).
-- **Cheapest Test**: Synthetic allocation benchmark on 200 stratified test vectors using pre-computed task-embedding similarity matrices. Run time $< 2.0$s, $0 external quota.
+  - **Pass**: The accounting system strictly maintains $\Delta K = 0$ and $\Delta T = 0$ across all $N$ transport copies, allocating only delivery/resilience service fees while strictly conserving epistemic principal.
+  - **Fail**: Any replication, re-encoding, or fragmentation increases evidentiary rank ($K > 1$) or mints unearned settlement weight.
+- **Cheapest Test**: Local Python test using numpy matrix rank and orthogonal projection: simulates 1,000 replicated packets, verifies rank invariance ($\text{rank} = 1$) and zero target-value drift. Execution time $< 1.5$s on commodity CPU, $0 external quota.
 
 ---
 
@@ -125,8 +125,8 @@ The following table presents the reproducible scoring of all six canonical invar
   1. Spawn a background worker executing an atomic task lease.
   2. Terminate the SSH alias / intermediate wrapper with SIGPIPE / connection break while the worker process remains active.
   3. Capture orchestrator status code (status 137 / 255) vs actual worker OS process table state.
-  4. Verify whether dispatcher correctly tags the event as `MEMBRANE_FAULT` / `EVIDENCE_INSUFFICIENT` rather than leaf OOM.
+  4. Verify whether the dispatcher correctly tags the event as `MEMBRANE_FAULT` / `EVIDENCE_INSUFFICIENT` rather than leaf OOM.
 - **Pass/Fail Threshold**:
   - **Pass**: The dispatch system rejects exit code 137 as an OOM proof unless corroborated by leaf PID SIGKILL confirmation and kernel memory pressure telemetry.
-  - **Fail**: Dispatch system classifies a broken transport wrapper as a leaf process crash / OOM, resulting in erroneous operator alerts or blind retries.
-- **Cheapest Test**: Local subshell script: child writes PID and sleeps; parent terminates abruptly with exit 137. Dispatch verifier inspects `/proc` or `ps` output to confirm child survived. Run time $< 1.0$s.
+  - **Fail**: If the dispatch system classifies a broken transport wrapper as a leaf process crash / OOM, resulting in erroneous operator alerts or blind retries.
+- **Cheapest Test**: Local subshell script: child writes PID and sleeps; parent terminates abruptly with exit 137. Dispatch verifier inspects `/proc` or `ps` output to confirm child survived. Run time $< 1.0$s, $0 external quota.

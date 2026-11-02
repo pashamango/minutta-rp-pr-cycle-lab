@@ -4,7 +4,7 @@
     "node_count": 51,
     "canonical_invariant_count": 6,
     "source_claim_count": 45,
-    "edge_count": 88,
+    "edge_count": 86,
     "allowed_relation_types": [
       "refines",
       "generalizes",
@@ -26,7 +26,45 @@
         "C3_cross_domain_generality": 0.2,
         "C4_test_cost_efficiency": 0.15
       },
-      "formula": "S = 0.35*C1 + 0.30*C2 + 0.20*C3 + 0.15*C4"
+      "formula": "S = 0.35*C1 + 0.30*C2 + 0.20*C3 + 0.15*C4",
+      "criteria_definitions": {
+        "C1_rigor_and_falsifiability": {
+          "description": "Existence of closed-form mathematical/probabilistic formulations, exact martingales, and explicit null hypotheses with deterministic decision thresholds.",
+          "bands": {
+            "9.0-10.0": "Closed-form test statistic with provable error bounds (e-process martingales, Dirichlet simplex coordinates, OS kernel binding structs).",
+            "7.5-8.9": "Semi-formal protocol/state-machine with operational pass/fail rules, but depends on heuristic thresholds or environment assumptions.",
+            "6.0-7.4": "Qualitative structural partition or taxonomy lacking exact mathematical test statistic or sharp rejection threshold.",
+            "below_6.0": "Informal hypothesis without falsifiable operational null test."
+          }
+        },
+        "C2_anti_sybil_and_grounding": {
+          "description": "Mathematical resistance against identity splitting, search-budget inflation, and prompt gaming; grounded directly in primary empirical evidence.",
+          "bands": {
+            "9.5-10.0": "Provable anti-Sybil immunity (e.g., unit simplex conservation sum(w)=1); directly grounded in Issue #168 comment evidence.",
+            "8.5-9.4": "Strong cryptographic or kernel-level identity binding (Ed25519 proof-of-possession, OS process tables) resisting single-host forgery.",
+            "7.0-8.4": "Heuristic deduplication or semantic similarity thresholding; partially vulnerable to high-dimensional split attacks or paraphrasing.",
+            "below_7.0": "No anti-Sybil defense; susceptible to duplicate inflation."
+          }
+        },
+        "C3_cross_domain_generality": {
+          "description": "Applicability across scientific discovery, decentralized agent swarms, systems runtime execution, and economic accounting.",
+          "bands": {
+            "9.0-10.0": "Universal across multi-agent consensus, scientific hypothesis testing, distributed compute allocation, and economic settlement.",
+            "8.0-8.9": "Broadly applicable across distributed execution systems and multi-host infrastructure, but specialized to runtime/OS semantics.",
+            "7.0-7.9": "Domain-specific to prompt engineering, task taxonomy, or semantic representation; limited transfer to systems or cryptographic accounting.",
+            "below_7.0": "Narrow single-use or project-specific applicability."
+          }
+        },
+        "C4_test_cost_efficiency": {
+          "description": "Feasibility and wall-clock execution time of the cheapest bounded falsification protocol on local commodity hardware with zero external API spend.",
+          "bands": {
+            "9.5-10.0": "Ultra-low-cost reproducible test: < 3.5s wall-clock time on commodity CPU, zsh external API/network spend, pure vectorized code or local mock.",
+            "9.0-9.4": "Low-cost local test: < 5.0s compute, requires local OS subshell/pipe execution, zsh external spend.",
+            "7.5-8.9": "Moderate test cost: requires multi-host coordination, daemon execution, or larger corpora evaluation > 5.0s.",
+            "below_7.5": "High test cost: external paid APIs, specialized hardware, or human-in-the-loop validation."
+          }
+        }
+      }
     },
     "top_3_ranked_candidates": [
       {
@@ -42,22 +80,22 @@
           "C4_test_cost_efficiency": 9.8
         },
         "score": 9.8,
-        "rationale": "Admissible general e-value merge rule (Wang 2025 Biometrika), rigorous anti-Sybil mathematical foundation, cross-project applicability across science, market, and settlement."
+        "rationale": "Admissible general e-value merge rule (Wang 2025 Biometrika), rigorous anti-Sybil mathematical foundation, cross-project universality across science, compute, and settlement."
       },
       {
         "rank": 2,
         "candidate_id": "CANDIDATE-02",
-        "anchor_claim": "CLAIM-001",
-        "canonical_invariant_id": "CANONICAL-03",
-        "title": "Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant",
+        "anchor_claim": "CLAIM-040",
+        "canonical_invariant_id": "CANONICAL-02",
+        "title": "Target-Conditioned Redundancy vs. True Value Invariant",
         "component_scores": {
-          "C1_rigor_and_falsifiability": 9.2,
-          "C2_anti_sybil_and_grounding": 9.0,
-          "C3_cross_domain_generality": 9.0,
-          "C4_test_cost_efficiency": 9.8
+          "C1_rigor_and_falsifiability": 9.1,
+          "C2_anti_sybil_and_grounding": 9.6,
+          "C3_cross_domain_generality": 9.2,
+          "C4_test_cost_efficiency": 9.6
         },
-        "score": 9.2,
-        "rationale": "Critical mathematical boundary separating genuine phi-specificity from coarse 50% allocation bias and selection advantage under permutation search."
+        "score": 9.3,
+        "rationale": "Linear-algebraic provenance rank and orthogonal 3-ledger state (R, K, T) preventing replication and erasure coding redundancy from inflating true epistemic capital."
       },
       {
         "rank": 3,
@@ -79,42 +117,42 @@
   "nodes": [
     {
       "id": "CANONICAL-01",
-      "label": "Conserved Evidence Portfolio Simplex & Matched Search-Budget Invariant",
+      "label": "CANONICAL-01: Conserved Evidence Portfolio Simplex & Matched Search-Budget Invariant",
       "type": "canonical_invariant",
       "domain": "Epistemic Accounting & Anti-Sybil Invariants",
       "anchor_claim_id": "CLAIM-011"
     },
     {
       "id": "CANONICAL-02",
-      "label": "Target-Conditioned Redundancy vs. True Value Invariant",
+      "label": "CANONICAL-02: Target-Conditioned Redundancy vs. True Value Invariant",
       "type": "canonical_invariant",
-      "domain": "Epistemic Accounting & Anti-Sybil Invariants",
-      "anchor_claim_id": "CLAIM-019"
+      "domain": "Distributed Membrane / Epistemic Accounting",
+      "anchor_claim_id": "CLAIM-040"
     },
     {
       "id": "CANONICAL-03",
-      "label": "Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant",
+      "label": "CANONICAL-03: Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant",
       "type": "canonical_invariant",
-      "domain": "Golden Trinity & Ratio Dynamics",
+      "domain": "Golden Trinity Dynamics",
       "anchor_claim_id": "CLAIM-001"
     },
     {
       "id": "CANONICAL-04",
-      "label": "Teleological Semantics & Asymmetric Cause-Purpose Partitioning Invariant",
+      "label": "CANONICAL-04: Teleological Semantics & Asymmetric Cause-Purpose Partitioning Invariant",
       "type": "canonical_invariant",
-      "domain": "Golden Trinity & Ratio Dynamics",
+      "domain": "Golden Trinity Dynamics",
       "anchor_claim_id": "CLAIM-036"
     },
     {
       "id": "CANONICAL-05",
-      "label": "Durable Dispatch-Boundary Process-Binding Invariant",
+      "label": "CANONICAL-05: Durable Dispatch-Boundary Process-Binding Invariant",
       "type": "canonical_invariant",
       "domain": "Distributed Membrane, Host Isolation & Identity Boundaries",
       "anchor_claim_id": "CLAIM-003"
     },
     {
       "id": "CANONICAL-06",
-      "label": "Cryptographic Zero-Trust Membrane & Mutual Multi-Pass Invariant",
+      "label": "CANONICAL-06: Cryptographic Zero-Trust Membrane & Attenuating Semilattice Invariant",
       "type": "canonical_invariant",
       "domain": "Distributed Membrane, Host Isolation & Identity Boundaries",
       "anchor_claim_id": "CLAIM-018"
@@ -269,7 +307,7 @@
       "type": "source_claim",
       "cluster_id": "Cluster-1",
       "epistemic_label": "hypothesis",
-      "canonical_invariant_id": "CANONICAL-02"
+      "canonical_invariant_id": "CANONICAL-01"
     },
     {
       "id": "CLAIM-020",
@@ -277,7 +315,7 @@
       "type": "source_claim",
       "cluster_id": "Cluster-1",
       "epistemic_label": "hypothesis",
-      "canonical_invariant_id": "CANONICAL-02"
+      "canonical_invariant_id": "CANONICAL-01"
     },
     {
       "id": "CLAIM-021",
@@ -437,7 +475,7 @@
       "type": "source_claim",
       "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "canonical_invariant_id": "CANONICAL-05"
+      "canonical_invariant_id": "CANONICAL-02"
     },
     {
       "id": "CLAIM-041",
@@ -453,7 +491,7 @@
       "type": "source_claim",
       "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "canonical_invariant_id": "CANONICAL-05"
+      "canonical_invariant_id": "CANONICAL-02"
     },
     {
       "id": "CLAIM-043",
@@ -469,7 +507,7 @@
       "type": "source_claim",
       "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "canonical_invariant_id": "CANONICAL-05"
+      "canonical_invariant_id": "CANONICAL-02"
     },
     {
       "id": "CLAIM-045",
@@ -477,7 +515,7 @@
       "type": "source_claim",
       "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "canonical_invariant_id": "CANONICAL-05"
+      "canonical_invariant_id": "CANONICAL-02"
     }
   ],
   "edges": [
@@ -497,7 +535,7 @@
       "source": "CLAIM-003",
       "target": "CANONICAL-05",
       "relation": "maps_to_canonical",
-      "rationale": "Origin claim formalizing dispatch boundary vs leaf process exit status 137."
+      "rationale": "Durable dispatch receipt binding leaf PID/PPID and kernel telemetry across membrane."
     },
     {
       "source": "CLAIM-004",
@@ -533,7 +571,7 @@
       "source": "CLAIM-009",
       "target": "CANONICAL-05",
       "relation": "maps_to_canonical",
-      "rationale": "Establishes three-identity credential invariant for remote dispatch."
+      "rationale": "Enforces three-identity credential invariant (role, principal, runtime identity) on dispatch boundary."
     },
     {
       "source": "CLAIM-010",
@@ -569,7 +607,7 @@
       "source": "CLAIM-015",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Treats shared agent memory as untrusted commons."
+      "rationale": "Shared agent memory treated as untrusted commons requiring witness receipts."
     },
     {
       "source": "CLAIM-016",
@@ -581,37 +619,37 @@
       "source": "CLAIM-017",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Enforces two-phase Git evidence binding for committed reports."
+      "rationale": "Two-phase Git binding (committed report + signed checkpoint) in untrusted commons."
     },
     {
       "source": "CLAIM-018",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Defines linear evidence resource discipline in branch propagation."
+      "rationale": "Scientific observations modeled as linear evidence resources (non-duplicable consumable tokens)."
     },
     {
       "source": "CLAIM-019",
-      "target": "CANONICAL-02",
+      "target": "CANONICAL-01",
       "relation": "maps_to_canonical",
-      "rationale": "Separates evidence ancestry algebra from evidence strength."
+      "rationale": "Separates evidence ancestry algebra from evidence strength within Git-like DAG."
     },
     {
       "source": "CLAIM-020",
-      "target": "CANONICAL-02",
+      "target": "CANONICAL-01",
       "relation": "maps_to_canonical",
-      "rationale": "Introduces nilpotent shadow provenance for composability."
+      "rationale": "Introduces nilpotent shadow provenance to prevent duplicate evidence products."
     },
     {
       "source": "CLAIM-021",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Distinguishes consumable evidence from reusable knowledge."
+      "rationale": "Type-level distinction between consumable evidence tokens and reusable citation knowledge."
     },
     {
       "source": "CLAIM-022",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Binds orthogonal content identity and issuer capability."
+      "rationale": "Orthogonal bindings for durable evidence: content identity digest and issuer capability."
     },
     {
       "source": "CLAIM-023",
@@ -641,31 +679,31 @@
       "source": "CLAIM-027",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Constructs typed capability tuple (digest, issuer_cap, lineage, policy)."
+      "rationale": "Formal 4-tuple capability struct E=(content_digest, issuer_capability, lineage, reuse_policy)."
     },
     {
       "source": "CLAIM-028",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Enforces attenuation-only capability discipline."
+      "rationale": "Attenuation-only capability discipline: derivations may narrow rights, never expand."
     },
     {
       "source": "CLAIM-029",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Specifies authority narrowing under derivation."
+      "rationale": "Semantic duplicate specializing attenuating capabilities to scientific derivation trees."
     },
     {
       "source": "CLAIM-030",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Models evidence policy as product semilattice E=(R,O,L)."
+      "rationale": "Product semilattice E=(R,O,L) governing monotone rights restriction."
     },
     {
       "source": "CLAIM-031",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Propagates attenuating capability state as CRDT across hosts."
+      "rationale": "Attenuating CRDT join across multi-host schedulers for deterministic convergence."
     },
     {
       "source": "CLAIM-032",
@@ -677,7 +715,7 @@
       "source": "CLAIM-033",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Places cross-host coordination by semantic monotonicity."
+      "rationale": "Scheduler mailbox coordination placed by semantic monotonicity rather than component boundary."
     },
     {
       "source": "CLAIM-034",
@@ -689,7 +727,7 @@
       "source": "CLAIM-035",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Replaces revocation with monotone bounded supersession."
+      "rationale": "Monotone supersession: capability revocation via bounded epoch and predecessor hash chaining."
     },
     {
       "source": "CLAIM-036",
@@ -707,7 +745,7 @@
       "source": "CLAIM-038",
       "target": "CANONICAL-06",
       "relation": "maps_to_canonical",
-      "rationale": "Applies order-independent BC-UR transport to air-gapped sync."
+      "rationale": "BC-UR fountain coding as unopinionated frame transport for CRDT semilattice payloads."
     },
     {
       "source": "CLAIM-039",
@@ -717,9 +755,9 @@
     },
     {
       "source": "CLAIM-040",
-      "target": "CANONICAL-05",
+      "target": "CANONICAL-02",
       "relation": "maps_to_canonical",
-      "rationale": "Enforces redundancy != value across dispatch and storage."
+      "rationale": "Enforces redundancy != value: orthogonal recoverability and epistemic value."
     },
     {
       "source": "CLAIM-041",
@@ -729,9 +767,9 @@
     },
     {
       "source": "CLAIM-042",
-      "target": "CANONICAL-05",
+      "target": "CANONICAL-02",
       "relation": "maps_to_canonical",
-      "rationale": "Tracks availability multiplicity orthogonally from evidence rank."
+      "rationale": "Tracks availability multiplicity orthogonally from linear evidence rank."
     },
     {
       "source": "CLAIM-043",
@@ -741,15 +779,15 @@
     },
     {
       "source": "CLAIM-044",
-      "target": "CANONICAL-05",
+      "target": "CANONICAL-02",
       "relation": "maps_to_canonical",
-      "rationale": "Separates resilience value from novelty value in schedulers."
+      "rationale": "Separates resilience value (service fees) from novelty value (epistemic capital)."
     },
     {
       "source": "CLAIM-045",
-      "target": "CANONICAL-05",
+      "target": "CANONICAL-02",
       "relation": "maps_to_canonical",
-      "rationale": "Maintains 3 orthogonal ledgers: resilience, novelty, target evidence."
+      "rationale": "Maintains three orthogonal ledgers: resilience, source rank, and target-relevant evidence."
     },
     {
       "source": "CLAIM-002",
@@ -785,7 +823,7 @@
       "source": "CLAIM-009",
       "target": "CLAIM-003",
       "relation": "refines",
-      "rationale": "Establishes three-identity credential invariant for remote dispatch."
+      "rationale": "Enforces three-identity credential invariant (role, principal, runtime identity) on dispatch boundary."
     },
     {
       "source": "CLAIM-010",
@@ -827,31 +865,25 @@
       "source": "CLAIM-017",
       "target": "CLAIM-015",
       "relation": "refines",
-      "rationale": "Enforces two-phase Git evidence binding for committed reports."
+      "rationale": "Two-phase Git binding (committed report + signed checkpoint) in untrusted commons."
     },
     {
-      "source": "CLAIM-018",
-      "target": "CLAIM-017",
+      "source": "CLAIM-019",
+      "target": "CLAIM-016",
       "relation": "refines",
-      "rationale": "Defines linear evidence resource discipline in branch propagation."
+      "rationale": "Separates evidence ancestry algebra from evidence strength within Git-like DAG."
     },
     {
       "source": "CLAIM-020",
       "target": "CLAIM-019",
       "relation": "refines",
-      "rationale": "Introduces nilpotent shadow provenance for composability."
+      "rationale": "Introduces nilpotent shadow provenance to prevent duplicate evidence products."
     },
     {
       "source": "CLAIM-021",
       "target": "CLAIM-018",
       "relation": "refines",
-      "rationale": "Distinguishes consumable evidence from reusable knowledge."
-    },
-    {
-      "source": "CLAIM-022",
-      "target": "CLAIM-021",
-      "relation": "refines",
-      "rationale": "Binds orthogonal content identity and issuer capability."
+      "rationale": "Type-level distinction between consumable evidence tokens and reusable citation knowledge."
     },
     {
       "source": "CLAIM-023",
@@ -881,31 +913,31 @@
       "source": "CLAIM-027",
       "target": "CLAIM-022",
       "relation": "refines",
-      "rationale": "Constructs typed capability tuple (digest, issuer_cap, lineage, policy)."
+      "rationale": "Formal 4-tuple capability struct E=(content_digest, issuer_capability, lineage, reuse_policy)."
     },
     {
       "source": "CLAIM-028",
       "target": "CLAIM-027",
       "relation": "refines",
-      "rationale": "Enforces attenuation-only capability discipline."
+      "rationale": "Attenuation-only capability discipline: derivations may narrow rights, never expand."
     },
     {
       "source": "CLAIM-029",
       "target": "CLAIM-028",
-      "relation": "refines",
-      "rationale": "Specifies authority narrowing under derivation."
+      "relation": "duplicates",
+      "rationale": "Semantic duplicate specializing attenuating capabilities to scientific derivation trees."
     },
     {
       "source": "CLAIM-030",
-      "target": "CLAIM-029",
+      "target": "CLAIM-028",
       "relation": "refines",
-      "rationale": "Models evidence policy as product semilattice E=(R,O,L)."
+      "rationale": "Product semilattice E=(R,O,L) governing monotone rights restriction."
     },
     {
       "source": "CLAIM-031",
       "target": "CLAIM-030",
       "relation": "refines",
-      "rationale": "Propagates attenuating capability state as CRDT across hosts."
+      "rationale": "Attenuating CRDT join across multi-host schedulers for deterministic convergence."
     },
     {
       "source": "CLAIM-032",
@@ -917,7 +949,7 @@
       "source": "CLAIM-033",
       "target": "CLAIM-031",
       "relation": "refines",
-      "rationale": "Places cross-host coordination by semantic monotonicity."
+      "rationale": "Scheduler mailbox coordination placed by semantic monotonicity rather than component boundary."
     },
     {
       "source": "CLAIM-034",
@@ -929,7 +961,7 @@
       "source": "CLAIM-035",
       "target": "CLAIM-028",
       "relation": "refines",
-      "rationale": "Replaces revocation with monotone bounded supersession."
+      "rationale": "Monotone supersession: capability revocation via bounded epoch and predecessor hash chaining."
     },
     {
       "source": "CLAIM-037",
@@ -939,21 +971,15 @@
     },
     {
       "source": "CLAIM-038",
-      "target": "CLAIM-033",
+      "target": "CLAIM-031",
       "relation": "refines",
-      "rationale": "Applies order-independent BC-UR transport to air-gapped sync."
+      "rationale": "BC-UR fountain coding as unopinionated frame transport for CRDT semilattice payloads."
     },
     {
       "source": "CLAIM-039",
       "target": "CLAIM-037",
       "relation": "refines",
       "rationale": "Applies teleological scoring to absurd hypotheses tuple (W, A, P, T, G)."
-    },
-    {
-      "source": "CLAIM-040",
-      "target": "CLAIM-003",
-      "relation": "refines",
-      "rationale": "Enforces redundancy != value across dispatch and storage."
     },
     {
       "source": "CLAIM-041",
@@ -965,7 +991,7 @@
       "source": "CLAIM-042",
       "target": "CLAIM-040",
       "relation": "refines",
-      "rationale": "Tracks availability multiplicity orthogonally from evidence rank."
+      "rationale": "Tracks availability multiplicity orthogonally from linear evidence rank."
     },
     {
       "source": "CLAIM-043",
@@ -977,31 +1003,31 @@
       "source": "CLAIM-044",
       "target": "CLAIM-042",
       "relation": "refines",
-      "rationale": "Separates resilience value from novelty value in schedulers."
+      "rationale": "Separates resilience value (service fees) from novelty value (epistemic capital)."
     },
     {
       "source": "CLAIM-045",
       "target": "CLAIM-044",
       "relation": "refines",
-      "rationale": "Maintains 3 orthogonal ledgers: resilience, novelty, target evidence."
+      "rationale": "Maintains three orthogonal ledgers: resilience, source rank, and target-relevant evidence."
     },
     {
       "source": "CANONICAL-02",
       "target": "CANONICAL-01",
       "relation": "refines",
-      "rationale": "Target-conditioned novelty bounds admissible e-value portfolio allocation."
+      "rationale": "Target-conditioned redundancy conservation bounds admissible e-value portfolio allocation."
     },
     {
       "source": "CANONICAL-03",
       "target": "CANONICAL-01",
       "relation": "supports",
-      "rationale": "Dirichlet null tests validate evidence conservation under permutation-selection budgets."
+      "rationale": "Golden Trinity simplex parameterization informs portfolio budget allocation."
     },
     {
       "source": "CANONICAL-04",
       "target": "CANONICAL-03",
       "relation": "generalizes",
-      "rationale": "Teleological triplet provides formal semantic foundation for ternary C:B:V allocation."
+      "rationale": "Teleological triplet semantics generalizes triadic context-behavior-value ordering."
     },
     {
       "source": "CANONICAL-06",

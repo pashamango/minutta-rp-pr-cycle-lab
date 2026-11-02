@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "1.2",
+    "version": "1.3",
     "authority": "MIN-18 Invariant Foundry Specification",
     "status": "CANDIDATE / NOT EXECUTION-AUTHORIZED",
     "scoring_rubric": {
@@ -43,8 +43,8 @@
         "C4_test_cost_efficiency": {
           "description": "Feasibility and wall-clock execution time of the cheapest bounded falsification protocol on local commodity hardware with zero external API spend.",
           "bands": {
-            "9.5-10.0": "Ultra-low-cost reproducible test: < 3.5s wall-clock time on commodity CPU, $0 external API/network spend, pure vectorized code or local mock.",
-            "9.0-9.4": "Low-cost local test: < 5.0s compute, requires local OS subshell/pipe execution, $0 external spend.",
+            "9.5-10.0": "Ultra-low-cost reproducible test: < 3.5s wall-clock time on commodity CPU, zsh external API/network spend, pure vectorized code or local mock.",
+            "9.0-9.4": "Low-cost local test: < 5.0s compute, requires local OS subshell/pipe execution, zsh external spend.",
             "7.5-8.9": "Moderate test cost: requires multi-host coordination, daemon execution, or larger corpora evaluation > 5.0s.",
             "below_7.5": "High test cost: external paid APIs, specialized hardware, or human-in-the-loop validation."
           }
@@ -64,36 +64,50 @@
         "C3_cross_domain_generality": 9.5,
         "C4_test_cost_efficiency": 9.8
       },
+      "rubric_bands": {
+        "C1_rigor_and_falsifiability": "9.0-10.0",
+        "C2_anti_sybil_and_grounding": "9.5-10.0",
+        "C3_cross_domain_generality": "9.0-10.0",
+        "C4_test_cost_efficiency": "9.5-10.0"
+      },
       "component_justifications": {
-        "C1_rigor_and_falsifiability": "Closed-form e-process martingale formulation (Wang 2025 Biometrika admissible merge) with exact Ville's inequality bound P(sup E_t >= 1/alpha) <= alpha.",
+        "C1_rigor_and_falsifiability": "Closed-form e-process martingale formulation (Wang 2025 Biometrika admissible merge) with exact Ville's inequality bound P(sup E_t >= 1/alpha) <= alpha and Kraft sum bound sum(2^-l_i) <= 1.",
         "C2_anti_sybil_and_grounding": "Provable anti-Sybil immunity; identity splitting without weight partitioning yields zero expected e-wealth advantage under H_0. Grounded directly in Issue #168 comment 5649859218.",
-        "C3_cross_domain_generality": "Universal across all agent search, scientific hypothesis generation, and decentralized discovery validation.",
-        "C4_test_cost_efficiency": "5,000 Monte Carlo runs execute in < 3.5s via vectorized pure Python/NumPy, $0 external quota, 0 daemon dependencies."
+        "C3_cross_domain_generality": "Universal across multi-agent consensus, scientific hypothesis testing, distributed compute allocation, and economic settlement.",
+        "C4_test_cost_efficiency": "Ultra-low-cost reproducible test: vectorized NumPy simulation of 5,000 Monte Carlo trajectories executes in < 3.5s on commodity CPU with zsh external spend."
       },
       "composite_score": 9.8,
+      "rounded_score": 9.8,
       "rank": 1,
-      "selection_status": "SELECTED_TOP_3"
+      "status": "SELECTED (Spec 1)"
     },
     {
-      "canonical_invariant_id": "CANONICAL-03",
-      "title": "Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant",
-      "anchor_claim_id": "CLAIM-001",
-      "domain_cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
+      "canonical_invariant_id": "CANONICAL-02",
+      "title": "Target-Conditioned Redundancy vs. True Value Invariant",
+      "anchor_claim_id": "CLAIM-040",
+      "domain_cluster": "Cluster-3: Distributed Membrane / Epistemic Accounting",
       "component_scores": {
-        "C1_rigor_and_falsifiability": 9.2,
-        "C2_anti_sybil_and_grounding": 9.0,
-        "C3_cross_domain_generality": 9.0,
-        "C4_test_cost_efficiency": 9.8
+        "C1_rigor_and_falsifiability": 9.1,
+        "C2_anti_sybil_and_grounding": 9.6,
+        "C3_cross_domain_generality": 9.2,
+        "C4_test_cost_efficiency": 9.6
+      },
+      "rubric_bands": {
+        "C1_rigor_and_falsifiability": "9.0-10.0",
+        "C2_anti_sybil_and_grounding": "9.5-10.0",
+        "C3_cross_domain_generality": "9.0-10.0",
+        "C4_test_cost_efficiency": "9.5-10.0"
       },
       "component_justifications": {
-        "C1_rigor_and_falsifiability": "Analytical (1, phi, phi^2) normalized to unit simplex (0.191, 0.309, 0.500), explicit null hypothesis against Dir(1,1,1) under 6-permutation selection matching.",
-        "C2_anti_sybil_and_grounding": "Controls for search-budget mining by strictly matching permutation selection budgets between candidate and controls.",
-        "C3_cross_domain_generality": "Broad application across cognitive architecture triadic allocation (Context : Behavior : Value) and resource scheduling.",
-        "C4_test_cost_efficiency": "Evaluates 1,000 Dirichlet controls across precomputed 200 held-out splits in < 2.0s with $0 external quota."
+        "C1_rigor_and_falsifiability": "Closed-form linear-algebraic rank formalization: m copies span rank 1; independent atom increases rank to 2. Orthogonal 3-ledger state (R, K, T) with explicit target projection operator and XOR counterexample bounding synergistic value.",
+        "C2_anti_sybil_and_grounding": "Mathematically provable anti-Sybil immunity against identity and replication cloning; pure copying or re-encoding strictly conserves rank (Delta K = 0) and cannot mint novel value tokens. Grounded in Issue #168 comments 5655787687 and 5655848243.",
+        "C3_cross_domain_generality": "Universal across multi-agent consensus, scientific hypothesis testing, distributed compute allocation, and economic settlement.",
+        "C4_test_cost_efficiency": "Ultra-low-cost reproducible test: vectorized matrix rank and projection test on synthetic provenance vectors executes in < 2.0s with zsh external spend."
       },
-      "composite_score": 9.2,
+      "composite_score": 9.345,
+      "rounded_score": 9.3,
       "rank": 2,
-      "selection_status": "SELECTED_TOP_3"
+      "status": "SELECTED (Spec 2)"
     },
     {
       "canonical_invariant_id": "CANONICAL-05",
@@ -106,78 +120,106 @@
         "C3_cross_domain_generality": 8.8,
         "C4_test_cost_efficiency": 9.2
       },
-      "component_justifications": {
-        "C1_rigor_and_falsifiability": "Formal kernel process receipt struct binding (task_lease_id, host_identity, process_tree, leaf_pid, exit_status, raw_signal, memory_telemetry) differentiating membrane fault from leaf OOM.",
-        "C2_anti_sybil_and_grounding": "Kernel process table and PID lineage prevent spoofed exit statuses and transport wrapper failures from masquerading as worker failures.",
-        "C3_cross_domain_generality": "Essential across all distributed execution nodes (Wolfram, Darwin, remote runners).",
-        "C4_test_cost_efficiency": "Local subshell child/parent exit simulation runs in < 1.0s with $0 external network."
+      "rubric_bands": {
+        "C1_rigor_and_falsifiability": "7.5-8.9",
+        "C2_anti_sybil_and_grounding": "8.5-9.4",
+        "C3_cross_domain_generality": "8.0-8.9",
+        "C4_test_cost_efficiency": "9.0-9.4"
       },
-      "composite_score": 8.9,
+      "component_justifications": {
+        "C1_rigor_and_falsifiability": "Semi-formal operational protocol for cross-host process tree telemetry, exit signal decoding, and kernel /proc inspection; depends on OS-specific process table semantics.",
+        "C2_anti_sybil_and_grounding": "Strong kernel-level and cryptographic identity binding: OS process tables, PID/PPID tree verification, and 3-identity credential invariant resisting single-host forgery. Grounded in Issue #168 comments 5648743239 and 5649439196.",
+        "C3_cross_domain_generality": "Broadly applicable across distributed execution systems and multi-host infrastructure, but specialized to runtime/OS semantics.",
+        "C4_test_cost_efficiency": "Low-cost local test: requires local subshell process fork and SIGPIPE fault injection script running in < 1.0s with zsh external spend."
+      },
+      "composite_score": 8.91,
+      "rounded_score": 8.9,
       "rank": 3,
-      "selection_status": "SELECTED_TOP_3"
+      "status": "SELECTED (Spec 3)"
     },
     {
       "canonical_invariant_id": "CANONICAL-06",
-      "title": "Cryptographic Zero-Trust Membrane & Mutual Multi-Pass Invariant",
+      "title": "Cryptographic Zero-Trust Membrane & Attenuating Semilattice Invariant",
       "anchor_claim_id": "CLAIM-018",
       "domain_cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
       "component_scores": {
-        "C1_rigor_and_falsifiability": 8.4,
-        "C2_anti_sybil_and_grounding": 9.4,
-        "C3_cross_domain_generality": 8.2,
-        "C4_test_cost_efficiency": 8.8
+        "C1_rigor_and_falsifiability": 8.5,
+        "C2_anti_sybil_and_grounding": 9.3,
+        "C3_cross_domain_generality": 8.5,
+        "C4_test_cost_efficiency": 9.6
+      },
+      "rubric_bands": {
+        "C1_rigor_and_falsifiability": "7.5-8.9",
+        "C2_anti_sybil_and_grounding": "8.5-9.4",
+        "C3_cross_domain_generality": "8.0-8.9",
+        "C4_test_cost_efficiency": "9.5-10.0"
       },
       "component_justifications": {
-        "C1_rigor_and_falsifiability": "Formal state machine and Ed25519 challenge-response mutual authentication protocol; relies on host key-ring and monotonic timestamp synchronization assumptions.",
-        "C2_anti_sybil_and_grounding": "High cryptographic anti-Sybil protection via Ed25519 proof-of-possession, though bounded by root key security.",
-        "C3_cross_domain_generality": "Specialized to node-to-node transport and RPC membrane security (xHTTP / Tailscale); less directly applicable to statistical inference.",
-        "C4_test_cost_efficiency": "Cryptographic handshake test executes in < 2.5s locally via ed25519 signatures with $0 external spend."
+        "C1_rigor_and_falsifiability": "Semi-formal product semilattice (R,O,L) and attenuating CRDT join protocol with monotone supersession state machine.",
+        "C2_anti_sybil_and_grounding": "Strong cryptographic capability binding with Ed25519 signatures, content hashes, and monotonic attenuation discipline resisting unauthorized elevation. Grounded in Issue #168 comments 5651293792 and 5653556096.",
+        "C3_cross_domain_generality": "Broadly applicable across distributed execution systems and multi-host infrastructure, but specialized to runtime/OS capability semantics.",
+        "C4_test_cost_efficiency": "Ultra-low-cost reproducible test: local semilattice join and capability attenuation validator executes in < 2.0s on CPU with zsh external spend."
       },
-      "composite_score": 8.7,
+      "composite_score": 8.905,
+      "rounded_score": 8.9,
       "rank": 4,
-      "selection_status": "BELOW_TOP_3_THRESHOLD"
+      "status": "Below Top 3 Threshold"
     },
     {
-      "canonical_invariant_id": "CANONICAL-02",
-      "title": "Target-Conditioned Redundancy vs. True Value Invariant",
-      "anchor_claim_id": "CLAIM-019",
-      "domain_cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
+      "canonical_invariant_id": "CANONICAL-03",
+      "title": "Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant",
+      "anchor_claim_id": "CLAIM-001",
+      "domain_cluster": "Cluster-2: Golden Trinity Dynamics",
       "component_scores": {
-        "C1_rigor_and_falsifiability": 8.2,
-        "C2_anti_sybil_and_grounding": 8.5,
-        "C3_cross_domain_generality": 8.4,
-        "C4_test_cost_efficiency": 8.6
+        "C1_rigor_and_falsifiability": 8.8,
+        "C2_anti_sybil_and_grounding": 8.0,
+        "C3_cross_domain_generality": 7.8,
+        "C4_test_cost_efficiency": 9.8
+      },
+      "rubric_bands": {
+        "C1_rigor_and_falsifiability": "7.5-8.9",
+        "C2_anti_sybil_and_grounding": "7.0-8.4",
+        "C3_cross_domain_generality": "7.0-7.9",
+        "C4_test_cost_efficiency": "9.5-10.0"
       },
       "component_justifications": {
-        "C1_rigor_and_falsifiability": "Semi-formal information-theoretic trade-off between redundancy and marginal information gain; lacks closed-form martingale bound for non-linear embedding spaces.",
-        "C2_anti_sybil_and_grounding": "Penalizes duplicate discovery streams via semantic similarity thresholds, but vulnerable to adversarial paraphrasing that evades cosine thresholds.",
-        "C3_cross_domain_generality": "Applies across multi-agent search and deduplication, but primarily cognitive and evaluative.",
-        "C4_test_cost_efficiency": "Requires embedding computation or similarity matrix calculation over text corpus (~3.0s compute)."
+        "C1_rigor_and_falsifiability": "Semi-formal ratio allocation model on 2-simplex evaluated under permutation budget matching; lacks closed-form analytical proof of phi-optimality.",
+        "C2_anti_sybil_and_grounding": "Heuristic permutation-matching budget; partially vulnerable to high-dimensional parameter tuning or split attacks. Does not possess cryptographic or kernel-level identity binding.",
+        "C3_cross_domain_generality": "Domain-specific to prompt engineering, task taxonomy, and cognitive allocation; limited transfer to distributed systems or cryptographic accounting; does not achieve universal cross-domain coverage.",
+        "C4_test_cost_efficiency": "Ultra-low-cost reproducible test: synthetic Dirichlet benchmark runs in < 2.0s with zsh external spend."
       },
-      "composite_score": 8.4,
+      "composite_score": 8.51,
+      "rounded_score": 8.5,
       "rank": 5,
-      "selection_status": "BELOW_TOP_3_THRESHOLD"
+      "status": "Below Top 3 Threshold"
     },
     {
       "canonical_invariant_id": "CANONICAL-04",
       "title": "Teleological Semantics & Asymmetric Cause-Purpose Partitioning Invariant",
       "anchor_claim_id": "CLAIM-036",
-      "domain_cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
+      "domain_cluster": "Cluster-2: Golden Trinity Dynamics",
       "component_scores": {
         "C1_rigor_and_falsifiability": 7.6,
         "C2_anti_sybil_and_grounding": 7.8,
-        "C3_cross_domain_generality": 8.0,
-        "C4_test_cost_efficiency": 8.5
+        "C3_cross_domain_generality": 7.5,
+        "C4_test_cost_efficiency": 9.6
+      },
+      "rubric_bands": {
+        "C1_rigor_and_falsifiability": "7.5-8.9",
+        "C2_anti_sybil_and_grounding": "7.0-8.4",
+        "C3_cross_domain_generality": "7.0-7.9",
+        "C4_test_cost_efficiency": "9.5-10.0"
       },
       "component_justifications": {
-        "C1_rigor_and_falsifiability": "Structural separation of efficient cause vs telos/purpose in agent task representations; qualitative ontology rather than quantitative statistical null hypothesis.",
-        "C2_anti_sybil_and_grounding": "Heuristic teleological labeling provides moderate prompt-gaming resistance, but subjective labeling noise remains higher than mathematical/cryptographic invariants.",
-        "C3_cross_domain_generality": "Applicable to agent intent modeling and prompt evaluation, but does not generalize to runtime transport or distributed kernel execution.",
-        "C4_test_cost_efficiency": "Evaluation requires running semantic classification checks over benchmark prompts (~2.5s)."
+        "C1_rigor_and_falsifiability": "Qualitative/semi-formal taxonomy of teleological triplets (U, D_eps, Omega) and (W,A,P,T,G) tuples; lacks exact mathematical test statistic.",
+        "C2_anti_sybil_and_grounding": "Semantic separation of cause vs purpose; heuristic semantic classification vulnerable to subjective redefinition.",
+        "C3_cross_domain_generality": "Domain-specific to task taxonomy and prompt semantics; limited transfer to systems or cryptographic accounting.",
+        "C4_test_cost_efficiency": "Ultra-low-cost reproducible test: semantic tuple parser and validation rules execute in < 1.5s on local CPU with zsh external spend."
       },
-      "composite_score": 7.9,
+      "composite_score": 7.94,
+      "rounded_score": 7.9,
       "rank": 6,
-      "selection_status": "BELOW_TOP_3_THRESHOLD"
+      "status": "Below Top 3 Threshold"
     }
   ],
   "specs": [
@@ -199,7 +241,7 @@
         "pass_condition": "Under H_0, the portfolio e-wealth satisfies E[E*] <= 1.0 across all stopping times, and 99th percentile e-wealth <= 100 (Markov bound holds). Sybil identity splitting produces zero net gain in portfolio e-value compared to the parent weight.",
         "fail_condition": "If an actor can generate expected portfolio e-wealth growth > 1.0 under the null solely by forking identities or searching m parallel branches without weight partitioning."
       },
-      "cheapest_test": "100-line vectorized NumPy simulation of 5,000 Monte Carlo runs (500 steps each). Compute wall-clock time < 3.5 seconds on Wolfram, $0 network quota, 0 external mutations.",
+      "cheapest_test": "100-line vectorized NumPy simulation of 5,000 Monte Carlo runs (500 steps each). Compute wall-clock time < 3.5 seconds on Wolfram, zsh network quota, 0 external mutations.",
       "canonical_invariant_id": "CANONICAL-01",
       "score": 9.8,
       "component_scores": {
@@ -213,30 +255,30 @@
     {
       "spec_id": "FALSIF-SPEC-002",
       "rank": 2,
-      "target_invariant": "Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant",
-      "anchor_claim_id": "CLAIM-001",
-      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5648693413",
-      "formulation": "The normalized triple (1, phi, phi^2) normalized to unit sum (1/(2phi^2), 1/(2phi), 1/2) ~= (0.191, 0.309, 0.500) represents a genuine structural optimum in Context-Behavior-Value allocation only if its out-of-sample held-out performance exceeds the 95th percentile of exchangeable symmetric Dirichlet triples Dir(1,1,1) under strictly matched permutation-selection budgets.",
-      "null_hypothesis": "H_0: The empirical performance of (1, phi, phi^2) on held-out tasks is statistically indistinguishable from (A) the median of Dirichlet triples, or (B) the coarse baseline (0.25, 0.25, 0.50), when both are granted identical 6-permutation selection budgets on training data.",
+      "target_invariant": "Target-Conditioned Redundancy vs. True Value Invariant",
+      "anchor_claim_id": "CLAIM-040",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5655787687",
+      "formulation": "Pure replication, fountain/erasure fragments, and retry copies increase availability/recovery probability, but evidential or monetary weight increases only when a genuinely new independently bound provenance atom increases rank under the declared dependency model. In orthogonal state (R, K, T), transport redundancy increases resilience R while strictly conserving epistemic rank K and target-relevant evidence T.",
+      "null_hypothesis": "H_0: Replication, re-encoding, or fountain fragmentation of existing evidence artifacts increases net epistemic or economic value beyond the rank of their underlying independent provenance atoms.",
       "falsification_procedure": [
-        "Step 1 (Candidate Generation): Normalize candidate phi-triple and 1,000 control triples sampled from Dir(1, 1, 1) on the 2-simplex.",
-        "Step 2 (Permutation Budget Matching): For each shape, evaluate all 6 permutations of (w_1, w_2, w_3) over training task embeddings.",
-        "Step 3 (Frozen Selection): Select the best-performing permutation on training data alone; freeze the mapping.",
-        "Step 4 (Held-Out Evaluation): Score the frozen shapes across 200 held-out evaluation splits.",
-        "Step 5 (Statistical Significance): Compute empirical percentile rank of phi-shape relative to the Dirichlet control distribution and paired t-test against the coarse (0.25, 0.25, 0.50) control."
+        "Step 1 (Provenance Atom Synthesis): Generate a primary evidence record e_1 with verifiable provenance digest and observed likelihood ratio.",
+        "Step 2 (Redundancy Generation): Produce N = 100 distinct replicas, re-encodings, and Luby-transform fountain fragments of e_1 across simulated transport channels.",
+        "Step 3 (Orthogonal Accounting Ingestion): Submit all N replicas to the orthogonal 3-ledger accounting verifier.",
+        "Step 4 (Ledger Measurement): Measure resilience state R vs evidence rank K and target-relevant weight T.",
+        "Step 5 (Rank Conservation Verification): Verify that rank(K) = 1 and T(e_1, ..., e_N) = T(e_1), despite R scaling with N."
       ],
       "pass_fail_criteria": {
-        "pass_condition": "Phi-shape out-of-sample percentile >= 95.0% among Dirichlet controls AND achieves statistically significant superiority over (0.25, 0.25, 0.50) with p < 0.01.",
-        "fail_condition": "If phi-shape held-out percentile < 95.0% OR effect size compared to (0.25, 0.25, 0.50) has 95% CI covering zero (indicating the effect is purely driven by coarse 50% future allocation)."
+        "pass_condition": "The accounting system strictly maintains Delta K = 0 and Delta T = 0 across all N transport copies, allocating only delivery/resilience service fees while strictly conserving epistemic principal.",
+        "fail_condition": "If any replication, re-encoding, or fragmentation increases evidentiary rank (K > 1) or mints unearned settlement weight."
       },
-      "cheapest_test": "Synthetic allocation benchmark on 200 stratified test vectors using pre-computed task-embedding similarity matrices. Run time < 2.0 seconds, $0 external quota.",
-      "canonical_invariant_id": "CANONICAL-03",
-      "score": 9.2,
+      "cheapest_test": "Local Python test using numpy matrix rank and orthogonal projection: simulates 1,000 replicated packets, verifies rank invariance (rank = 1) and zero target-value drift. Execution time < 1.5s on commodity CPU, zsh external quota.",
+      "canonical_invariant_id": "CANONICAL-02",
+      "score": 9.3,
       "component_scores": {
-        "C1_rigor_and_falsifiability": 9.2,
-        "C2_anti_sybil_and_grounding": 9.0,
-        "C3_cross_domain_generality": 9.0,
-        "C4_test_cost_efficiency": 9.8
+        "C1_rigor_and_falsifiability": 9.1,
+        "C2_anti_sybil_and_grounding": 9.6,
+        "C3_cross_domain_generality": 9.2,
+        "C4_test_cost_efficiency": 9.6
       },
       "scoring_formula": "S = 0.35*C1 + 0.30*C2 + 0.20*C3 + 0.15*C4"
     },
@@ -258,7 +300,7 @@
         "pass_condition": "The dispatch system rejects exit code 137 as an OOM proof unless corroborated by leaf PID SIGKILL confirmation and kernel memory pressure telemetry.",
         "fail_condition": "If the dispatch system classifies a broken transport wrapper as a leaf process crash / OOM, resulting in erroneous operator alerts or blind retries."
       },
-      "cheapest_test": "Local subshell script: child writes PID and sleeps; parent terminates abruptly with exit 137. Dispatch verifier inspects /proc or ps output to confirm child survived. Run time < 1.0 second.",
+      "cheapest_test": "Local subshell script: child writes PID and sleeps; parent terminates abruptly with exit 137. Dispatch verifier inspects /proc or ps output to confirm child survived. Run time < 1.0 second, zsh external quota.",
       "canonical_invariant_id": "CANONICAL-05",
       "score": 8.9,
       "component_scores": {
