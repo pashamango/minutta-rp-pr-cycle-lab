@@ -4,7 +4,7 @@ Open [`demo/index.html`](demo/index.html) directly in a browser (`file://`). It 
 
 ## WASM boundary
 
-The page currently uses a dependency-free JavaScript reference so the acceptance path works offline. A Rust/WASM implementation can replace these functions without changing the UI contract:
+The page currently uses a dependency-free JavaScript reference so the acceptance path works offline. The matching Rust/WASM source lives in [`crate/src/lib.rs`](crate/src/lib.rs) and exposes the same typed operations:
 
 ```text
 factorize(u64) -> ValuationProfile
@@ -13,7 +13,15 @@ canonicalize(ValuationProfile) -> CanonicalProfile
 reconstruct(CanonicalProfile) -> u64
 ```
 
-No generated `.wasm` binary is committed because this repository has no Rust/WASM source crate or toolchain yet. The strip explorer is a bounded predicate, not an unbounded analytic proof.
+Build the library when Rust and the WebAssembly target are installed:
+
+```sh
+rustup target add wasm32-unknown-unknown
+cargo test --manifest-path crate/Cargo.toml
+cargo build --manifest-path crate/Cargo.toml --target wasm32-unknown-unknown --release
+```
+
+The checked-in demo remains serverless and has no generated binary or runtime dependency. The strip explorer is a bounded predicate, not an unbounded analytic proof.
 
 ## Check
 
@@ -25,3 +33,5 @@ assert 'factorize' in Path('demo/app.js').read_text()
 print('static asset references: PASS')
 PY
 ```
+
+The JavaScript reference is intentionally kept as the browser fallback: this makes `file://demo/index.html` usable without a server, CDN, module import, or WASM loader.

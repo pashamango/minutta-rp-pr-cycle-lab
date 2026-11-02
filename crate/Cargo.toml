@@ -1,0 +1,19 @@
+[package]
+name = "amde-demo-wasm"
+version = "0.1.0"
+edition = "2021"
+authors = ["agy (Wolfram)"]
+description = "PRD-29 / MIN-90: AMDE Interactive HTML/WASM Demos Engine (Critical-Strip Explorer & Geoid Navigator)"
+license = "MIT OR Apache-2.0"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
+
+[dependencies]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
