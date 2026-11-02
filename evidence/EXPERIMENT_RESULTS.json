@@ -1,0 +1,173 @@
+[
+  {
+    "block_id": "BLOCK-A-10-25",
+    "t_min": 10.0,
+    "t_max": 25.0,
+    "channel_1_ribbon": {
+      "t_mid": 17.5,
+      "f0_mid": 1.7192935208485611e-07,
+      "f0_rad": 3.690754569376572e-46,
+      "f_double_prime_mid": 7.912495430604724e-08,
+      "is_even": true,
+      "golden_ratio_level1": 1.0007807031001368,
+      "golden_ratio_level5": 1.0000166144018208,
+      "control_q06": 8.483942624178604e-11,
+      "control_q05": 2.6564650739637483e-11
+    },
+    "channel_2_winding": {
+      "contour": [
+        0.1,
+        0.9,
+        10.0,
+        25.0
+      ],
+      "winding_real": 2.000917841476495,
+      "winding_radius": 7.751406600544888e-31,
+      "proven_zero_count": 2,
+      "is_certified_integer": true
+    },
+    "channel_3_li": {
+      "all_positive": true,
+      "lambda_1": {
+        "n": 1,
+        "midpoint": 0.023095708966121033,
+        "radius": 9.107893987248522e-41,
+        "is_strictly_positive": true,
+        "lower_bound": 0.023095708966121033,
+        "upper_bound": 0.023095708966121033
+      },
+      "lambda_2": {
+        "n": 2,
+        "midpoint": 0.09234573522804668,
+        "radius": 7.959675735461472e-40,
+        "is_strictly_positive": true,
+        "lower_bound": 0.09234573522804668,
+        "upper_bound": 0.09234573522804668
+      },
+      "lambda_3": {
+        "n": 3,
+        "midpoint": 0.2076389205543248,
+        "radius": 3.735588414372664e-39,
+        "is_strictly_positive": true,
+        "lower_bound": 0.2076389205543248,
+        "upper_bound": 0.2076389205543248
+      }
+    },
+    "scale_predictability_confirmed": false,
+    "verdict": "HONEST NULL-RESULT: Channel 1 ribbon scale does NOT linearly predict discrete zero count in Channel 2 (N=2) nor does it alter universal Li coefficients. Cross-channel scale predictability hypothesis is falsified."
+  },
+  {
+    "block_id": "BLOCK-B-25-35",
+    "t_min": 25.0,
+    "t_max": 35.0,
+    "channel_1_ribbon": {
+      "t_mid": 30.0,
+      "f0_mid": 2.25498950700897e-16,
+      "f0_rad": 2.9621675329389768e-55,
+      "f_double_prime_mid": 2.6060766962566792e-15,
+      "is_even": true,
+      "golden_ratio_level1": 1.0021846093347182,
+      "golden_ratio_level5": 1.0000464785600356,
+      "control_q06": 2.7972224749998437e-18,
+      "control_q05": 8.751125280507988e-19
+    },
+    "channel_2_winding": {
+      "contour": [
+        0.1,
+        0.9,
+        25.0,
+        35.0
+      ],
+      "winding_real": 2.9989928299645916,
+      "winding_radius": 5.599436571577334e-31,
+      "proven_zero_count": 3,
+      "is_certified_integer": true
+    },
+    "channel_3_li": {
+      "all_positive": true,
+      "lambda_1": {
+        "n": 1,
+        "midpoint": 0.023095708966121033,
+        "radius": 9.107893987248522e-41,
+        "is_strictly_positive": true,
+        "lower_bound": 0.023095708966121033,
+        "upper_bound": 0.023095708966121033
+      },
+      "lambda_2": {
+        "n": 2,
+        "midpoint": 0.09234573522804668,
+        "radius": 7.959675735461472e-40,
+        "is_strictly_positive": true,
+        "lower_bound": 0.09234573522804668,
+        "upper_bound": 0.09234573522804668
+      },
+      "lambda_3": {
+        "n": 3,
+        "midpoint": 0.2076389205543248,
+        "radius": 3.735588414372664e-39,
+        "is_strictly_positive": true,
+        "lower_bound": 0.2076389205543248,
+        "upper_bound": 0.2076389205543248
+      }
+    },
+    "scale_predictability_confirmed": false,
+    "verdict": "HONEST NULL-RESULT: Channel 1 ribbon scale does NOT linearly predict discrete zero count in Channel 2 (N=3) nor does it alter universal Li coefficients. Cross-channel scale predictability hypothesis is falsified."
+  },
+  {
+    "block_id": "BLOCK-C-35-45",
+    "t_min": 35.0,
+    "t_max": 45.0,
+    "channel_1_ribbon": {
+      "t_mid": 40.0,
+      "f0_mid": 4.484321697799916e-22,
+      "f0_rad": 1.4257152392416945e-60,
+      "f_double_prime_mid": 1.3944355251268735e-21,
+      "is_even": true,
+      "golden_ratio_level1": 1.002945745719198,
+      "golden_ratio_level5": 1.0000626572851254,
+      "control_q06": 1.4975626511781914e-24,
+      "control_q05": 4.6829742884014855e-25
+    },
+    "channel_2_winding": {
+      "contour": [
+        0.1,
+        0.9,
+        35.0,
+        45.0
+      ],
+      "winding_real": 3.000017728201984,
+      "winding_radius": 6.189723843343811e-31,
+      "proven_zero_count": 3,
+      "is_certified_integer": true
+    },
+    "channel_3_li": {
+      "all_positive": true,
+      "lambda_1": {
+        "n": 1,
+        "midpoint": 0.023095708966121033,
+        "radius": 9.107893987248522e-41,
+        "is_strictly_positive": true,
+        "lower_bound": 0.023095708966121033,
+        "upper_bound": 0.023095708966121033
+      },
+      "lambda_2": {
+        "n": 2,
+        "midpoint": 0.09234573522804668,
+        "radius": 7.959675735461472e-40,
+        "is_strictly_positive": true,
+        "lower_bound": 0.09234573522804668,
+        "upper_bound": 0.09234573522804668
+      },
+      "lambda_3": {
+        "n": 3,
+        "midpoint": 0.2076389205543248,
+        "radius": 3.735588414372664e-39,
+        "is_strictly_positive": true,
+        "lower_bound": 0.2076389205543248,
+        "upper_bound": 0.2076389205543248
+      }
+    },
+    "scale_predictability_confirmed": false,
+    "verdict": "HONEST NULL-RESULT: Channel 1 ribbon scale does NOT linearly predict discrete zero count in Channel 2 (N=3) nor does it alter universal Li coefficients. Cross-channel scale predictability hypothesis is falsified."
+  }
+]

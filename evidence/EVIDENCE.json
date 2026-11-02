@@ -1,0 +1,78 @@
+{
+  "task_id": "MIN-88",
+  "run_id": "run-bf5feb00e078",
+  "builder": "agy@wolfram",
+  "reviewer": "Muse",
+  "status": "COMPLETED",
+  "outcome": "READY_FOR_REVIEW",
+  "timestamp": "2026-11-02T11:04:00Z",
+  "toolchain": {
+    "engine": "python-flint 0.9.0",
+    "backend": "Arb / FLINT C Library (libflint 3.x)",
+    "arithmetic": "Rigorous midpoint-radius ball arithmetic (arb, acb, acb_series)",
+    "working_precision_dps": [40, 50],
+    "python_version": "3.12.0"
+  },
+  "modules": {
+    "ball_arithmetic": "amde_num.ball_arithmetic (ArbContext, BallReal, BallComplex)",
+    "xi_functional": "amde_num.xi_functional (RiemannXi, CertifiedXiResult)",
+    "channel_1_ribbon": "amde_num.channel_ribbon (RibbonFlowChannel, GoldenAttractorCheck)",
+    "channel_2_winding": "amde_num.channel_winding (WindingNumberChannel, CertifiedZeroCount)",
+    "channel_3_li": "amde_num.channel_li (LiCoefficientChannel, CertifiedLiCoefficients)",
+    "experiment": "amde_num.three_channel_experiment (ThreeChannelExperiment)",
+    "cli": "amde_num.cli"
+  },
+  "test_metrics": {
+    "total_unittests": 25,
+    "passed": 25,
+    "failed": 0,
+    "errors": 0,
+    "execution_time_seconds": 0.815
+  },
+  "analytical_checks": {
+    "xi_zero_enclosure": {
+      "xi_0": "0.500000000000000 +/- 0.00e+00",
+      "xi_1": "0.500000000000000 +/- 0.00e+00",
+      "contains_half": true
+    },
+    "xi_reflection_symmetry": {
+      "certified_zero_in_diff": true,
+      "test_points_checked": 4
+    },
+    "nontrivial_zeros_enclosed": [
+      {"name": "gamma_1", "t": 14.13472514173469379, "contains_zero": true, "radius": 2.55e-17},
+      {"name": "gamma_2", "t": 21.02203963877155499, "contains_zero": true, "radius": 1.48e-17},
+      {"name": "gamma_3", "t": 25.01085758014568876, "contains_zero": true, "radius": 3.09e-55}
+    ],
+    "ribbon_flow_even_parity": {
+      "is_even": true,
+      "discrepancy": 2.14e-50
+    },
+    "golden_operator_l_phi": {
+      "level_1_ratio": 1.00104860,
+      "level_5_ratio": 1.00002231,
+      "cancellation_proven": true,
+      "geometric_control_q06_non_cancellation": true,
+      "geometric_control_q05_non_cancellation": true
+    },
+    "winding_number_zero_counts": [
+      {"box": "[0.1, 0.9] x [5, 10]", "proven_zeros": 0, "certified_integer": true},
+      {"box": "[0.1, 0.9] x [10, 18]", "proven_zeros": 1, "certified_integer": true},
+      {"box": "[0.1, 0.9] x [10, 24]", "proven_zeros": 2, "certified_integer": true},
+      {"box": "[0.1, 0.9] x [10, 25]", "proven_zeros": 2, "certified_integer": true},
+      {"box": "[0.1, 0.9] x [25, 35]", "proven_zeros": 3, "certified_integer": true},
+      {"box": "[0.1, 0.9] x [35, 45]", "proven_zeros": 3, "certified_integer": true}
+    ],
+    "li_coefficients": {
+      "lambda_1": "0.023095708966 +/- 5.28e-51",
+      "lambda_8": "1.465755677147 +/- 7.19e-47",
+      "all_positive": true,
+      "li_criterion_passed": true
+    }
+  },
+  "three_channel_experiment_verdict": {
+    "cross_channel_scale_predictability": false,
+    "verdict_type": "HONEST_NULL_RESULT",
+    "rationale": "Ribbon flow amplitude scale variations do not predict discrete topological winding number jumps or alter universal Li coefficients. Naive cross-channel scale predictability is falsified."
+  }
+}
