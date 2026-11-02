@@ -32,6 +32,7 @@ class HeightBlockResult:
     channel_1_ribbon: Dict[str, Any]
     channel_2_winding: Dict[str, Any]
     channel_3_li: Dict[str, Any]
+    controls: Dict[str, Any]
     scale_predictability_confirmed: bool
     verdict: str
 
@@ -52,6 +53,10 @@ class ThreeChannelExperiment:
 
         # Channel 1: Ribbon flow at t_mid
         ribbon_res = self.ch1.run_channel(t_val=t_mid, n_levels=5)
+        # Height control: evaluate the same local observable at both edges.
+        # This prevents a single midpoint from being mistaken for a block trend.
+        ribbon_low = self.ch1.run_channel(t_val=t_min, n_levels=1)
+        ribbon_high = self.ch1.run_channel(t_val=t_max, n_levels=1)
         ch1_summary = {
             "t_mid": t_mid,
             "f0_mid": ribbon_res.f0.midpoint,
@@ -70,6 +75,12 @@ class ThreeChannelExperiment:
             sigma_max=0.9,
             t_min=t_min,
             t_max=t_max,
+            steps_per_edge=80,
+        )
+        # Width control: repeat the contour with a narrower strip.  A prediction
+        # must survive this geometric control; otherwise it is a contour artifact.
+        winding_narrow = self.ch2.count_zeros_in_box(
+            sigma_min=0.2, sigma_max=0.8, t_min=t_min, t_max=t_max,
             steps_per_edge=80,
         )
         ch2_summary = winding_res.to_dict()
@@ -97,6 +108,28 @@ class ThreeChannelExperiment:
             "Cross-channel scale predictability hypothesis is falsified."
         )
 
+        controls = {
+            "height_control": {
+                "t_min_f0": ribbon_low.f0.midpoint,
+                "t_mid_f0": ribbon_res.f0.midpoint,
+                "t_max_f0": ribbon_high.f0.midpoint,
+            },
+            "width_control": {
+                "wide_sigma": [0.1, 0.9],
+                "narrow_sigma": [0.2, 0.8],
+                "wide_zero_count": winding_res.proven_zero_count,
+                "narrow_zero_count": winding_narrow.proven_zero_count,
+                "counts_agree": (
+                    winding_res.is_certified_integer
+                    and winding_narrow.is_certified_integer
+                    and winding_res.proven_zero_count == winding_narrow.proven_zero_count
+                ),
+            },
+            "inference_guard": (
+                "Descriptive controls only; three blocks do not establish a predictive model."
+            ),
+        }
+
         return HeightBlockResult(
             block_id=block_id,
             t_min=t_min,
@@ -104,6 +137,7 @@ class ThreeChannelExperiment:
             channel_1_ribbon=ch1_summary,
             channel_2_winding=ch2_summary,
             channel_3_li=ch3_summary,
+            controls=controls,
             scale_predictability_confirmed=scale_predictability_confirmed,
             verdict=verdict,
         )

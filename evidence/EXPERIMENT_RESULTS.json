@@ -53,6 +53,27 @@
         "upper_bound": 0.2076389205543248
       }
     },
+    "controls": {
+      "height_control": {
+        "t_min_f0": 0.0014415576572336189,
+        "t_mid_f0": 1.7192935208485611e-07,
+        "t_max_f0": 1.9111879554802976e-16
+      },
+      "width_control": {
+        "wide_sigma": [
+          0.1,
+          0.9
+        ],
+        "narrow_sigma": [
+          0.2,
+          0.8
+        ],
+        "wide_zero_count": 2,
+        "narrow_zero_count": 2,
+        "counts_agree": true
+      },
+      "inference_guard": "Descriptive controls only; three blocks do not establish a predictive model."
+    },
     "scale_predictability_confirmed": false,
     "verdict": "HONEST NULL-RESULT: Channel 1 ribbon scale does NOT linearly predict discrete zero count in Channel 2 (N=2) nor does it alter universal Li coefficients. Cross-channel scale predictability hypothesis is falsified."
   },
@@ -110,6 +131,27 @@
         "upper_bound": 0.2076389205543248
       }
     },
+    "controls": {
+      "height_control": {
+        "t_min_f0": 1.9111879554802976e-16,
+        "t_mid_f0": 2.25498950700897e-16,
+        "t_max_f0": 3.3760022116907563e-18
+      },
+      "width_control": {
+        "wide_sigma": [
+          0.1,
+          0.9
+        ],
+        "narrow_sigma": [
+          0.2,
+          0.8
+        ],
+        "wide_zero_count": 3,
+        "narrow_zero_count": 3,
+        "counts_agree": true
+      },
+      "inference_guard": "Descriptive controls only; three blocks do not establish a predictive model."
+    },
     "scale_predictability_confirmed": false,
     "verdict": "HONEST NULL-RESULT: Channel 1 ribbon scale does NOT linearly predict discrete zero count in Channel 2 (N=3) nor does it alter universal Li coefficients. Cross-channel scale predictability hypothesis is falsified."
   },
@@ -166,6 +208,27 @@
         "lower_bound": 0.2076389205543248,
         "upper_bound": 0.2076389205543248
       }
+    },
+    "controls": {
+      "height_control": {
+        "t_min_f0": 3.3760022116907563e-18,
+        "t_mid_f0": 4.484321697799916e-22,
+        "t_max_f0": 1.6270554311079354e-24
+      },
+      "width_control": {
+        "wide_sigma": [
+          0.1,
+          0.9
+        ],
+        "narrow_sigma": [
+          0.2,
+          0.8
+        ],
+        "wide_zero_count": 3,
+        "narrow_zero_count": 3,
+        "counts_agree": true
+      },
+      "inference_guard": "Descriptive controls only; three blocks do not establish a predictive model."
     },
     "scale_predictability_confirmed": false,
     "verdict": "HONEST NULL-RESULT: Channel 1 ribbon scale does NOT linearly predict discrete zero count in Channel 2 (N=3) nor does it alter universal Li coefficients. Cross-channel scale predictability hypothesis is falsified."

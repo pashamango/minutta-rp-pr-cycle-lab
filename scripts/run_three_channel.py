@@ -30,6 +30,8 @@ def main():
         print(f"  Channel 3 (Li Coefficients):")
         print(f"    lambda_1: {b.channel_3_li['lambda_1']['midpoint']:.10f}")
         print(f"    All positive: {b.channel_3_li['all_positive']}")
+        print(f"  Controls: height f0=[{b.controls['height_control']['t_min_f0']:.4e}, {b.controls['height_control']['t_max_f0']:.4e}], "
+              f"width counts agree={b.controls['width_control']['counts_agree']}")
         print(f"  Predictive Scale Hypothesis:")
         print(f"    Verdict: {b.verdict}")
 
@@ -40,6 +42,7 @@ def main():
             "channel_1_ribbon": b.channel_1_ribbon,
             "channel_2_winding": b.channel_2_winding,
             "channel_3_li": b.channel_3_li,
+            "controls": b.controls,
             "scale_predictability_confirmed": b.scale_predictability_confirmed,
             "verdict": b.verdict,
         })

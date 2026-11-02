@@ -1,10 +1,10 @@
 # Three-Channel Experiment Report: Certified Numerics across Height Blocks
 
-**Linear Reference**: `MIN-88` / `PRD-28`  
+**Linear Reference**: `MIN-89` / `PRD-28` (builds on `MIN-88`)
 **Author**: `agy@wolfram`  
 **Reviewer**: `Muse`  
 **Date**: `2026-11-02`  
-**Status**: Completed / Ready for Review  
+**Status**: Builder handoff / Independent QA required
 
 ---
 
@@ -109,6 +109,18 @@ $$\lambda_n = n \cdot [w^n] \left( (1 + w)^{n-1} \ln \xi(1 + w) \right)$$
 ---
 
 ## 5. Synthesis & Cross-Channel Null-Result
+
+### 5.1 Width and height controls (MIN-89)
+
+Each block evaluates Channel 1 at `t_min`, `t_mid`, and `t_max`. Channel 2 is
+also evaluated on the wide strip `[0.1, 0.9]` and narrower strip `[0.2, 0.8]`;
+these controls are recorded in `EXPERIMENT_RESULTS.json`. Agreement of counts
+is a contour-consistency check, not evidence that Channel 1 predicts them.
+
+There are only three blocks and no held-out prediction protocol. Accordingly,
+the result is **no demonstrated predictive relationship**, not a universal
+impossibility theorem. The integer verdict remains conditional on the
+enclosure and no-boundary-zero assumptions documented in `channel_winding.py`.
 
 When comparing across height blocks $A [10, 25]$, $B [25, 35]$, and $C [35, 45]$:
 1. **Channel 1 Amplitude**: Drops exponentially from $1.72 \times 10^{-7}$ in Block A to $2.26 \times 10^{-16}$ in Block B and $4.48 \times 10^{-22}$ in Block C due to the gamma prefactor $\Gamma(s/2) \sim e^{-\frac{\pi}{4} t}$.
