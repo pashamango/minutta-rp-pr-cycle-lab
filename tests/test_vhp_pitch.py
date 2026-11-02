@@ -8,6 +8,7 @@ import subprocess
 import sys
 import json
 import hashlib
+import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -139,14 +140,60 @@ class TestVHPPitch(unittest.TestCase):
     def test_receipt_commit_matches_head(self):
         ref_data = json.loads(self.ref_json_path.read_text(encoding="utf-8"))
         receipt_commit = ref_data.get("verification_receipt", {}).get("commit_sha")
-        self.assertEqual(receipt_commit, "511565cc3c68e51ad616726579b9f613399038cd")
         self.assertNotEqual(receipt_commit, "HEAD")
+        self.assertTrue(bool(re.fullmatch(r"[0-9a-fA-F]{40}", receipt_commit)))
+
+        # Compare dynamically with git rev-parse HEAD (or its audited target commit parent)
+        res = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True
+        )
+        self.assertEqual(res.returncode, 0, f"git rev-parse HEAD failed: {res.stderr}")
+        head_sha = res.stdout.strip()
+
+        valid_shas = {head_sha}
+        res_parent = subprocess.run(
+            ["git", "rev-parse", "HEAD^"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True
+        )
+        if res_parent.returncode == 0:
+            valid_shas.add(res_parent.stdout.strip())
+
+        self.assertIn(
+            receipt_commit,
+            valid_shas,
+            f"Receipt commit '{receipt_commit}' must match repository HEAD ({head_sha}) or audited target parent commit"
+        )
 
         # Also check markdown receipt commit
         content = self.ref_pitch_path.read_text(encoding="utf-8")
         self.assertIn("Commit SHA:", content)
-        self.assertIn("511565cc3c68e51ad616726579b9f613399038cd", content)
+        self.assertIn(receipt_commit, content)
         self.assertNotIn("Commit SHA: HEAD", content)
+
+    def test_receipt_commit_rejects_outdated_baseline(self):
+        outdated_sha = "511565cc3c68e51ad616726579b9f613399038cd"
+        ref_data = json.loads(self.ref_json_path.read_text(encoding="utf-8"))
+        receipt_commit = ref_data.get("verification_receipt", {}).get("commit_sha")
+        self.assertNotEqual(
+            receipt_commit,
+            outdated_sha,
+            f"Receipt commit must not point to outdated rejected baseline {outdated_sha}"
+        )
+
+        import types
+        from importlib.machinery import SourceFileLoader
+        loader = SourceFileLoader("verify_vhp_pitch", str(self.verifier_script))
+        mod = types.ModuleType(loader.name)
+        loader.exec_module(mod)
+
+        ok, msg = mod.verify_receipt_commit(outdated_sha, REPO_ROOT)
+        self.assertFalse(ok, f"Verifier must strictly reject outdated baseline {outdated_sha}")
+        self.assertTrue("outdated" in msg or "rejected" in msg or "does not match" in msg)
 
     def test_wheel_axioms_cli_check_axioms(self):
         result = subprocess.run(
