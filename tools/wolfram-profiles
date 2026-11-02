@@ -1,0 +1,554 @@
+#!/usr/bin/env python3
+"""Wolfram Profiles Harness: Capacity-aware sovereign local compute profiles.
+
+Implements WOLFRAM_PROFILES/v1 and profile plan arbitration for Wolfram (16 GiB Apple Silicon).
+Mutually exclusive operational profiles: GUARD, FORGE, MATH.
+"""
+
+from __future__ import annotations
+
+import argparse
+import dataclasses
+import json
+import os
+import re
+import subprocess
+import sys
+from typing import Any, Dict, List, Optional, Tuple
+
+VERSION = "v1.0.0"
+PROTOCOL = "WOLFRAM_PROFILES/v1"
+
+# Protected system & network daemons that MUST NEVER be killed or suspended
+PROTECTED_PROCESSES = (
+    "fleetd",
+    "token_governor",
+    "wolfram-agent-watcher",
+    "wolfram-agent-reporter",
+    "tailscaled",
+    "Google Chrome",
+    "Chrome",
+    "sshd",
+    "launchd",
+)
+
+PROFILES = ("GUARD", "FORGE", "MATH")
+
+PROFILE_SPECS = {
+    "GUARD": {
+        "name": "GUARD",
+        "description": "Base sovereign telemetry, Token Governor, Darwin link, and read-only tools",
+        "heavy_workload": False,
+        "max_extra_rss_mib": 0,
+        "ollama_active": False,
+        "lean4_active": False,
+        "colima_active": False,
+        "max_parallel": 0,
+    },
+    "FORGE": {
+        "name": "FORGE",
+        "description": "Local resource-bounded Ollama generator (3B-8B quantized model, max_parallel=1)",
+        "heavy_workload": True,
+        "max_extra_rss_mib": 4096,  # 4 GiB max allocation
+        "ollama_active": True,
+        "lean4_active": False,
+        "colima_active": False,  # Bare-metal Apple Silicon preferred over VM
+        "max_parallel": 1,
+        "max_context_tokens": 4096,
+        "max_generation_tokens": 2048,
+        "allowed_tasks": [
+            "issue_decomposition",
+            "code_scaffolding",
+            "test_design",
+            "lint",
+            "synthetic_fixtures",
+            "literature_dedup",
+        ],
+        "prohibited_actions": [
+            "direct_git_push",
+            "certify_proofs",
+            "unreviewed_merge",
+            "quota_tier_switch",
+        ],
+    },
+    "MATH": {
+        "name": "MATH",
+        "description": "Formal research: Lean4/mathlib, Rust test harnesses, SymPy invariant search",
+        "heavy_workload": True,
+        "max_extra_rss_mib": 6144,  # 6 GiB max allocation for Lean4/rustc compilation spikes
+        "ollama_active": False,  # Ollama heavy models unloaded during math epochs
+        "lean4_active": True,
+        "colima_active": False,
+        "max_parallel": 1,
+        "allowed_tasks": [
+            "lean4_proof_checking",
+            "rust_invariant_fuzzing",
+            "sympy_symbolic_derivation",
+            "deterministic_boundary_search",
+        ],
+        "prohibited_actions": [
+            "concurrent_heavy_llm_inference",
+            "direct_git_push",
+            "unreviewed_merge",
+        ],
+    },
+}
+
+# Safety thresholds on 16 GiB Apple Silicon
+THRESHOLDS = {
+    "min_free_memory_percent": 25.0,  # Abort if system-wide memory free falls below 25%
+    "max_allowed_swap_used_mib": 14000.0,  # 14 GiB swap limit
+    "max_swap_growth_mib": 512.0,  # Abort if swap increases by > 512 MiB during run
+    "max_steady_pageouts_per_min": 2500,  # Pageout spike threshold
+}
+
+
+@dataclasses.dataclass
+class HostCapacityProbe:
+    total_ram_bytes: int
+    total_ram_gib: float
+    swap_total_mib: float
+    swap_used_mib: float
+    swap_free_mib: float
+    memory_free_percent: float
+    page_size_bytes: int
+    pages_free: int
+    pages_active: int
+    pages_inactive: int
+    pages_wired: int
+    pages_compressed: int
+    pageins: int
+    pageouts: int
+    swapins: int
+    swapouts: int
+    timestamp_utc: str
+
+    def to_dict(self) -> Dict[str, Any]:
+        return dataclasses.asdict(self)
+
+
+def parse_sysctl_memsize(output: str) -> int:
+    match = re.search(r"(\d+)", output)
+    if not match:
+        raise ValueError(f"Unable to parse memsize from output: {output!r}")
+    return int(match.group(1))
+
+
+def parse_swapusage(output: str) -> Tuple[float, float, float]:
+    """Parses sysctl vm.swapusage output.
+    Format: total = 14336.00M  used = 12820.06M  free = 1515.94M
+    """
+    total_m = re.search(r"total\s*=\s*([\d\.]+)M", output)
+    used_m = re.search(r"used\s*=\s*([\d\.]+)M", output)
+    free_m = re.search(r"free\s*=\s*([\d\.]+)M", output)
+    if not (total_m and used_m and free_m):
+        raise ValueError(f"Unable to parse vm.swapusage: {output!r}")
+    return float(total_m.group(1)), float(used_m.group(1)), float(free_m.group(1))
+
+
+def parse_memory_pressure(output: str) -> float:
+    """Parses memory_pressure output for free percentage."""
+    match = re.search(r"System-wide memory free percentage:\s*(\d+)%", output)
+    if match:
+        return float(match.group(1))
+    # Fallback to estimation from percentage
+    match_est = re.search(r"(\d+)%", output)
+    if match_est:
+        return float(match_est.group(1))
+    return 50.0
+
+
+def parse_vm_stat(output: str) -> Dict[str, int]:
+    """Parses vm_stat output into dictionary of counts."""
+    stats: Dict[str, int] = {}
+    for line in output.splitlines():
+        line = line.strip()
+        if not line or line.startswith("Mach"):
+            continue
+        parts = line.split(":")
+        if len(parts) == 2:
+            key = parts[0].strip().strip('"')
+            val_match = re.search(r"(\d+)", parts[1].replace(".", ""))
+            if val_match:
+                stats[key] = int(val_match.group(1))
+    return stats
+
+
+def sample_host_capacity(
+    sysctl_mem_raw: Optional[str] = None,
+    sysctl_swap_raw: Optional[str] = None,
+    memory_pressure_raw: Optional[str] = None,
+    vm_stat_raw: Optional[str] = None,
+) -> HostCapacityProbe:
+    """Samples host capacity metrics using system commands or provided raw strings."""
+    import datetime as dt
+
+    # 1. Total RAM
+    if sysctl_mem_raw is None:
+        sysctl_mem_raw = subprocess.check_output(
+            ["sysctl", "-n", "hw.memsize"], text=True
+        )
+    ram_bytes = parse_sysctl_memsize(sysctl_mem_raw)
+    ram_gib = round(ram_bytes / (1024**3), 2)
+
+    # 2. Swap
+    if sysctl_swap_raw is None:
+        sysctl_swap_raw = subprocess.check_output(
+            ["sysctl", "-n", "vm.swapusage"], text=True
+        )
+    swap_total, swap_used, swap_free = parse_swapusage(sysctl_swap_raw)
+
+    # 3. Memory pressure
+    if memory_pressure_raw is None:
+        try:
+            memory_pressure_raw = subprocess.check_output(
+                ["memory_pressure"], text=True, stderr=subprocess.DEVNULL
+            )
+        except Exception:
+            memory_pressure_raw = "System-wide memory free percentage: 50%"
+    mem_free_pct = parse_memory_pressure(memory_pressure_raw)
+
+    # 4. vm_stat
+    if vm_stat_raw is None:
+        try:
+            vm_stat_raw = subprocess.check_output(["vm_stat"], text=True)
+        except Exception:
+            vm_stat_raw = ""
+    vm_stats = parse_vm_stat(vm_stat_raw)
+
+    page_size = 16384  # Standard on Apple Silicon arm64 macOS
+    pages_free = vm_stats.get("Pages free", 0)
+    pages_active = vm_stats.get("Pages active", 0)
+    pages_inactive = vm_stats.get("Pages inactive", 0)
+    pages_wired = vm_stats.get("Pages wired down", 0)
+    pages_compressed = vm_stats.get("Pages stored in compressor", 0)
+    pageins = vm_stats.get("Pageins", 0)
+    pageouts = vm_stats.get("Pageouts", 0)
+    swapins = vm_stats.get("Swapins", 0)
+    swapouts = vm_stats.get("Swapouts", 0)
+
+    ts = dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")
+
+    return HostCapacityProbe(
+        total_ram_bytes=ram_bytes,
+        total_ram_gib=ram_gib,
+        swap_total_mib=swap_total,
+        swap_used_mib=swap_used,
+        swap_free_mib=swap_free,
+        memory_free_percent=mem_free_pct,
+        page_size_bytes=page_size,
+        pages_free=pages_free,
+        pages_active=pages_active,
+        pages_inactive=pages_inactive,
+        pages_wired=pages_wired,
+        pages_compressed=pages_compressed,
+        pageins=pageins,
+        pageouts=pageouts,
+        swapins=swapins,
+        swapouts=swapouts,
+        timestamp_utc=ts,
+    )
+
+
+def plan_profile_transition(
+    target_profile: str,
+    current_profile: str = "GUARD",
+    probe: Optional[HostCapacityProbe] = None,
+    active_processes: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    """Generates a safe, read-only plan for transitioning to target_profile.
+    Validates mutual exclusion (FORGE xor MATH), headroom, and protected daemons.
+    """
+    if target_profile not in PROFILES:
+        raise ValueError(
+            f"Invalid target profile: {target_profile}. Must be one of {PROFILES}"
+        )
+    if current_profile not in PROFILES:
+        raise ValueError(f"Invalid current profile: {current_profile}")
+
+    if probe is None:
+        probe = sample_host_capacity()
+
+    spec = PROFILE_SPECS[target_profile]
+    actions_to_stop: List[str] = []
+    actions_to_start: List[str] = []
+    safety_violations: List[str] = []
+    warnings: List[str] = []
+
+    # 1. Capacity check: Memory Free Percentage
+    if probe.memory_free_percent < THRESHOLDS["min_free_memory_percent"]:
+        safety_violations.append(
+            f"System memory free percentage ({probe.memory_free_percent:.1f}%) "
+            f"is below safe threshold ({THRESHOLDS['min_free_memory_percent']:.1f}%)."
+        )
+
+    # 2. Swap headroom check
+    if probe.swap_used_mib > THRESHOLDS["max_allowed_swap_used_mib"]:
+        safety_violations.append(
+            f"Swap usage ({probe.swap_used_mib:.1f} MiB) exceeds safety ceiling "
+            f"({THRESHOLDS['max_allowed_swap_used_mib']:.1f} MiB)."
+        )
+
+    # 3. Mutual exclusivity enforcement (FORGE xor MATH)
+    if target_profile == "FORGE":
+        if current_profile == "MATH":
+            actions_to_stop.append("MATH formal solver / Lean4 compiler sessions")
+        actions_to_start.append("Local Ollama single model harness (3B-8B quantized, max_parallel=1)")
+    elif target_profile == "MATH":
+        if current_profile == "FORGE":
+            actions_to_stop.append("Local Ollama loaded generator models")
+        actions_to_start.append("Lean4 / Rust proof check session")
+    elif target_profile == "GUARD":
+        if current_profile == "FORGE":
+            actions_to_stop.append("Local Ollama loaded generator models")
+        if current_profile == "MATH":
+            actions_to_stop.append("MATH formal solver / Lean4 compiler sessions")
+
+    # 4. Check protected processes (they must NEVER be in actions_to_stop)
+    for protected in PROTECTED_PROCESSES:
+        for action in actions_to_stop:
+            if protected.lower() in action.lower():
+                safety_violations.append(
+                    f"CRITICAL SAFETY VIOLATION: Planned action '{action}' targets protected service '{protected}'!"
+                )
+
+    # 5. Resident swap note (High resident swap != continued swap growth)
+    if probe.swap_used_mib > 8000:
+        warnings.append(
+            f"High resident swap observed ({probe.swap_used_mib:.1f} MiB). "
+            "Note: macOS arm64 resident swap is retained by design; verify swap growth delta over 5m window before aborting."
+        )
+
+    is_admissible = len(safety_violations) == 0
+
+    return {
+        "protocol": PROTOCOL,
+        "current_profile": current_profile,
+        "target_profile": target_profile,
+        "spec": spec,
+        "admissible": is_admissible,
+        "violations": safety_violations,
+        "warnings": warnings,
+        "actions_to_stop": actions_to_stop,
+        "actions_to_start": actions_to_start,
+        "protected_services_preserved": list(PROTECTED_PROCESSES),
+        "capacity_probe": probe.to_dict(),
+        "thresholds": THRESHOLDS,
+    }
+
+
+def evaluate_falsifiable_benefit(
+    task_id: str,
+    baseline_external_tokens: int,
+    local_forge_tokens_generated: int,
+    tests_passed: bool,
+    proof_certified: bool,
+    human_review_minutes: float,
+    false_done_claims: int,
+    wall_clock_seconds: float,
+    estimated_external_savings_cents: float,
+) -> Dict[str, Any]:
+    """Calculates falsifiable benefit metrics comparing local FORGE vs external workflow.
+    Rule: Never equate local task count with monetary savings or correctness.
+    Zero false DONE claims is mandatory for admissibility.
+    """
+    valid = True
+    rejection_reasons: List[str] = []
+
+    if false_done_claims > 0:
+        valid = False
+        rejection_reasons.append(
+            f"FALSE_DONE_DETECTED: {false_done_claims} false completion claims reported. Rejection mandatory."
+        )
+
+    if not tests_passed:
+        valid = False
+        rejection_reasons.append("TESTS_FAILED: Scaffolding or code did not pass validated unit tests.")
+
+    # Net efficiency score: external tokens saved per human review minute
+    net_token_efficiency = 0.0
+    if human_review_minutes > 0:
+        net_token_efficiency = round(baseline_external_tokens / human_review_minutes, 2)
+
+    return {
+        "task_id": task_id,
+        "valid": valid,
+        "admissible_for_token_substitution": valid and (baseline_external_tokens > 0),
+        "rejection_reasons": rejection_reasons,
+        "metrics": {
+            "baseline_external_tokens": baseline_external_tokens,
+            "local_forge_tokens_generated": local_forge_tokens_generated,
+            "tests_passed": tests_passed,
+            "proof_certified": proof_certified,
+            "human_review_minutes": human_review_minutes,
+            "false_done_claims": false_done_claims,
+            "wall_clock_seconds": wall_clock_seconds,
+            "estimated_external_savings_cents": estimated_external_savings_cents,
+            "net_tokens_saved_per_review_minute": net_token_efficiency,
+        },
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Wolfram Profiles Harness: Capacity-aware sovereign compute"
+    )
+    subparsers = parser.add_subparsers(dest="subcommand", required=True)
+
+    # Probe subcommand
+    probe_parser = subparsers.add_parser("probe", help="Sample live host capacity")
+    probe_parser.add_argument("--json", action="store_true", help="Output JSON format")
+
+    # Plan subcommand
+    plan_parser = subparsers.add_parser("plan", help="Generate read-only profile plan")
+    plan_parser.add_argument(
+        "--target",
+        choices=PROFILES,
+        required=True,
+        help="Target operational profile (GUARD, FORGE, MATH)",
+    )
+    plan_parser.add_argument(
+        "--current",
+        choices=PROFILES,
+        default="GUARD",
+        help="Current operational profile (default: GUARD)",
+    )
+    plan_parser.add_argument("--json", action="store_true", help="Output JSON format")
+
+    # Evaluate subcommand
+    eval_parser = subparsers.add_parser(
+        "evaluate", help="Score task run under falsifiable benefit test"
+    )
+    eval_parser.add_argument("--task", required=True, help="Task identifier (e.g. TASK-01)")
+    eval_parser.add_argument(
+        "--baseline-tokens",
+        type=int,
+        required=True,
+        help="Estimated external baseline tokens",
+    )
+    eval_parser.add_argument(
+        "--forge-tokens",
+        type=int,
+        default=0,
+        help="Local tokens generated by FORGE",
+    )
+    eval_parser.add_argument(
+        "--tests-passed",
+        action="store_true",
+        help="Whether generated code passed test suite",
+    )
+    eval_parser.add_argument(
+        "--proof-certified",
+        action="store_true",
+        help="Whether formal proof was verified (MATH only)",
+    )
+    eval_parser.add_argument(
+        "--review-minutes",
+        type=float,
+        default=1.0,
+        help="Human review minutes spent",
+    )
+    eval_parser.add_argument(
+        "--false-dones",
+        type=int,
+        default=0,
+        help="Number of false DONE claims (zero tolerance)",
+    )
+    eval_parser.add_argument(
+        "--wall-seconds",
+        type=float,
+        default=30.0,
+        help="Execution wall clock seconds",
+    )
+    eval_parser.add_argument(
+        "--savings-cents",
+        type=float,
+        default=0.0,
+        help="Estimated dollar savings in cents",
+    )
+    eval_parser.add_argument("--json", action="store_true", help="Output JSON format")
+
+    args = parser.parse_args()
+
+    if args.subcommand == "probe":
+        probe = sample_host_capacity()
+        if args.json:
+            print(json.dumps(probe.to_dict(), indent=2))
+        else:
+            print(f"=== Wolfram Capacity Probe ({probe.timestamp_utc}) ===")
+            print(f"RAM Total:          {probe.total_ram_gib:.2f} GiB")
+            print(f"Memory Free:        {probe.memory_free_percent:.1f}%")
+            print(f"Swap Used / Total:  {probe.swap_used_mib:.1f} / {probe.swap_total_mib:.1f} MiB")
+            print(f"Pageins / Pageouts: {probe.pageins} / {probe.pageouts}")
+            print(f"Swapins / Swapouts: {probe.swapins} / {probe.swapouts}")
+            print(f"Compressed Pages:   {probe.pages_compressed}")
+
+    elif args.subcommand == "plan":
+        probe = sample_host_capacity()
+        plan = plan_profile_transition(
+            target_profile=args.target,
+            current_profile=args.current,
+            probe=probe,
+        )
+        if args.json:
+            print(json.dumps(plan, indent=2))
+        else:
+            print(f"=== Profile Plan: {args.current} -> {args.target} ===")
+            print(f"Admissible: {plan['admissible']}")
+            if plan["violations"]:
+                print("Violations:")
+                for v in plan["violations"]:
+                    print(f"  - ❌ {v}")
+            if plan["warnings"]:
+                print("Warnings:")
+                for w in plan["warnings"]:
+                    print(f"  - ⚠️  {w}")
+            print("Actions to stop:")
+            for s in plan["actions_to_stop"] or ["(none)"]:
+                print(f"  - {s}")
+            print("Actions to start:")
+            for a in plan["actions_to_start"] or ["(none)"]:
+                print(f"  - {a}")
+            print("Protected daemons preserved:")
+            for p in plan["protected_services_preserved"]:
+                print(f"  - 🛡️  {p}")
+
+        if not plan["admissible"]:
+            sys.exit(1)
+
+    elif args.subcommand == "evaluate":
+        res = evaluate_falsifiable_benefit(
+            task_id=args.task,
+            baseline_external_tokens=args.baseline_tokens,
+            local_forge_tokens_generated=args.forge_tokens,
+            tests_passed=args.tests_passed,
+            proof_certified=args.proof_certified,
+            human_review_minutes=args.review_minutes,
+            false_done_claims=args.false_dones,
+            wall_clock_seconds=args.wall_seconds,
+            estimated_external_savings_cents=args.savings_cents,
+        )
+        if args.json:
+            print(json.dumps(res, indent=2))
+        else:
+            print(f"=== Falsifiable Benefit Evaluation: {args.task} ===")
+            print(f"Valid:                        {res['valid']}")
+            print(f"Admissible for Substitution:  {res['admissible_for_token_substitution']}")
+            if res["rejection_reasons"]:
+                print("Rejection reasons:")
+                for r in res["rejection_reasons"]:
+                    print(f"  - ❌ {r}")
+            m = res["metrics"]
+            print(f"Baseline External Tokens:     {m['baseline_external_tokens']}")
+            print(f"Local FORGE Tokens:           {m['local_forge_tokens_generated']}")
+            print(f"Tests Passed:                 {m['tests_passed']}")
+            print(f"Review Minutes:               {m['human_review_minutes']}")
+            print(f"False DONE Claims:            {m['false_done_claims']}")
+            print(f"Tokens/Review Minute:         {m['net_tokens_saved_per_review_minute']}")
+
+        if not res["valid"]:
+            sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
