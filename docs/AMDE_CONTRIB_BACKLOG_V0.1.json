@@ -1,0 +1,20 @@
+{
+  "protocol": "amde-contrib-0.1",
+  "updated": "2026-11-02",
+  "open": true,
+  "items": [
+    {
+      "id": "amde/millennium-problems/riemann-hypothesis/critical-strip",
+      "title": "Critical Strip: Lean verification + arXiv template",
+      "path": ["Millennium Problems", "Riemann Hypothesis", "Critical Strip 0.618-0.482"],
+      "scope": "Verify explicitly stated bounded lemmas in Lean and populate the arXiv template; do not claim an RH proof.",
+      "deliverables": ["Lean source", "reproducible checks", "arXiv template draft", "signed JSON attestation"],
+      "status": "open",
+      "starter_example": true,
+      "exclusive": false,
+      "checkout_count": 0,
+      "valid_contributors": [],
+      "merge_policy": "triage-equivalent-prs-credit-all-valid-contributors"
+    }
+  ]
+}
