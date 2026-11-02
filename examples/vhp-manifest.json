@@ -1,0 +1,17 @@
+{
+  "manifestVersion": "1.0",
+  "submissionId": "vhp-min66-sync-bridge-001",
+  "createdAt": "2026-11-02T22:00:00Z",
+  "expiresAt": "2026-11-09T22:00:00Z",
+  "project": {"id": "VHP-001", "name": "Template Venture Product", "ticketId": "MIN-66"},
+  "sources": {
+    "drive": {"fileId": "1exampleDriveFileId", "webUrl": "https://drive.google.com/file/d/1exampleDriveFileId/view"},
+    "linear": {"issueId": "MIN-66", "issueUrl": "https://linear.app/mindrock/issue/MIN-66", "state": "In Review"},
+    "github": {"repoUrl": "https://github.com/pashamango/minutta-rp-pr-cycle-lab", "branch": "minutta/min-66-vhp-08-sync-bridge-manifest", "commitSha": "0123456789abcdef0123456789abcdef01234567"}
+  },
+  "artifacts": [
+    {"path": "docs/VHP_08_SYNC_BRIDGE_SPEC.md", "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "mediaType": "text/markdown"},
+    {"path": "schemas/vhp-manifest.schema.json", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "mediaType": "application/schema+json"}
+  ],
+  "policy": {"humanApprovalRequired": true, "autoMerge": false, "allowedHosts": ["drive.google.com", "linear.app", "github.com"]}
+}
