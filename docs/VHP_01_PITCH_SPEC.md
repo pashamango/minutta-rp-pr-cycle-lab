@@ -35,10 +35,10 @@ The **VHP-01 Pitch Protocol** defines the high-impact, 90-second executive prese
 [Mathematical / algorithmic breakthrough: formalization, totalization, verified theorem proving, zero-panic guarantee. 400-600 chars.]
 
 ## 3. Verification Receipt
-- **Target Engine / Toolchain:** [e.g., Lean 4 v4.15.0 / Python 3.10+]
-- **Axiom Audit:** [e.g., 0 sorry / 0 admit / 0 unreviewed axioms]
+- **Target Engine / Toolchain:** [e.g., Python 3.10+ Wheel Verifier / Lean 4]
+- **Axiom Audit:** [e.g., 8/8 Carlström wheel axioms verified | 0 unreviewed axioms]
 - **Repository:** `[canonical git URL]`
-- **Commit SHA:** `[64 or 40 hex char commit hash]`
+- **Commit SHA:** `[HEAD or 40/64 hex char commit hash]`
 - **Replay Command:** `[one-line clean execution command]`
 ```
 

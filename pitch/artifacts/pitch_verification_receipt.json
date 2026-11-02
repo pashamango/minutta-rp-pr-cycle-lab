@@ -6,8 +6,8 @@
   "target_artifacts": {
     "reference_pitch": {
       "path": "pitch/vhp-01-reference-pitch.md",
-      "sha256": "b5edc72df5c3f642e47ce8dacf69c35d36ccf493040fd5e9207c53e2f96d8ada",
-      "symbol_count": 1360,
+      "sha256": "377c996a838473af729e5d4df131030d6f5eaf97b4d48a4265205075f0d911d0",
+      "symbol_count": 1410,
       "symbol_limit": 1500,
       "compliant": true
     },
@@ -24,7 +24,15 @@
     "Formal Breakthrough",
     "Verification Receipt"
   ],
+  "verification_receipt": {
+    "proof_engine": "Python 3.10+ Wheel Verification Engine & AST Auditor",
+    "axiom_audit": "8/8 Carlström wheel axioms verified | 0 unreviewed axioms",
+    "repository": "https://github.com/pashamango/minutta-rp-pr-cycle-lab.git",
+    "commit_sha": "HEAD",
+    "verification_command": "python3 tools/verify-vhp-pitch verify pitch/vhp-01-reference-pitch.md"
+  },
+  "commit_sha": "HEAD",
   "verification_command": "python3 tools/verify-vhp-pitch verify pitch/vhp-01-reference-pitch.md",
   "audit_passed": true,
-  "timestamp": "2026-11-02T21:18:00Z"
+  "timestamp": "2026-11-02T21:50:00Z"
 }

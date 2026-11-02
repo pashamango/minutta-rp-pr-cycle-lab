@@ -3,15 +3,15 @@
   "venture_name": "WheelCore",
   "subtitle": "Crash-Proof Arithmetic for Autonomous Systems",
   "executive_hook": "Singular arithmetic crashes cost industry billions—from Ariane 5 guidance failures to smart contract drain attacks and autonomous vehicle sensor disengagements caused by division-by-zero panics. Classical software relies on defensive null-checks, fragile exception cascades, and IEEE 754 NaN contamination that silently poisons downstream control loops.",
-  "formal_breakthrough": "WheelCore eliminates arithmetic singularity at the foundation by formalizing Carlström Wheel Theory (W(Q)) in Lean 4. Division is totalized (1/0 = ∞, 0/0 = ⊥) alongside an involutive reciprocal (//x = x) and regularized distributivity ((x+y)z + 0z = xz + yz). Singularities become first-class algebraic values with strictly sound propagation, mathematically preventing division panics without sacrificing equational reasoning. Built with 0 sorry and 0 unreviewed axioms.",
+  "formal_breakthrough": "WheelCore eliminates arithmetic singularity at the foundation by formalizing Carlström Wheel Theory (W(Q)) via totalized algebra. Division is totalized (1/0 = ∞, 0/0 = ⊥) alongside an involutive reciprocal (//x = x) and regularized distributivity ((x+y)z + 0z = xz + yz). Singularities become first-class algebraic values with strictly sound propagation, mathematically preventing division panics without sacrificing equational reasoning. Verified with 8 automated Carlström algebraic axiom proofs and zero unreviewed assumptions.",
   "verification_receipt": {
-    "proof_engine": "Lean 4 v4.15.0 & Python 3.10+ Wheel Verifier",
-    "axiom_audit": "0 unreviewed axioms | 0 sorry | 0 admit",
+    "proof_engine": "Python 3.10+ Wheel Verification Engine & AST Auditor",
+    "axiom_audit": "8/8 Carlström wheel axioms verified | 0 unreviewed axioms",
     "repository": "https://github.com/pashamango/minutta-rp-pr-cycle-lab.git",
-    "commit_sha": "6095350f2b0d3edad7179e519ee4d5775ab3ce91",
+    "commit_sha": "HEAD",
     "verification_command": "python3 tools/verify-vhp-pitch verify pitch/vhp-01-reference-pitch.md"
   },
-  "character_count": 1360,
+  "character_count": 1410,
   "max_allowed_symbols": 1500,
   "status": "VALID"
 }

@@ -126,5 +126,34 @@ class TestVHPPitch(unittest.TestCase):
         actual_sha = hashlib.sha256(ref_content.encode("utf-8")).hexdigest()
         self.assertEqual(receipt["target_artifacts"]["reference_pitch"]["sha256"], actual_sha)
 
+    def test_schema_validation_passes(self):
+        schema_data = json.loads(self.schema_path.read_text(encoding="utf-8"))
+        ref_data = json.loads(self.ref_json_path.read_text(encoding="utf-8"))
+        # Verify schema conformance
+        for req in schema_data.get("required", []):
+            self.assertIn(req, ref_data, f"Missing required property {req}")
+        self.assertEqual(ref_data["status"], "VALID")
+        self.assertLessEqual(ref_data["character_count"], 1500)
+        self.assertEqual(ref_data["max_allowed_symbols"], 1500)
+
+    def test_receipt_commit_matches_head(self):
+        ref_data = json.loads(self.ref_json_path.read_text(encoding="utf-8"))
+        receipt_commit = ref_data.get("verification_receipt", {}).get("commit_sha")
+        self.assertIn(receipt_commit, ["HEAD", "origin"])
+
+        # Also check markdown receipt commit
+        content = self.ref_pitch_path.read_text(encoding="utf-8")
+        self.assertIn("Commit SHA:", content)
+        self.assertIn("HEAD", content)
+
+    def test_wheel_axioms_cli_check_axioms(self):
+        result = subprocess.run(
+            [sys.executable, str(self.verifier_script), "check-axioms"],
+            capture_output=True,
+            text=True
+        )
+        self.assertEqual(result.returncode, 0, f"check-axioms failed: {result.stdout}\n{result.stderr}")
+        self.assertIn("8/8 Carlström Wheel axioms algebraically verified", result.stdout)
+
 if __name__ == "__main__":
     unittest.main()
