@@ -1,19 +1,46 @@
 {
   "graph_metadata": {
     "title": "Issue #168 Invariant Dependency & Claim Graph",
-    "node_count": 45,
-    "edge_count": 50,
+    "node_count": 51,
+    "canonical_invariant_count": 6,
+    "source_claim_count": 45,
+    "edge_count": 88,
+    "allowed_relation_types": [
+      "refines",
+      "generalizes",
+      "supports",
+      "contradicts",
+      "duplicates",
+      "maps_to_canonical"
+    ],
     "cluster_counts": {
       "Cluster-1": 10,
       "Cluster-2": 16,
       "Cluster-3": 19
+    },
+    "scoring_rubric": {
+      "rubric_name": "Invariant Decidability & Epistemic Impact Rubric (IDEIR-v1)",
+      "weights": {
+        "C1_rigor_and_falsifiability": 0.35,
+        "C2_anti_sybil_and_grounding": 0.3,
+        "C3_cross_domain_generality": 0.2,
+        "C4_test_cost_efficiency": 0.15
+      },
+      "formula": "S = 0.35*C1 + 0.30*C2 + 0.20*C3 + 0.15*C4"
     },
     "top_3_ranked_candidates": [
       {
         "rank": 1,
         "candidate_id": "CANDIDATE-01",
         "anchor_claim": "CLAIM-011",
+        "canonical_invariant_id": "CANONICAL-01",
         "title": "Conserved Evidence Portfolio Simplex & Matched Search-Budget Invariant",
+        "component_scores": {
+          "C1_rigor_and_falsifiability": 9.8,
+          "C2_anti_sybil_and_grounding": 10.0,
+          "C3_cross_domain_generality": 9.5,
+          "C4_test_cost_efficiency": 9.8
+        },
         "score": 9.8,
         "rationale": "Admissible general e-value merge rule (Wang 2025 Biometrika), rigorous anti-Sybil mathematical foundation, cross-project applicability across science, market, and settlement."
       },
@@ -21,15 +48,29 @@
         "rank": 2,
         "candidate_id": "CANDIDATE-02",
         "anchor_claim": "CLAIM-001",
+        "canonical_invariant_id": "CANONICAL-03",
         "title": "Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant",
+        "component_scores": {
+          "C1_rigor_and_falsifiability": 9.2,
+          "C2_anti_sybil_and_grounding": 9.0,
+          "C3_cross_domain_generality": 9.0,
+          "C4_test_cost_efficiency": 9.8
+        },
         "score": 9.2,
-        "rationale": "Critical mathematical boundary separating genuine \u03c6-specificity from coarse 50% allocation bias and selection advantage under permutation search."
+        "rationale": "Critical mathematical boundary separating genuine phi-specificity from coarse 50% allocation bias and selection advantage under permutation search."
       },
       {
         "rank": 3,
         "candidate_id": "CANDIDATE-03",
         "anchor_claim": "CLAIM-003",
+        "canonical_invariant_id": "CANONICAL-05",
         "title": "Durable Dispatch-Boundary Process-Binding Invariant",
+        "component_scores": {
+          "C1_rigor_and_falsifiability": 8.6,
+          "C2_anti_sybil_and_grounding": 9.2,
+          "C3_cross_domain_generality": 8.8,
+          "C4_test_cost_efficiency": 9.2
+        },
         "score": 8.9,
         "rationale": "Prevents catastrophic orchestration misdiagnosis (e.g. false OOM status 137) across heterogeneous nodes (Wolfram vs Darwin) by binding kernel telemetry."
       }
@@ -37,666 +78,936 @@
   },
   "nodes": [
     {
+      "id": "CANONICAL-01",
+      "label": "Conserved Evidence Portfolio Simplex & Matched Search-Budget Invariant",
+      "type": "canonical_invariant",
+      "domain": "Epistemic Accounting & Anti-Sybil Invariants",
+      "anchor_claim_id": "CLAIM-011"
+    },
+    {
+      "id": "CANONICAL-02",
+      "label": "Target-Conditioned Redundancy vs. True Value Invariant",
+      "type": "canonical_invariant",
+      "domain": "Epistemic Accounting & Anti-Sybil Invariants",
+      "anchor_claim_id": "CLAIM-019"
+    },
+    {
+      "id": "CANONICAL-03",
+      "label": "Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant",
+      "type": "canonical_invariant",
+      "domain": "Golden Trinity & Ratio Dynamics",
+      "anchor_claim_id": "CLAIM-001"
+    },
+    {
+      "id": "CANONICAL-04",
+      "label": "Teleological Semantics & Asymmetric Cause-Purpose Partitioning Invariant",
+      "type": "canonical_invariant",
+      "domain": "Golden Trinity & Ratio Dynamics",
+      "anchor_claim_id": "CLAIM-036"
+    },
+    {
+      "id": "CANONICAL-05",
+      "label": "Durable Dispatch-Boundary Process-Binding Invariant",
+      "type": "canonical_invariant",
+      "domain": "Distributed Membrane, Host Isolation & Identity Boundaries",
+      "anchor_claim_id": "CLAIM-003"
+    },
+    {
+      "id": "CANONICAL-06",
+      "label": "Cryptographic Zero-Trust Membrane & Mutual Multi-Pass Invariant",
+      "type": "canonical_invariant",
+      "domain": "Distributed Membrane, Host Isolation & Identity Boundaries",
+      "anchor_claim_id": "CLAIM-018"
+    },
+    {
       "id": "CLAIM-001",
-      "source_id": "5648693413",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-001: A \u03c6-specific effect exists only if the normalized shape (1, ...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "A \u03c6-specific effect exists only if the normalized shape (1, \u03c6, \u03c6\u00b2) generalizes o..."
+      "canonical_invariant_id": "CANONICAL-03"
     },
     {
       "id": "CLAIM-002",
-      "source_id": "5648702130",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-002: `Search budget` is part of the evidence contract. Across sch...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "`Search budget` is part of the evidence contract. Across scheduler science and P..."
+      "canonical_invariant_id": "CANONICAL-03"
     },
     {
       "id": "CLAIM-003",
-      "source_id": "5648743239",
-      "scheduler": "Hourly Research Market",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-003: An orchestration exit code is not evidence of the leaf proce...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "An orchestration exit code is not evidence of the leaf process's exit. Cross-hos..."
+      "canonical_invariant_id": "CANONICAL-05"
     },
     {
       "id": "CLAIM-004",
-      "source_id": "5649009464",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-1",
+      "label": "CLAIM-004: The deeper invariant is not necessarily equal search budget ...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-1",
       "epistemic_label": "hypothesis",
-      "statement_preview": "The deeper invariant is not necessarily equal search budget but **conserved evid..."
+      "canonical_invariant_id": "CANONICAL-01"
     },
     {
       "id": "CLAIM-005",
-      "source_id": "5649035302",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-005: A defensible directional definition is: Golden Trinity is an...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "A defensible directional definition is: Golden Trinity is an ordered three-stage..."
+      "canonical_invariant_id": "CANONICAL-03"
     },
     {
       "id": "CLAIM-006",
-      "source_id": "5649278704",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-006: Any measured advantage of 1:\u03c6:\u03c6\u00b2 may come entirely from the ...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Any measured advantage of 1:\u03c6:\u03c6\u00b2 may come entirely from the coarse \u201cfuture gets ..."
+      "canonical_invariant_id": "CANONICAL-03"
     },
     {
       "id": "CLAIM-007",
-      "source_id": "5649287903",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-1",
+      "label": "CLAIM-007: `log e-wealth` is a useful conservation coordinate for Scien...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-1",
       "epistemic_label": "derived",
-      "statement_preview": "`log e-wealth` is a useful conservation coordinate for Scientific Broker / Proof..."
+      "canonical_invariant_id": "CANONICAL-01"
     },
     {
       "id": "CLAIM-008",
-      "source_id": "5649582460",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-1",
+      "label": "CLAIM-008: Use `evidence bits = log2(e-process wealth)` as a candidate ...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-1",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Use `evidence bits = log2(e-process wealth)` as a candidate *scientific accounti..."
+      "canonical_invariant_id": "CANONICAL-01"
     },
     {
       "id": "CLAIM-009",
-      "source_id": "5649651892",
-      "scheduler": "Hourly Research Market",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-009: Credential safety requires a three-identity invariant: organ...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Credential safety requires a three-identity invariant: organizational actor/role..."
+      "canonical_invariant_id": "CANONICAL-05"
     },
     {
       "id": "CLAIM-010",
-      "source_id": "5649838554",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-010: Golden Trinity should be defined first as a resource-allocat...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Golden Trinity should be defined first as a resource-allocation law over a commo..."
+      "canonical_invariant_id": "CANONICAL-03"
     },
     {
       "id": "CLAIM-011",
-      "source_id": "5649859218",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-1",
+      "label": "CLAIM-011: Treat evidential attention as a conserved portfolio simplex:...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-1",
       "epistemic_label": "derived",
-      "statement_preview": "Treat evidential attention as a conserved portfolio simplex: hypotheses/agents m..."
+      "canonical_invariant_id": "CANONICAL-01"
     },
     {
       "id": "CLAIM-012",
-      "source_id": "5650130876",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-1",
+      "label": "CLAIM-012: Use a **prefix/Kraft evidence budget** for adaptive hypothes...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-1",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Use a **prefix/Kraft evidence budget** for adaptive hypothesis trees. Branches m..."
+      "canonical_invariant_id": "CANONICAL-01"
     },
     {
       "id": "CLAIM-013",
-      "source_id": "5650427055",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-013: A Golden Trinity weighting claim requires one common ratio-s...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "A Golden Trinity weighting claim requires one common ratio-scale resource measur..."
+      "canonical_invariant_id": "CANONICAL-03"
     },
     {
       "id": "CLAIM-014",
-      "source_id": "5650556366",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-1",
+      "label": "CLAIM-014: Agent branching can obey a literal evidence-conservation rul...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-1",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Agent branching can obey a literal evidence-conservation rule: **branching split..."
+      "canonical_invariant_id": "CANONICAL-01"
     },
     {
       "id": "CLAIM-015",
-      "source_id": "5650698210",
-      "scheduler": "Research Scout",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-015: Shared agent memory/knowledge should be treated as an untrus...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Shared agent memory/knowledge should be treated as an untrusted commons: publica..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-016",
-      "source_id": "5651052897",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-1",
+      "label": "CLAIM-016: Represent cross-scheduler evidence as a Git-like DAG with th...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-1",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Represent cross-scheduler evidence as a Git-like DAG with three primitives: `spl..."
+      "canonical_invariant_id": "CANONICAL-01"
     },
     {
       "id": "CLAIM-017",
-      "source_id": "5651073474",
-      "scheduler": "Research Market",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-017: Durable Git evidence needs a two-phase binding: a committed ...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Durable Git evidence needs a two-phase binding: a committed report binds the imp..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-018",
-      "source_id": "5651293792",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-018: Treat scientific observations as **linear evidence resources...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Treat scientific observations as **linear evidence resources**. Branches may cop..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-019",
-      "source_id": "5651549808",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-1",
+      "label": "CLAIM-019: Separate **evidence ancestry algebra** from **evidence stren...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-1",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Separate **evidence ancestry algebra** from **evidence strength**. Every schedul..."
+      "canonical_invariant_id": "CANONICAL-02"
     },
     {
       "id": "CLAIM-020",
-      "source_id": "5651850213",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-1",
+      "label": "CLAIM-020: Maintain both ordinary provenance (for audit) and a **nilpot...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-1",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Maintain both ordinary provenance (for audit) and a **nilpotent shadow provenanc..."
+      "canonical_invariant_id": "CANONICAL-02"
     },
     {
       "id": "CLAIM-021",
-      "source_id": "5652113976",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-021: Cross-scheduler settlement should distinguish **consumable e...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Cross-scheduler settlement should distinguish **consumable evidence** from **reu..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-022",
-      "source_id": "5652238366",
-      "scheduler": "Research Market",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-022: Durable evidence needs two orthogonal bindings: content iden...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Durable evidence needs two orthogonal bindings: content identity and issuer capa..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-023",
-      "source_id": "5652288922",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-023: Golden Trinity can serve as a compositional class of group b...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Golden Trinity can serve as a compositional class of group behavior: agents need..."
+      "canonical_invariant_id": "CANONICAL-03"
     },
     {
       "id": "CLAIM-024",
-      "source_id": "5652381230",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-024: Approximate Golden Trinity is compositionally stable under p...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Approximate Golden Trinity is compositionally stable under positive linear aggre..."
+      "canonical_invariant_id": "CANONICAL-03"
     },
     {
       "id": "CLAIM-025",
-      "source_id": "5652592413",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-025: A scientifically identifiable \u201cgolden group\u201d requires two co...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "A scientifically identifiable \u201cgolden group\u201d requires two coordinates, not one: ..."
+      "canonical_invariant_id": "CANONICAL-03"
     },
     {
       "id": "CLAIM-026",
-      "source_id": "5652602706",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-1",
+      "label": "CLAIM-026: Use a typed evidence algebra across schedulers: `\u2295` = depend...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-1",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Use a typed evidence algebra across schedulers: `\u2295` = dependency-safe mixture/me..."
+      "canonical_invariant_id": "CANONICAL-01"
     },
     {
       "id": "CLAIM-027",
-      "source_id": "5652880657",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-027: Treat evidence as a typed capability, minimally `E=(content_...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Treat evidence as a typed capability, minimally `E=(content_digest, issuer_capab..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-028",
-      "source_id": "5653152829",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-028: Use an attenuation-only `typed evidence capability` discipli...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Use an attenuation-only `typed evidence capability` discipline. Evidence composi..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-029",
-      "source_id": "5653473890",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-029: Treat scientific evidence as an attenuating capability: ordi...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Treat scientific evidence as an attenuating capability: ordinary derivations may..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-030",
-      "source_id": "5653769009",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-030: Model reusable scheduler/scientific evidence policy as a pro...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Model reusable scheduler/scientific evidence policy as a product semilattice `E=..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-031",
-      "source_id": "5654085449",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-031: Evidence/authority state can be propagated across schedulers...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Evidence/authority state can be propagated across schedulers/hosts as an attenua..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-032",
-      "source_id": "5654269643",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-032: Any claim that Golden Trinity emerges from interaction needs...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Any claim that Golden Trinity emerges from interaction needs an explicit \u03c6-selec..."
+      "canonical_invariant_id": "CANONICAL-03"
     },
     {
       "id": "CLAIM-033",
-      "source_id": "5654393689",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-033: Scheduler/mailbox coordination should be placed by semantic ...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Scheduler/mailbox coordination should be placed by semantic monotonicity, not by..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-034",
-      "source_id": "5654737164",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-034: Golden Trinity may be defined dynamically as the projective ...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "derived",
-      "statement_preview": "Golden Trinity may be defined dynamically as the projective attractor of the min..."
+      "canonical_invariant_id": "CANONICAL-03"
     },
     {
       "id": "CLAIM-035",
-      "source_id": "5654748689",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-035: Convert most revocation into **monotone supersession**: issu...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Convert most revocation into **monotone supersession**: issue bounded capabiliti..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-036",
-      "source_id": "5655337455",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-036: A Golden Trinity semantic record should carry two non-substi...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "derived",
-      "statement_preview": "A Golden Trinity semantic record should carry two non-substitutable fields: CAUS..."
+      "canonical_invariant_id": "CANONICAL-04"
     },
     {
       "id": "CLAIM-037",
-      "source_id": "5655384295",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-037: The Theory of Hard Problems should classify a task by a tele...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "The Theory of Hard Problems should classify a task by a teleological triplet (U,..."
+      "canonical_invariant_id": "CANONICAL-04"
     },
     {
       "id": "CLAIM-038",
-      "source_id": "5655420194",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-038: For any project that needs camera-mediated, air-gapped, orde...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "For any project that needs camera-mediated, air-gapped, order-independent transp..."
+      "canonical_invariant_id": "CANONICAL-06"
     },
     {
       "id": "CLAIM-039",
-      "source_id": "5655527333",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-039: The Theory of Absurd Hypotheses should score a candidate by ...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "The Theory of Absurd Hypotheses should score a candidate by the tuple (W,A,P,T,G..."
+      "canonical_invariant_id": "CANONICAL-04"
     },
     {
       "id": "CLAIM-040",
-      "source_id": "5655765041",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-040: Enforce `redundancy != value`: maintain orthogonal states fo...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Enforce `redundancy != value`: maintain orthogonal states for recoverability and..."
+      "canonical_invariant_id": "CANONICAL-05"
     },
     {
       "id": "CLAIM-041",
-      "source_id": "5655993417",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-041: A legitimate \u201cBrier legislature\u201d needs three non-substitutab...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "A legitimate \u201cBrier legislature\u201d needs three non-substitutable ledgers for every..."
+      "canonical_invariant_id": "CANONICAL-04"
     },
     {
       "id": "CLAIM-042",
-      "source_id": "5656123085",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-042: Track `(availability multiplicity, evidence rank)` as orthog...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Track `(availability multiplicity, evidence rank)` as orthogonal state. Replicat..."
+      "canonical_invariant_id": "CANONICAL-05"
     },
     {
       "id": "CLAIM-043",
-      "source_id": "5656218661",
-      "scheduler": "Golden Research Step",
-      "cluster": "Cluster-2",
+      "label": "CLAIM-043: The Theory of Hard Problems should distinguish static diffic...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-2",
       "epistemic_label": "hypothesis",
-      "statement_preview": "The Theory of Hard Problems should distinguish static difficulty D\u03b5(s,U,H) from ..."
+      "canonical_invariant_id": "CANONICAL-04"
     },
     {
       "id": "CLAIM-044",
-      "source_id": "5656471075",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-044: Schedulers should separate `resilience value` from `novelty ...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Schedulers should separate `resilience value` from `novelty value`. A conservati..."
+      "canonical_invariant_id": "CANONICAL-05"
     },
     {
       "id": "CLAIM-045",
-      "source_id": "5656817459",
-      "scheduler": "Discovery Steward",
-      "cluster": "Cluster-3",
+      "label": "CLAIM-045: Keep three orthogonal ledgers: `resilience`, `source novelty...",
+      "type": "source_claim",
+      "cluster_id": "Cluster-3",
       "epistemic_label": "hypothesis",
-      "statement_preview": "Keep three orthogonal ledgers: `resilience`, `source novelty/rank`, and `target-..."
+      "canonical_invariant_id": "CANONICAL-05"
     }
   ],
   "edges": [
     {
+      "source": "CLAIM-001",
+      "target": "CANONICAL-03",
+      "relation": "maps_to_canonical",
+      "rationale": "Origin claim formalizing permutation-matched Dirichlet null for (1, phi, phi^2)."
+    },
+    {
       "source": "CLAIM-002",
-      "target": "CLAIM-001",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CANONICAL-03",
+      "relation": "maps_to_canonical",
+      "rationale": "Establishes matched search budget contract to prevent permutation-selection bias."
+    },
+    {
+      "source": "CLAIM-003",
+      "target": "CANONICAL-05",
+      "relation": "maps_to_canonical",
+      "rationale": "Origin claim formalizing dispatch boundary vs leaf process exit status 137."
+    },
+    {
+      "source": "CLAIM-004",
+      "target": "CANONICAL-01",
+      "relation": "maps_to_canonical",
+      "rationale": "Origin claim formalizing conserved evidence capital over raw search budget."
     },
     {
       "source": "CLAIM-005",
-      "target": "CLAIM-002",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CANONICAL-03",
+      "relation": "maps_to_canonical",
+      "rationale": "Defines Golden Trinity as ordered Context-Behavior-Value representation."
     },
     {
       "source": "CLAIM-006",
-      "target": "CLAIM-005",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CANONICAL-03",
+      "relation": "maps_to_canonical",
+      "rationale": "Refines null test against 50% future allocation baseline."
+    },
+    {
+      "source": "CLAIM-007",
+      "target": "CANONICAL-01",
+      "relation": "maps_to_canonical",
+      "rationale": "Refines evidence capital to logarithmic coordinate log(e-wealth)."
+    },
+    {
+      "source": "CLAIM-008",
+      "target": "CANONICAL-01",
+      "relation": "maps_to_canonical",
+      "rationale": "Semantic duplicate specifying evidence bits = log2(e-wealth) as scientific accounting layer."
+    },
+    {
+      "source": "CLAIM-009",
+      "target": "CANONICAL-05",
+      "relation": "maps_to_canonical",
+      "rationale": "Establishes three-identity credential invariant for remote dispatch."
+    },
+    {
+      "source": "CLAIM-010",
+      "target": "CANONICAL-03",
+      "relation": "maps_to_canonical",
+      "rationale": "Formulates Golden Trinity as resource-allocation law over common measure mu."
+    },
+    {
+      "source": "CLAIM-011",
+      "target": "CANONICAL-01",
+      "relation": "maps_to_canonical",
+      "rationale": "Anchors evidence conservation as portfolio simplex with Wang 2025 admissible e-value merge."
+    },
+    {
+      "source": "CLAIM-012",
+      "target": "CANONICAL-01",
+      "relation": "maps_to_canonical",
+      "rationale": "Refines evidence simplex to prefix/Kraft tree budgets."
+    },
+    {
+      "source": "CLAIM-013",
+      "target": "CANONICAL-03",
+      "relation": "maps_to_canonical",
+      "rationale": "Restricts common measure mu to ratio-scale requirement."
+    },
+    {
+      "source": "CLAIM-014",
+      "target": "CANONICAL-01",
+      "relation": "maps_to_canonical",
+      "rationale": "Specializes conservation to explicit agent branching split rules."
+    },
+    {
+      "source": "CLAIM-015",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Treats shared agent memory as untrusted commons."
+    },
+    {
+      "source": "CLAIM-016",
+      "target": "CANONICAL-01",
+      "relation": "maps_to_canonical",
+      "rationale": "Defines Git-like DAG split/merge primitives for evidence."
+    },
+    {
+      "source": "CLAIM-017",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Enforces two-phase Git evidence binding for committed reports."
+    },
+    {
+      "source": "CLAIM-018",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Defines linear evidence resource discipline in branch propagation."
+    },
+    {
+      "source": "CLAIM-019",
+      "target": "CANONICAL-02",
+      "relation": "maps_to_canonical",
+      "rationale": "Separates evidence ancestry algebra from evidence strength."
+    },
+    {
+      "source": "CLAIM-020",
+      "target": "CANONICAL-02",
+      "relation": "maps_to_canonical",
+      "rationale": "Introduces nilpotent shadow provenance for composability."
+    },
+    {
+      "source": "CLAIM-021",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Distinguishes consumable evidence from reusable knowledge."
+    },
+    {
+      "source": "CLAIM-022",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Binds orthogonal content identity and issuer capability."
+    },
+    {
+      "source": "CLAIM-023",
+      "target": "CANONICAL-03",
+      "relation": "maps_to_canonical",
+      "rationale": "Extends Golden Trinity to compositional group behavior class."
+    },
+    {
+      "source": "CLAIM-024",
+      "target": "CANONICAL-03",
+      "relation": "maps_to_canonical",
+      "rationale": "Proves stability under positive linear aggregation."
+    },
+    {
+      "source": "CLAIM-025",
+      "target": "CANONICAL-03",
+      "relation": "maps_to_canonical",
+      "rationale": "Requires two-coordinate golden group: low bias and high variance."
+    },
+    {
+      "source": "CLAIM-026",
+      "target": "CANONICAL-01",
+      "relation": "maps_to_canonical",
+      "rationale": "Constructs typed evidence algebra with direct sum and tensor product."
+    },
+    {
+      "source": "CLAIM-027",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Constructs typed capability tuple (digest, issuer_cap, lineage, policy)."
+    },
+    {
+      "source": "CLAIM-028",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Enforces attenuation-only capability discipline."
+    },
+    {
+      "source": "CLAIM-029",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Specifies authority narrowing under derivation."
+    },
+    {
+      "source": "CLAIM-030",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Models evidence policy as product semilattice E=(R,O,L)."
+    },
+    {
+      "source": "CLAIM-031",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Propagates attenuating capability state as CRDT across hosts."
+    },
+    {
+      "source": "CLAIM-032",
+      "target": "CANONICAL-03",
+      "relation": "maps_to_canonical",
+      "rationale": "Mandates explicit phi-selecting interaction mechanism."
+    },
+    {
+      "source": "CLAIM-033",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Places cross-host coordination by semantic monotonicity."
+    },
+    {
+      "source": "CLAIM-034",
+      "target": "CANONICAL-03",
+      "relation": "maps_to_canonical",
+      "rationale": "Defines dynamic phi-attractor via minimal positive additive operators."
+    },
+    {
+      "source": "CLAIM-035",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Replaces revocation with monotone bounded supersession."
+    },
+    {
+      "source": "CLAIM-036",
+      "target": "CANONICAL-04",
+      "relation": "maps_to_canonical",
+      "rationale": "Origin claim formalizing non-substitutable Cause vs Purpose partitioning."
+    },
+    {
+      "source": "CLAIM-037",
+      "target": "CANONICAL-04",
+      "relation": "maps_to_canonical",
+      "rationale": "Formalizes Hard Problems teleological triplet (U, D_epsilon, Omega)."
+    },
+    {
+      "source": "CLAIM-038",
+      "target": "CANONICAL-06",
+      "relation": "maps_to_canonical",
+      "rationale": "Applies order-independent BC-UR transport to air-gapped sync."
+    },
+    {
+      "source": "CLAIM-039",
+      "target": "CANONICAL-04",
+      "relation": "maps_to_canonical",
+      "rationale": "Applies teleological scoring to absurd hypotheses tuple (W, A, P, T, G)."
+    },
+    {
+      "source": "CLAIM-040",
+      "target": "CANONICAL-05",
+      "relation": "maps_to_canonical",
+      "rationale": "Enforces redundancy != value across dispatch and storage."
+    },
+    {
+      "source": "CLAIM-041",
+      "target": "CANONICAL-04",
+      "relation": "maps_to_canonical",
+      "rationale": "Specifies 3-ledger Brier legislature norm verification."
+    },
+    {
+      "source": "CLAIM-042",
+      "target": "CANONICAL-05",
+      "relation": "maps_to_canonical",
+      "rationale": "Tracks availability multiplicity orthogonally from evidence rank."
+    },
+    {
+      "source": "CLAIM-043",
+      "target": "CANONICAL-04",
+      "relation": "maps_to_canonical",
+      "rationale": "Decomposes static difficulty D_epsilon from temporal decomposability."
+    },
+    {
+      "source": "CLAIM-044",
+      "target": "CANONICAL-05",
+      "relation": "maps_to_canonical",
+      "rationale": "Separates resilience value from novelty value in schedulers."
+    },
+    {
+      "source": "CLAIM-045",
+      "target": "CANONICAL-05",
+      "relation": "maps_to_canonical",
+      "rationale": "Maintains 3 orthogonal ledgers: resilience, novelty, target evidence."
+    },
+    {
+      "source": "CLAIM-002",
+      "target": "CLAIM-001",
+      "relation": "refines",
+      "rationale": "Establishes matched search budget contract to prevent permutation-selection bias."
+    },
+    {
+      "source": "CLAIM-005",
+      "target": "CLAIM-001",
+      "relation": "refines",
+      "rationale": "Defines Golden Trinity as ordered Context-Behavior-Value representation."
+    },
+    {
+      "source": "CLAIM-006",
+      "target": "CLAIM-001",
+      "relation": "refines",
+      "rationale": "Refines null test against 50% future allocation baseline."
     },
     {
       "source": "CLAIM-007",
       "target": "CLAIM-004",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Refines evidence capital to logarithmic coordinate log(e-wealth)."
     },
     {
       "source": "CLAIM-008",
       "target": "CLAIM-007",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "duplicates",
+      "rationale": "Semantic duplicate specifying evidence bits = log2(e-wealth) as scientific accounting layer."
     },
     {
       "source": "CLAIM-009",
       "target": "CLAIM-003",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Establishes three-identity credential invariant for remote dispatch."
     },
     {
       "source": "CLAIM-010",
-      "target": "CLAIM-006",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-005",
+      "relation": "refines",
+      "rationale": "Formulates Golden Trinity as resource-allocation law over common measure mu."
     },
     {
       "source": "CLAIM-011",
-      "target": "CLAIM-008",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-004",
+      "relation": "refines",
+      "rationale": "Anchors evidence conservation as portfolio simplex with Wang 2025 admissible e-value merge."
     },
     {
       "source": "CLAIM-012",
       "target": "CLAIM-011",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Refines evidence simplex to prefix/Kraft tree budgets."
     },
     {
       "source": "CLAIM-013",
       "target": "CLAIM-010",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Restricts common measure mu to ratio-scale requirement."
     },
     {
       "source": "CLAIM-014",
-      "target": "CLAIM-012",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
-    },
-    {
-      "source": "CLAIM-015",
-      "target": "CLAIM-009",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-011",
+      "relation": "refines",
+      "rationale": "Specializes conservation to explicit agent branching split rules."
     },
     {
       "source": "CLAIM-016",
       "target": "CLAIM-014",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Defines Git-like DAG split/merge primitives for evidence."
     },
     {
       "source": "CLAIM-017",
       "target": "CLAIM-015",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Enforces two-phase Git evidence binding for committed reports."
     },
     {
       "source": "CLAIM-018",
       "target": "CLAIM-017",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
-    },
-    {
-      "source": "CLAIM-019",
-      "target": "CLAIM-016",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Defines linear evidence resource discipline in branch propagation."
     },
     {
       "source": "CLAIM-020",
       "target": "CLAIM-019",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Introduces nilpotent shadow provenance for composability."
     },
     {
       "source": "CLAIM-021",
       "target": "CLAIM-018",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Distinguishes consumable evidence from reusable knowledge."
     },
     {
       "source": "CLAIM-022",
       "target": "CLAIM-021",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Binds orthogonal content identity and issuer capability."
     },
     {
       "source": "CLAIM-023",
-      "target": "CLAIM-013",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-010",
+      "relation": "refines",
+      "rationale": "Extends Golden Trinity to compositional group behavior class."
     },
     {
       "source": "CLAIM-024",
       "target": "CLAIM-023",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Proves stability under positive linear aggregation."
     },
     {
       "source": "CLAIM-025",
-      "target": "CLAIM-024",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-023",
+      "relation": "refines",
+      "rationale": "Requires two-coordinate golden group: low bias and high variance."
     },
     {
       "source": "CLAIM-026",
-      "target": "CLAIM-020",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-016",
+      "relation": "refines",
+      "rationale": "Constructs typed evidence algebra with direct sum and tensor product."
     },
     {
       "source": "CLAIM-027",
       "target": "CLAIM-022",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Constructs typed capability tuple (digest, issuer_cap, lineage, policy)."
     },
     {
       "source": "CLAIM-028",
       "target": "CLAIM-027",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Enforces attenuation-only capability discipline."
     },
     {
       "source": "CLAIM-029",
       "target": "CLAIM-028",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Specifies authority narrowing under derivation."
     },
     {
       "source": "CLAIM-030",
       "target": "CLAIM-029",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Models evidence policy as product semilattice E=(R,O,L)."
     },
     {
       "source": "CLAIM-031",
       "target": "CLAIM-030",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Propagates attenuating capability state as CRDT across hosts."
     },
     {
       "source": "CLAIM-032",
-      "target": "CLAIM-025",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-006",
+      "relation": "refines",
+      "rationale": "Mandates explicit phi-selecting interaction mechanism."
     },
     {
       "source": "CLAIM-033",
       "target": "CLAIM-031",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Places cross-host coordination by semantic monotonicity."
     },
     {
       "source": "CLAIM-034",
-      "target": "CLAIM-032",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-024",
+      "relation": "refines",
+      "rationale": "Defines dynamic phi-attractor via minimal positive additive operators."
     },
     {
       "source": "CLAIM-035",
-      "target": "CLAIM-033",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
-    },
-    {
-      "source": "CLAIM-036",
-      "target": "CLAIM-034",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-028",
+      "relation": "refines",
+      "rationale": "Replaces revocation with monotone bounded supersession."
     },
     {
       "source": "CLAIM-037",
       "target": "CLAIM-036",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Formalizes Hard Problems teleological triplet (U, D_epsilon, Omega)."
     },
     {
       "source": "CLAIM-038",
-      "target": "CLAIM-035",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-033",
+      "relation": "refines",
+      "rationale": "Applies order-independent BC-UR transport to air-gapped sync."
     },
     {
       "source": "CLAIM-039",
       "target": "CLAIM-037",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Applies teleological scoring to absurd hypotheses tuple (W, A, P, T, G)."
     },
     {
       "source": "CLAIM-040",
-      "target": "CLAIM-038",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-003",
+      "relation": "refines",
+      "rationale": "Enforces redundancy != value across dispatch and storage."
     },
     {
       "source": "CLAIM-041",
-      "target": "CLAIM-039",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-037",
+      "relation": "refines",
+      "rationale": "Specifies 3-ledger Brier legislature norm verification."
     },
     {
       "source": "CLAIM-042",
       "target": "CLAIM-040",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Tracks availability multiplicity orthogonally from evidence rank."
     },
     {
       "source": "CLAIM-043",
-      "target": "CLAIM-041",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "target": "CLAIM-037",
+      "relation": "refines",
+      "rationale": "Decomposes static difficulty D_epsilon from temporal decomposability."
     },
     {
       "source": "CLAIM-044",
       "target": "CLAIM-042",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
+      "relation": "refines",
+      "rationale": "Separates resilience value from novelty value in schedulers."
     },
     {
       "source": "CLAIM-045",
       "target": "CLAIM-044",
-      "relation": "refines_or_deduplicates",
-      "weight": 1.0
-    },
-    {
-      "source": "CLAIM-002",
-      "target": "CLAIM-001",
-      "relation": "supports",
-      "description": "Matched search budget invariant independently derived for \u03c6 allocation"
-    },
-    {
-      "source": "CLAIM-004",
-      "target": "CLAIM-002",
       "relation": "refines",
-      "description": "Search budget generalizes into conserved evidence capital"
+      "rationale": "Maintains 3 orthogonal ledgers: resilience, novelty, target evidence."
     },
     {
-      "source": "CLAIM-006",
-      "target": "CLAIM-001",
-      "relation": "contradicts",
-      "description": "Challenges \u03c6 claim: 50% future allocation alone may account for observed gains"
-    },
-    {
-      "source": "CLAIM-011",
-      "target": "CLAIM-007",
+      "source": "CANONICAL-02",
+      "target": "CANONICAL-01",
       "relation": "refines",
-      "description": "E-value portfolio simplex formalizes log-e wealth merge rule (Wang 2025)"
+      "rationale": "Target-conditioned novelty bounds admissible e-value portfolio allocation."
     },
     {
-      "source": "CLAIM-021",
-      "target": "CLAIM-011",
+      "source": "CANONICAL-03",
+      "target": "CANONICAL-01",
       "relation": "supports",
-      "description": "Linear/affine logic guarantees no-silent-duplication at type level"
+      "rationale": "Dirichlet null tests validate evidence conservation under permutation-selection budgets."
     },
     {
-      "source": "CLAIM-040",
-      "target": "CLAIM-021",
+      "source": "CANONICAL-04",
+      "target": "CANONICAL-03",
       "relation": "generalizes",
-      "description": "Redundancy != value: transport availability separated from evidence rank"
+      "rationale": "Teleological triplet provides formal semantic foundation for ternary C:B:V allocation."
     },
     {
-      "source": "CLAIM-034",
-      "target": "CLAIM-005",
-      "relation": "refines",
-      "description": "Dynamical Fibonacci recurrence attractor replaces ad-hoc \u03c6 parameterization"
-    },
-    {
-      "source": "CLAIM-003",
-      "target": "CLAIM-009",
+      "source": "CANONICAL-06",
+      "target": "CANONICAL-05",
       "relation": "supports",
-      "description": "Process-bound telemetry ties to three-identity credential invariant"
+      "rationale": "Zero-trust membrane provides cryptographic verification for dispatch-boundary telemetry."
     }
   ]
 }

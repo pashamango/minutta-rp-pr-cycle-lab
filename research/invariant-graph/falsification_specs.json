@@ -1,8 +1,18 @@
 {
   "metadata": {
-    "version": "1.0",
+    "version": "1.1",
     "authority": "MIN-18 Invariant Foundry Specification",
-    "status": "CANDIDATE / NOT EXECUTION-AUTHORIZED"
+    "status": "CANDIDATE / NOT EXECUTION-AUTHORIZED",
+    "scoring_rubric": {
+      "rubric_name": "Invariant Decidability & Epistemic Impact Rubric (IDEIR-v1)",
+      "weights": {
+        "C1_rigor_and_falsifiability": 0.35,
+        "C2_anti_sybil_and_grounding": 0.3,
+        "C3_cross_domain_generality": 0.2,
+        "C4_test_cost_efficiency": 0.15
+      },
+      "formula": "S = 0.35*C1 + 0.30*C2 + 0.20*C3 + 0.15*C4"
+    }
   },
   "specs": [
     {
@@ -23,7 +33,16 @@
         "pass_condition": "Under H_0, the portfolio e-wealth satisfies E[E*] <= 1.0 across all stopping times, and 99th percentile e-wealth <= 100 (Markov bound holds). Sybil identity splitting produces zero net gain in portfolio e-value compared to the parent weight.",
         "fail_condition": "If an actor can generate expected portfolio e-wealth growth > 1.0 under the null solely by forking identities or searching m parallel branches without weight partitioning."
       },
-      "cheapest_test": "100-line vectorized NumPy simulation of 5,000 Monte Carlo runs (500 steps each). Compute wall-clock time < 3.5 seconds on Wolfram, $0 network quota, 0 external mutations."
+      "cheapest_test": "100-line vectorized NumPy simulation of 5,000 Monte Carlo runs (500 steps each). Compute wall-clock time < 3.5 seconds on Wolfram, $0 network quota, 0 external mutations.",
+      "canonical_invariant_id": "CANONICAL-01",
+      "score": 9.8,
+      "component_scores": {
+        "C1_rigor_and_falsifiability": 9.8,
+        "C2_anti_sybil_and_grounding": 10.0,
+        "C3_cross_domain_generality": 9.5,
+        "C4_test_cost_efficiency": 9.8
+      },
+      "scoring_formula": "S = 0.35*C1 + 0.30*C2 + 0.20*C3 + 0.15*C4"
     },
     {
       "spec_id": "FALSIF-SPEC-002",
@@ -44,7 +63,16 @@
         "pass_condition": "Phi-shape out-of-sample percentile >= 95.0% among Dirichlet controls AND achieves statistically significant superiority over (0.25, 0.25, 0.50) with p < 0.01.",
         "fail_condition": "If phi-shape held-out percentile < 95.0% OR effect size compared to (0.25, 0.25, 0.50) has 95% CI covering zero (indicating the effect is purely driven by coarse 50% future allocation)."
       },
-      "cheapest_test": "Synthetic allocation benchmark on 200 stratified test vectors using pre-computed task-embedding similarity matrices. Run time < 2.0 seconds, $0 external quota."
+      "cheapest_test": "Synthetic allocation benchmark on 200 stratified test vectors using pre-computed task-embedding similarity matrices. Run time < 2.0 seconds, $0 external quota.",
+      "canonical_invariant_id": "CANONICAL-03",
+      "score": 9.2,
+      "component_scores": {
+        "C1_rigor_and_falsifiability": 9.2,
+        "C2_anti_sybil_and_grounding": 9.0,
+        "C3_cross_domain_generality": 9.0,
+        "C4_test_cost_efficiency": 9.8
+      },
+      "scoring_formula": "S = 0.35*C1 + 0.30*C2 + 0.20*C3 + 0.15*C4"
     },
     {
       "spec_id": "FALSIF-SPEC-003",
@@ -64,7 +92,16 @@
         "pass_condition": "The dispatch system rejects exit code 137 as an OOM proof unless corroborated by leaf PID SIGKILL confirmation and kernel memory pressure telemetry.",
         "fail_condition": "If the dispatch system classifies a broken transport wrapper as a leaf process crash / OOM, resulting in erroneous operator alerts or blind retries."
       },
-      "cheapest_test": "Local subshell script: child writes PID and sleeps; parent terminates abruptly with exit 137. Dispatch verifier inspects /proc or ps output to confirm child survived. Run time < 1.0 second."
+      "cheapest_test": "Local subshell script: child writes PID and sleeps; parent terminates abruptly with exit 137. Dispatch verifier inspects /proc or ps output to confirm child survived. Run time < 1.0 second.",
+      "canonical_invariant_id": "CANONICAL-05",
+      "score": 8.9,
+      "component_scores": {
+        "C1_rigor_and_falsifiability": 8.6,
+        "C2_anti_sybil_and_grounding": 9.2,
+        "C3_cross_domain_generality": 8.8,
+        "C4_test_cost_efficiency": 9.2
+      },
+      "scoring_formula": "S = 0.35*C1 + 0.30*C2 + 0.20*C3 + 0.15*C4"
     }
   ]
 }

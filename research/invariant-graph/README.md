@@ -1,48 +1,49 @@
 # MIN-18: Invariant Graph — 30–50-Source Normalization and Falsification
-**Repository:** `https://github.com/pashamango/minutta-rp-pr-cycle-lab.git`  
-**Branch:** `minutta/min-18-invariant-graph-3050-source-normalization-and-falsification`  
-**Linear Reference:** [MIN-18](https://linear.app/mindrock/issue/MIN-18/invariant-graph-30-50-source-normalization-and-falsification)  
-**Builder Agent:** `agy@wolfram`  
-**Status:** CANDIDATE / NOT EXECUTION-AUTHORIZED  
+
+**Status:** CANDIDATE / NOT EXECUTION-AUTHORIZED
+**Authority:** MIN-18 Foundry Acceptance Protocol
+**Canonical Upstream:** [https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168](https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168)
+**Verification Suite:** `python3 -m unittest tests/test_invariant_graph.py`
 
 ---
 
-## Overview
+## 1. Executive Summary
 
-This artifact package completes the normalization and falsification requirements of Linear ticket **MIN-18**.
-It processes the first 45 meaningful comments from upstream Issue [#168](https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168), maps them into structured claim units, builds a deduplicated graph topology, ranks the top 3 candidate invariants, formalizes three bounded falsification specifications, and catalogs excluded operational telemetry.
+This repository directory contains the formal deliverables for Linear ticket **MIN-18**:
+1. **Direct Object Ingestion & Normalization**:
+   - Ingested 45 meaningful comments from upstream Issue #168.
+   - Every claim is anchored by exact verbatim source-read evidence, verified character-for-character against GitHub REST direct objects.
+   - Includes source ID, direct URL, author, timestamp, full body SHA-256 digest, epistemic label, explicit assumptions, quantitative null test, contradictions, applications, and versions.
+2. **Canonical Deduplication & Clean Lineage**:
+   - Deduplicated into **6 Canonical Invariants** (`CANONICAL-01` to `CANONICAL-06`).
+   - Every claim unit includes structured `duplicate_lineage` (`CANONICAL_ORIGIN`, `SEMANTIC_DUPLICATE`, `REFINEMENT`, `EMPIRICAL_INSTANCE`) and an explicit `merge_rule`.
+   - Eliminates arbitrary chained duplicate pointers and removes all ambiguous relations (`refines_or_deduplicates`).
+3. **Graph Topology & Strict Cluster Counts**:
+   - **Cluster-1: Epistemic Accounting & Anti-Sybil Invariants**: 10 claims.
+   - **Cluster-2: Golden Trinity & Ratio Dynamics**: 16 claims.
+   - **Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries**: 19 claims.
+   - **Total:** 45 claims (100% consistent across JSON artifacts, markdown reports, and unit tests).
+4. **Reproducible Candidate Ranking & Top 3 Falsification Specs**:
+   - Formal multi-criteria rubric (IDEIR-v1) with weights: $0.35 \cdot C_1 + 0.30 \cdot C_2 + 0.20 \cdot C_3 + 0.15 \cdot C_4$.
+   - **Rank 1 (9.8):** `CANONICAL-01` (Anchor: `CLAIM-011`) — Conserved Evidence Portfolio Simplex & Matched Search-Budget Invariant.
+   - **Rank 2 (9.2):** `CANONICAL-03` (Anchor: `CLAIM-001`) — Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant.
+   - **Rank 3 (8.9):** `CANONICAL-05` (Anchor: `CLAIM-003`) — Durable Dispatch-Boundary Process-Binding Invariant.
+5. **Documented Excluded Data**:
+   - 20 sampled automated run receipts (`GITHUB_RUN_RECEIPT/v1`), empty NO-OP cycles, and heartbeat telemetry cataloged with exact source IDs and exclusion rationale.
+6. **Direct-Object-Read Verification Suite**:
+   - `direct_objects_cache.json` containing 65 direct objects (45 claims + 20 excluded records).
+   - Automated unit test suite (`tests/test_invariant_graph.py`) verifying exact evidence matching, source URLs/IDs, SHA-256 digests, acyclic duplicate lineage, strictly typed graph relations, and scoring formula reproducibility.
 
-## Directory Structure
+---
 
-```
-research/invariant-graph/
-├── README.md                  # Executive overview
-├── claim_schema.json          # Formal JSON Schema for structured claim unit
-├── normalized_claims.json     # 45 normalized claim units with exact source-read evidence
-├── claim_graph.json           # Machine-readable deduplicated claim graph (nodes, edges, clusters)
-├── CLAIM_GRAPH.md             # Human-readable graph report with Mermaid diagrams and tables
-├── falsification_specs.json   # Machine-readable bounded falsification specifications
-├── FALSIFICATION_SPECS.md     # Detailed specifications for Top 3 candidates (nulls, tests, thresholds)
-├── excluded_data.json         # Machine-readable catalog of excluded heartbeat/receipt records
-└── EXCLUDED_DATA.md           # Documentation of excluded data and constitutional exclusion policy
+## 2. Directory Layout
 
-tests/
-└── test_invariant_graph.py    # Complete test suite validating schema, graph, and invariants
-```
-
-## Top 3 Ranked Invariants
-
-1. **Rank 1:** Conserved Evidence Portfolio Simplex & Matched Search-Budget Invariant (`CLAIM-011`, Wang 2025 Biometrika admissible merge).
-2. **Rank 2:** Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant (`CLAIM-001`, out-of-sample held-out falsification).
-3. **Rank 3:** Durable Dispatch-Boundary Process-Binding Invariant (`CLAIM-003`, leaf PID vs wrapper exit status 137).
-
-## Acceptance Criteria Checklist
-
-- [x] **Structured Claim Units:** 45 claim units created with source URL/ID, exact source-read evidence, epistemic label, assumptions, null test, contradictions, duplicates, applications, versions.
-- [x] **Deduplicated Claim Graph:** Connected graph with nodes, directed edges, cluster topologies, and cross-cluster relations.
-- [x] **Top 3 Candidate Ranking:** Clustered and ranked with formal scores and domain rationales.
-- [x] **Three Bounded Falsification Specs:** Rigorous specs with null hypotheses, test procedures, pass/fail thresholds, and cheapest tests.
-- [x] **Documented Excluded Data:** Explicit cataloging of heartbeat records (`GITHUB_RUN_RECEIPT/v1`) with IDs, timestamps, and exclusion rationale.
-- [x] **Direct Object Read:** All claims and excluded records verified by direct read of upstream Issue #168.
-- [x] **No Giant Mirror:** Compact, normalized, structured epistemic representation.
-- [x] **Handoff Gate Protocol:** Full Git coordinates, atomized commit, zero-trust worktree isolation.
+- `claim_schema.json`: Formal JSON Schema for normalized claim units.
+- `direct_objects_cache.json`: Direct GitHub API comment objects for all 45 claims and 20 excluded records.
+- `normalized_claims.json`: 45 structured claim units with exact verbatim evidence and duplicate lineage.
+- `claim_graph.json`: Directed graph topology containing canonical invariants, source claims, and typed edges.
+- `CLAIM_GRAPH.md`: Architectural documentation and Mermaid visualizations.
+- `falsification_specs.json`: Machine-readable specifications for top 3 candidates with scoring breakdown.
+- `FALSIFICATION_SPECS.md`: Mathematical formulations, null hypotheses, and protocols for the top 3 invariants.
+- `excluded_data.json`: Catalog of 20 excluded automated receipts and heartbeats.
+- `EXCLUDED_DATA.md`: Documented exclusion rationale and source IDs.

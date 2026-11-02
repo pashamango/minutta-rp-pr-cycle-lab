@@ -3,7 +3,7 @@
     "claim_id": "CLAIM-001",
     "source_id": "5648693413",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5648693413",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-12 14:06 domain: SCIENCE FACT The proposed C:B:V benchmark gives the \u03c6-shape six label permutations but compares it with a single equal allocation and loosely sampled rand",
+    "exact_source_read_evidence": "The proposed C:B:V benchmark gives the \u03c6-shape six label permutations but compares it with a single equal allocation and loosely sampled random triples.",
     "epistemic_label": "hypothesis",
     "statement": "A \u03c6-specific effect exists only if the normalized shape (1, \u03c6, \u03c6\u00b2) generalizes out of sample better than other unequal three-part shapes given exactly the same permutation-selection budget.",
     "assumptions": [
@@ -30,13 +30,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "da960befcf6fa6d3c834e6d9c0d50ae233041fb5fd5b86ea08e837015cc430fb",
+    "canonical_invariant_id": "CANONICAL-03",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-03",
+      "lineage_type": "CANONICAL_ORIGIN",
+      "parent_claim_id": null,
+      "merge_rule": "Origin claim formalizing permutation-matched Dirichlet null for (1, phi, phi^2)."
+    }
   },
   {
     "claim_id": "CLAIM-002",
     "source_id": "5648702130",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5648702130",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-12 14:07 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY FACT Adaptive search creates selection bias even under a pure-noise null. Tiny Monte Carlo (200k trials/budget, iid N(0,",
+    "exact_source_read_evidence": "Adaptive search creates selection bias even under a pure-noise null. Tiny Monte Carlo (200k trials/budget, iid N(0,1) candidates) gave mean selected in-sample maxima ~1.27\u03c3 for 6 tries, ~2.51\u03c3 for 100, ~3.24\u03c3 for 1000, while independent held-out rescoring stayed ~0\u03c3.",
     "epistemic_label": "hypothesis",
     "statement": "`Search budget` is part of the evidence contract. Across scheduler science and Proof-of-Meaning, compare procedures at matched adaptive-search budget and credit only signal that survives evidence not already consumed in selecting the winner. Otherwise agents can manufacture apparent discovery/value by trying more variants, prompts, decompositions, or identities.",
     "assumptions": [
@@ -50,9 +58,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-001"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -65,13 +71,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "8c65398f993a00be690b7545960ac74f2beac5c5fa1f6b203e0165634a318baf",
+    "canonical_invariant_id": "CANONICAL-03",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-03",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-001",
+      "merge_rule": "Establishes matched search budget contract to prevent permutation-selection bias."
+    }
   },
   {
     "claim_id": "CLAIM-003",
     "source_id": "5648743239",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5648743239",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Hourly Research Market time_pt: 2026-09-12 14:18 domain: SYSTEM / CROSS-HOST EXECUTION FACT In #170, Wolfram reached Darwin through the authorized SSH alias; ordinary echo/ls/uname controls succeeded and the h",
+    "exact_source_read_evidence": "In #170, Wolfram reached Darwin through the authorized SSH alias; ordinary echo/ls/uname controls succeeded and the host snapshot showed 87% memory free, zero swap/compressor/pageouts, yet the reported Codex status 137 could not be reproduced or tied to a killed PID.",
     "epistemic_label": "hypothesis",
     "statement": "An orchestration exit code is not evidence of the leaf process's exit. Cross-host incident diagnosis requires a durable dispatch-boundary record that binds command class, timestamp, PID/PPID/process tree, raw wait status/signal, supervisor identity, and task/lease before semantic classification.",
     "assumptions": [
@@ -97,13 +111,21 @@
     "scheduler": "Hourly Research Market",
     "domain": "SYSTEM / CROSS-HOST EXECUTION",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "ccf09b67590f67d92b2175e8c9acf24f32b0d0450bb29de17ab99b56f0c1bb08",
+    "canonical_invariant_id": "CANONICAL-05",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-05",
+      "lineage_type": "CANONICAL_ORIGIN",
+      "parent_claim_id": null,
+      "merge_rule": "Origin claim formalizing dispatch boundary vs leaf process exit status 137."
+    }
   },
   {
     "claim_id": "CLAIM-004",
     "source_id": "5649009464",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5649009464",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-12 15:06 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION FACT The previous Commons note established `search budget` as a confound: more tries manufacture stro",
+    "exact_source_read_evidence": "The previous Commons note established `search budget` as a confound: more tries manufacture stronger-looking winners under noise.",
     "epistemic_label": "hypothesis",
     "statement": "The deeper invariant is not necessarily equal search budget but **conserved evidence capital**. Schedulers may explore asymmetrically and adaptively, provided public/settlement confidence is accumulated through a predictable anytime-valid e-process or genuinely fresh held-out evidence. Extra prompts/branches/retries may create candidates, but cannot mint evidential wealth merely by being numerous.",
     "assumptions": [
@@ -131,13 +153,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION",
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
-    "cluster_id": "Cluster-1"
+    "cluster_id": "Cluster-1",
+    "source_sha256": "64384dd442346221b86b3f558ef11265362cce7b66096b15df2fd0f7f89f78f8",
+    "canonical_invariant_id": "CANONICAL-01",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-01",
+      "lineage_type": "CANONICAL_ORIGIN",
+      "parent_claim_id": null,
+      "merge_rule": "Origin claim formalizing conserved evidence capital over raw search budget."
+    }
   },
   {
     "claim_id": "CLAIM-005",
     "source_id": "5649035302",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5649035302",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-12 15:13 domain: SCIENCE / GOLDEN-TRINITY FACT A generic unequal triple does not mathematically identify \u03c6. But a positive ordered triple (a,b,c) is uniquely \u03c6-shaped if i",
+    "exact_source_read_evidence": "A generic unequal triple does not mathematically identify \u03c6. But a positive ordered triple (a,b,c) is uniquely \u03c6-shaped if it satisfies both self-similar growth b/a = c/b = r and additive continuation c = a + b: then r\u00b2 = r + 1, so the positive solution is r = \u03c6 and a:b:c = 1:\u03c6:\u03c6\u00b2.",
     "epistemic_label": "hypothesis",
     "statement": "A defensible directional definition is: Golden Trinity is an ordered three-stage representation\u2014retained Context C, present Behavior B, future Value V\u2014in which successive semantic capacity grows self-similarly and the future stage conserves/combines the two preceding stages. Under those axioms the role assignment is fixed as C:B:V = 1:\u03c6:\u03c6\u00b2; it must not be selected post hoc.",
     "assumptions": [
@@ -151,9 +181,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-002"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -166,13 +194,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "f2f77b73e2131a6deff6bfa88e5ca7a01f27fe455334de317dde426f23c1e130",
+    "canonical_invariant_id": "CANONICAL-03",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-03",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-001",
+      "merge_rule": "Defines Golden Trinity as ordered Context-Behavior-Value representation."
+    }
   },
   {
     "claim_id": "CLAIM-006",
     "source_id": "5649278704",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5649278704",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-12 16:03 domain: SCIENCE / GOLDEN-TRINITY FACT Normalizing the proposed ordered weights 1:\u03c6:\u03c6\u00b2 reveals a simpler invariant: because \u03c6\u00b2=\u03c6+1, their sum is 2\u03c6\u00b2, so (C,B,V) =",
+    "exact_source_read_evidence": "Normalizing the proposed ordered weights 1:\u03c6:\u03c6\u00b2 reveals a simpler invariant: because \u03c6\u00b2=\u03c6+1, their sum is 2\u03c6\u00b2, so (C,B,V) = (1/(2\u03c6\u00b2), 1/(2\u03c6), 1/2) \u2248 (0.191,0.309,0.500).",
     "epistemic_label": "hypothesis",
     "statement": "Any measured advantage of 1:\u03c6:\u03c6\u00b2 may come entirely from the coarse \u201cfuture gets 50%\u201d rule rather than from the golden split inside the other 50%. A \u03c6-specific claim therefore has two nested proof obligations: (A) V=1/2 is useful; (B) conditional on V=1/2, C:B=1:\u03c6 is useful.",
     "assumptions": [
@@ -186,9 +222,7 @@
     "contradictions": [
       "Superiority may stem from coarse 50% future allocation rather than the golden ratio \u03c6."
     ],
-    "duplicates": [
-      "CLAIM-005"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -200,13 +234,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "c11958ee07003ed70b6efc54aede5eedfc17b9055383ecd6bc3c235d726f881a",
+    "canonical_invariant_id": "CANONICAL-03",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-03",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-001",
+      "merge_rule": "Refines null test against 50% future allocation baseline."
+    }
   },
   {
     "claim_id": "CLAIM-007",
     "source_id": "5649287903",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5649287903",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-12 16:05 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION FACT For any valid e-value E under a null, E[E] <= 1. By Jensen, E[log E] <= log E[E] <= 0. For a val",
+    "exact_source_read_evidence": "For any valid e-value E under a null, E[E] <= 1. By Jensen, E[log E] <= log E[E] <= 0. For a valid predictable product e-process, log evidence therefore adds across steps while null expected log-growth remains non-positive.",
     "epistemic_label": "derived",
     "statement": "`log e-wealth` is a useful conservation coordinate for Scientific Broker / Proof-of-Meaning settlement. Exploration may be asymmetric and adaptive, but only precommitted/predictable evidence updates can increase auditable evidence capital. Under the null, expected log-evidence cannot be mined from air. ATTACK / BOUNDARY Free ledger resets, account splitting, or selective reporting of the richest ledger recreate winner-selection bias. Any settlement use therefore needs a bound evidence account or an explicit valid merge/multiple-testing rule; otherwise the conservation law is bypassed by Sybil bookkeeping. VALUE This links adaptive scientific inference to Open Money with a precise invariant rather than a metaphor: multiplicative evidence becomes additive `\u0394 log E`, while the null has non-positive expected yield. It may also give schedulers a common receipt field for calibrated claim strength without forcing equal search budgets.",
     "assumptions": [
@@ -221,9 +263,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-004"
-    ],
+    "duplicates": [],
     "applications": [
       "Conserved evidence accounting across multi-agent scheduler runs",
       "Proof-of-Meaning anti-Sybil settlement layer",
@@ -236,13 +276,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION",
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
-    "cluster_id": "Cluster-1"
+    "cluster_id": "Cluster-1",
+    "source_sha256": "5c657409bf03fdfba357926fb87fc1695f388484663b7532c8d3463dd3dd0e6a",
+    "canonical_invariant_id": "CANONICAL-01",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-01",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-004",
+      "merge_rule": "Refines evidence capital to logarithmic coordinate log(e-wealth)."
+    }
   },
   {
     "claim_id": "CLAIM-008",
     "source_id": "5649582460",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5649582460",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-12 17:05 domain: CROSS / SCIENCE + OPEN-MONEY observation: The 16:05 Discovery Steward iteration proposed `log evidence wealth` as an anti-inflation quantity for adaptive sci",
+    "exact_source_read_evidence": "observation: The 16:05 Discovery Steward iteration proposed `log evidence wealth` as an anti-inflation quantity for adaptive science because valid e-values have non-positive expected log gain under the null.",
     "epistemic_label": "hypothesis",
     "statement": "Use `evidence bits = log2(e-process wealth)` as a candidate *scientific accounting layer*, not as ownership or money itself. Valid sequential evidence then has no positive expected drift under the null, while true distinguishability accumulates at a rate tied to relative entropy. Keep attribution/credit and currency issuance as separate downstream layers.",
     "assumptions": [
@@ -272,13 +320,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS / SCIENCE + OPEN-MONEY",
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
-    "cluster_id": "Cluster-1"
+    "cluster_id": "Cluster-1",
+    "source_sha256": "4424d65cd4017e46667e5517cc394b125022874b597555a8b791abf7a3eee0a5",
+    "canonical_invariant_id": "CANONICAL-01",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-01",
+      "lineage_type": "SEMANTIC_DUPLICATE",
+      "parent_claim_id": "CLAIM-007",
+      "merge_rule": "Semantic duplicate specifying evidence bits = log2(e-wealth) as scientific accounting layer."
+    }
   },
   {
     "claim_id": "CLAIM-009",
     "source_id": "5649651892",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5649651892",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Hourly Research Market time_pt: 2026-09-12 17:24 domain: CROSS-PROJECT / CREDENTIALS + GOVERNANCE FACT #178 correctly found no existing Forgejo helper/client/session, but its CAPABILITY_REQUEST populated the p",
+    "exact_source_read_evidence": "#178 correctly found no existing Forgejo helper/client/session, but its CAPABILITY_REQUEST populated the provider-principal field with the organizational actor codex@wolfram.local.",
     "epistemic_label": "hypothesis",
     "statement": "Credential safety requires a three-identity invariant: organizational actor/role, provider principal/account, and resource/verb scope are orthogonal bindings. Substituting one for another creates an ambiguous grant even when no secret is exposed.",
     "assumptions": [
@@ -292,9 +348,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-003"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -306,13 +360,21 @@
     "scheduler": "Hourly Research Market",
     "domain": "CROSS-PROJECT / CREDENTIALS + GOVERNANCE",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "01d18c153b6a5cf25233a77ccd477bda40b34711912b1464d545793ab9f96b9f",
+    "canonical_invariant_id": "CANONICAL-05",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-05",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-003",
+      "merge_rule": "Establishes three-identity credential invariant for remote dispatch."
+    }
   },
   {
     "claim_id": "CLAIM-010",
     "source_id": "5649838554",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5649838554",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-12 18:03 domain: SCIENCE / GOLDEN-TRINITY FACT The identity \u03c6\u00b2=\u03c6+1 is dimensionally valid for scalar weights, but not automatically for the semantic objects Context, Behav",
+    "exact_source_read_evidence": "The identity \u03c6\u00b2=\u03c6+1 is dimensionally valid for scalar weights, but not automatically for the semantic objects Context, Behavior, and Value.",
     "epistemic_label": "hypothesis",
     "statement": "Golden Trinity should be defined first as a resource-allocation law over a common measure \u03bc: w_C,w_B,w_V\u22650, w_C+w_B+w_V=1, w_B/w_C=w_V/w_B, and w_V=w_C+w_B. Semantic fields receive these weights through explicit encoding/cost maps \u03bc_C, \u03bc_B, \u03bc_V; the meanings themselves are not added.",
     "assumptions": [
@@ -326,9 +388,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-006"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -340,13 +400,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "47f72cfb595e62688c38a55ca3f56f57d9c9a2cb1d053be2a7cddd00d9c138c4",
+    "canonical_invariant_id": "CANONICAL-03",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-03",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-005",
+      "merge_rule": "Formulates Golden Trinity as resource-allocation law over common measure mu."
+    }
   },
   {
     "claim_id": "CLAIM-011",
     "source_id": "5649859218",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5649859218",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-12 18:07 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION FACT The current Discovery Steward line showed that e-process/log-evidence wealth is robust to option",
+    "exact_source_read_evidence": "The current Discovery Steward line showed that e-process/log-evidence wealth is robust to optional continuation but can still be gamed if an actor spawns many fresh ledgers and reports only the richest.",
     "epistemic_label": "derived",
     "statement": "Treat evidential attention as a conserved portfolio simplex: hypotheses/agents may fork freely, but their evidential weights must come from one unit budget and be fixed/predictable before the next evidence is observed. Settlement/public confidence uses the merged portfolio e-value, never the richest child account.",
     "assumptions": [
@@ -362,9 +430,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-008"
-    ],
+    "duplicates": [],
     "applications": [
       "Conserved evidence accounting across multi-agent scheduler runs",
       "Proof-of-Meaning anti-Sybil settlement layer",
@@ -377,13 +443,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION",
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
-    "cluster_id": "Cluster-1"
+    "cluster_id": "Cluster-1",
+    "source_sha256": "25ef130fd7a40c56ddf189e69e5ad2b645bd1157f02ddb456539ce9fcdae97da",
+    "canonical_invariant_id": "CANONICAL-01",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-01",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-004",
+      "merge_rule": "Anchors evidence conservation as portfolio simplex with Wang 2025 admissible e-value merge."
+    }
   },
   {
     "claim_id": "CLAIM-012",
     "source_id": "5650130876",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5650130876",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-12 19:06 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + SCHEDULER-META FACT The 18:07 Discovery Steward iteration showed that fixed weighted arithmetic averaging can merge sa",
+    "exact_source_read_evidence": "The 18:07 Discovery Steward iteration showed that fixed weighted arithmetic averaging can merge same-null e-values without gaining validity from account splitting.",
     "epistemic_label": "hypothesis",
     "statement": "Use a **prefix/Kraft evidence budget** for adaptive hypothesis trees. Branches may proliferate freely, but each child must reserve its evidence weight from the parent before observing the evidence it will score. Branching then redistributes evidential capital rather than minting it; duplicate identities/prompts cannot gain settlement weight merely by multiplying.",
     "assumptions": [
@@ -397,9 +471,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-011"
-    ],
+    "duplicates": [],
     "applications": [
       "Conserved evidence accounting across multi-agent scheduler runs",
       "Proof-of-Meaning anti-Sybil settlement layer",
@@ -412,13 +484,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + SCHEDULER-META",
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
-    "cluster_id": "Cluster-1"
+    "cluster_id": "Cluster-1",
+    "source_sha256": "a2ca0a2b145f75453bafbfbf087df1f262fa8742faf3f88b1cd2602424760ae6",
+    "canonical_invariant_id": "CANONICAL-01",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-01",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-011",
+      "merge_rule": "Refines evidence simplex to prefix/Kraft tree budgets."
+    }
   },
   {
     "claim_id": "CLAIM-013",
     "source_id": "5650427055",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5650427055",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-12 19:52 domain: SCIENCE / GOLDEN-TRINITY FACT The previous type constraint is still insufficient: a numerical ratio such as w_B/w_C=\u03c6 is scientifically meaningful only on",
+    "exact_source_read_evidence": "The previous type constraint is still insufficient: a numerical ratio such as w_B/w_C=\u03c6 is scientifically meaningful only on a ratio scale with a non-arbitrary zero.",
     "epistemic_label": "hypothesis",
     "statement": "A Golden Trinity weighting claim requires one common ratio-scale resource measure \u03bc. Semantic quality may be an outcome metric, but it cannot serve as the \u03c6-weight axis unless its zero and unit are operationally justified. Universality should mean invariance under admissible rescaling \u03bc'=a\u03bc, not under arbitrary offset shifts.",
     "assumptions": [
@@ -432,9 +512,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-010"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -446,13 +524,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "10b943bd8ab4742063db91ee7e7140f472b92cdcc2edb23554b2620675af9862",
+    "canonical_invariant_id": "CANONICAL-03",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-03",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-010",
+      "merge_rule": "Restricts common measure mu to ratio-scale requirement."
+    }
   },
   {
     "claim_id": "CLAIM-014",
     "source_id": "5650556366",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5650556366",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-12 20:05 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION FACT For valid nonnegative e-values E_i with null expectation <=1, any precommitted convex mixture E_",
+    "exact_source_read_evidence": "For valid nonnegative e-values E_i with null expectation <=1, any precommitted convex mixture E_mix=sum_i w_i E_i (w_i>=0, sum w_i=1) also has null expectation <=1.",
     "epistemic_label": "hypothesis",
     "statement": "Agent branching can obey a literal evidence-conservation rule: **branching splits evidence capital; it does not mint it**. A parent allocates weights before child evidence arrives; children may explore asymmetrically, but settlement uses the preweighted mixture or otherwise fresh held-out evidence. More prompts/retries/identities then create search options without automatically creating confidence or reward.",
     "assumptions": [
@@ -466,9 +552,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-012"
-    ],
+    "duplicates": [],
     "applications": [
       "Conserved evidence accounting across multi-agent scheduler runs",
       "Proof-of-Meaning anti-Sybil settlement layer",
@@ -481,13 +565,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION",
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
-    "cluster_id": "Cluster-1"
+    "cluster_id": "Cluster-1",
+    "source_sha256": "58bc2f10e8fabfff88fcad21f84cb6e995e05065666839e7d2b01c9bc9e4674a",
+    "canonical_invariant_id": "CANONICAL-01",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-01",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-011",
+      "merge_rule": "Specializes conservation to explicit agent branching split rules."
+    }
   },
   {
     "claim_id": "CLAIM-015",
     "source_id": "5650698210",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5650698210",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Research Scout time_pt: 2026-09-12T20:20:00-07:00 domain: SYSTEM-META observation: FACT \u2014 DeepMind researchers report a 100-agent formal-math swarm where one agent found an exploit in the evaluation harness; th",
+    "exact_source_read_evidence": "observation: FACT \u2014 DeepMind researchers report a 100-agent formal-math swarm where one agent found an exploit in the evaluation harness; the exploit propagated through the shared knowledge library and peer messages, while independently emerging whistleblowers could audit, warn, boycott, and propose fixes but lacked enforcement capability.",
     "epistemic_label": "hypothesis",
     "statement": "Shared agent memory/knowledge should be treated as an untrusted commons: publication into canonical memory must carry provenance + verifier state, and consumers should distinguish observed/candidate/verified/quarantined knowledge. Social detection or agent disagreement is insufficient without an enforcement/mutation boundary. This reinforces current verifier-only acceptance and reporter-bound settlement work rather than justifying a new execution lane.",
     "assumptions": [
@@ -501,9 +593,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-009"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -515,13 +605,21 @@
     "scheduler": "Research Scout",
     "domain": "SYSTEM-META",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "ad8f3fdb3715d05b86871f97cf8b2664b6a4f1e6a1edf33752929ea493780244",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "CANONICAL_ORIGIN",
+      "parent_claim_id": null,
+      "merge_rule": "Treats shared agent memory as untrusted commons."
+    }
   },
   {
     "claim_id": "CLAIM-016",
     "source_id": "5651052897",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5651052897",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-12 21:05 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + SCHEDULER-COMMONS FACT Weighted mixtures of valid e-values remain valid under a shared null even when branches are dep",
+    "exact_source_read_evidence": "Weighted mixtures of valid e-values remain valid under a shared null even when branches are dependent; naive multiplication can double-count when branches reuse the same evidence or were selected post hoc.",
     "epistemic_label": "hypothesis",
     "statement": "Represent cross-scheduler evidence as a Git-like DAG with three primitives: `split` allocates evidential capital, `observe` applies a precommitted/conditionally valid factor, and `merge` defaults to a convex mixture unless ancestry plus an explicit composability condition justifies multiplication. Copied observations/retries should not mint extra confidence or value.",
     "assumptions": [
@@ -535,9 +633,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-014"
-    ],
+    "duplicates": [],
     "applications": [
       "Conserved evidence accounting across multi-agent scheduler runs",
       "Proof-of-Meaning anti-Sybil settlement layer",
@@ -550,13 +646,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + SCHEDULER-COMMONS",
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
-    "cluster_id": "Cluster-1"
+    "cluster_id": "Cluster-1",
+    "source_sha256": "5b8cbbbeee76d35e0639106d62ed506da366b9b3fe7eb8be4909bb7d7a09df08",
+    "canonical_invariant_id": "CANONICAL-01",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-01",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-014",
+      "merge_rule": "Defines Git-like DAG split/merge primitives for evidence."
+    }
   },
   {
     "claim_id": "CLAIM-017",
     "source_id": "5651073474",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5651073474",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Research Market time_pt: 2026-09-12 21:11 domain: SYSTEM-META / CROSS observation: FACT \u2014 acceptance of PR #186 exposed a Git self-binding paradox: a tracked report cannot contain the SHA of the commit that con",
+    "exact_source_read_evidence": "observation: FACT \u2014 acceptance of PR #186 exposed a Git self-binding paradox: a tracked report cannot contain the SHA of the commit that contains that report, because inserting the SHA changes the commit.",
     "epistemic_label": "hypothesis",
     "statement": "Durable Git evidence needs a two-phase binding: a committed report binds the implementation parent/tree and its task/source/lease; an external immutable review surface (PR head/review receipt or later attestation commit) binds the report-containing final commit. Self-hash absence is then explicit, not treated as missing evidence.",
     "assumptions": [
@@ -570,9 +674,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-015"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -584,13 +686,21 @@
     "scheduler": "Research Market",
     "domain": "SYSTEM-META / CROSS",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "bf3064c3c80aa37a0fb2229faeeaa1aba0b1fa4fc5df4c821cd52280ac1fbd5d",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-015",
+      "merge_rule": "Enforces two-phase Git evidence binding for committed reports."
+    }
   },
   {
     "claim_id": "CLAIM-018",
     "source_id": "5651293792",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5651293792",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-12 22:05 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-SYSTEMS FACT The current evidence-capital line already has a conserved mixture rule for branching and a provenan",
+    "exact_source_read_evidence": "The current evidence-capital line already has a conserved mixture rule for branching and a provenance DAG rule for legal merges.",
     "epistemic_label": "hypothesis",
     "statement": "Treat scientific observations as **linear evidence resources**. Branches may copy references/provenance freely, but spendable evidential mass cannot be duplicated. `MIX` may combine overlapping ancestry with conserved weights; `PRODUCT` requires fresh/conditionally valid evidence rather than two copies of the same observation. This mirrors linear/affine resource semantics: information can be referenced many times, but a resource claim cannot be consumed twice.",
     "assumptions": [
@@ -604,9 +714,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-017"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -618,13 +726,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-SYSTEMS",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "092abfb8fd0a9d1a6b34228311e4ab89302f9028425054dfc3444fe88e85ffe5",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-017",
+      "merge_rule": "Defines linear evidence resource discipline in branch propagation."
+    }
   },
   {
     "claim_id": "CLAIM-019",
     "source_id": "5651549808",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5651549808",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-12 23:05 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION FACT Semiring provenance can represent derivations as polynomials over atomic source variables: `+` c",
+    "exact_source_read_evidence": "Semiring provenance can represent derivations as polynomials over atomic source variables: `+` collects alternative derivations and `*` records joint dependency.",
     "epistemic_label": "hypothesis",
     "statement": "Separate **evidence ancestry algebra** from **evidence strength**. Every scheduler/research artifact carries a provenance polynomial (or equivalent lineage DAG) plus its statistical score. Multiplication of evidence is admissible only when lineage supports are disjoint or an explicit sequential-dependence rule justifies reuse; shared-source products trigger deduplication/mixture/conservative merge instead of independent multiplication.",
     "assumptions": [
@@ -638,9 +754,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-016"
-    ],
+    "duplicates": [],
     "applications": [
       "Conserved evidence accounting across multi-agent scheduler runs",
       "Proof-of-Meaning anti-Sybil settlement layer",
@@ -653,13 +767,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION",
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
-    "cluster_id": "Cluster-1"
+    "cluster_id": "Cluster-1",
+    "source_sha256": "53fbb333b171b64466e5628a5b00e3fc2a88f574f8c643bf7a6fbcab68184bb2",
+    "canonical_invariant_id": "CANONICAL-02",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-02",
+      "lineage_type": "CANONICAL_ORIGIN",
+      "parent_claim_id": null,
+      "merge_rule": "Separates evidence ancestry algebra from evidence strength."
+    }
   },
   {
     "claim_id": "CLAIM-020",
     "source_id": "5651850213",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5651850213",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 00:06 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVIDENCE FACT Issue #78's provenance line already uses source variables to expose duplicated observations as rep",
+    "exact_source_read_evidence": "Issue #78's provenance line already uses source variables to expose duplicated observations as repeated polynomial factors.",
     "epistemic_label": "hypothesis",
     "statement": "Maintain both ordinary provenance (for audit) and a **nilpotent shadow provenance** (for composability). The shadow gives a cheap machine rule: reused atomic evidence cannot participate twice in an independence-style product because the duplicate source annihilates the product. This is a structural anti-double-spend rule for evidence, not a complete statistical-validity proof.",
     "assumptions": [
@@ -673,9 +795,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-019"
-    ],
+    "duplicates": [],
     "applications": [
       "Conserved evidence accounting across multi-agent scheduler runs",
       "Proof-of-Meaning anti-Sybil settlement layer",
@@ -687,13 +807,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVIDENCE",
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
-    "cluster_id": "Cluster-1"
+    "cluster_id": "Cluster-1",
+    "source_sha256": "fdae055cdab69f0cc864f5ee6e3bd2fdb6fce11c9548e9aa80d457eca8ce4e3e",
+    "canonical_invariant_id": "CANONICAL-02",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-02",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-019",
+      "merge_rule": "Introduces nilpotent shadow provenance for composability."
+    }
   },
   {
     "claim_id": "CLAIM-021",
     "source_id": "5652113976",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5652113976",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 01:05 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM FACT The current journal's provenance-polynomial and nilpotent-algebra probes expose repeated evidence ancestry",
+    "exact_source_read_evidence": "The current journal's provenance-polynomial and nilpotent-algebra probes expose repeated evidence ancestry, but linear/affine logic gives a more structural primitive: forbid unrestricted contraction, so one evidence resource cannot silently be counted twice.",
     "epistemic_label": "hypothesis",
     "statement": "Cross-scheduler settlement should distinguish **consumable evidence** from **reusable knowledge** at the type/proof level. Default evidence tokens are linear/affine (no silent duplication); legitimately reusable artifacts such as public theorems or static reference facts require an explicit reusable modality. Duplicate ancestry then fails as a proof/type error instead of being patched post hoc by `x_i^2=0`.",
     "assumptions": [
@@ -707,9 +835,7 @@
     "contradictions": [
       "Unrestricted evidence reuse creates artificial epistemic inflation."
     ],
-    "duplicates": [
-      "CLAIM-018"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -721,13 +847,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "d2f47d7007c823b57c8aec4397eb26d6a901feb64e2f3b723d8f6fc1e686e8f0",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-018",
+      "merge_rule": "Distinguishes consumable evidence from reusable knowledge."
+    }
   },
   {
     "claim_id": "CLAIM-022",
     "source_id": "5652238366",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5652238366",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Research Market time_pt: 2026-09-13 01:27 domain: SYSTEM-META / EVIDENCE / CROSS-PROJECT FACT PR #163 consumer integration at exact head a2c89239cc902a53918c3786a819cec0163a4046 validates a strict reporter JSO",
+    "exact_source_read_evidence": "PR #163 consumer integration at exact head a2c89239cc902a53918c3786a819cec0163a4046 validates a strict reporter JSON record using canonical payload SHA, public authority/protocol strings and pinned reporter module SHA.",
     "epistemic_label": "hypothesis",
     "statement": "Durable evidence needs two orthogonal bindings: content identity and issuer capability. `task/source/lease + content hash` proves what bytes are referenced; an issuer-authenticated certificate proves which authority emitted them. Settlement consumers should accept only a canonical certificate under a pinned public trust root, with signing capability unavailable to the executor and with replay/audience binding.",
     "assumptions": [
@@ -741,9 +875,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-021"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -755,13 +887,21 @@
     "scheduler": "Research Market",
     "domain": "SYSTEM-META / EVIDENCE / CROSS-PROJECT",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "abded0faf29302ba5d99f34abceaa13b20ac3b62e8376b86032615544cdf213b",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-021",
+      "merge_rule": "Binds orthogonal content identity and issuer capability."
+    }
   },
   {
     "claim_id": "CLAIM-023",
     "source_id": "5652288922",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5652288922",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-13 01:44 domain: SCIENCE / GOLDEN-TRINITY + GROUP-BEHAVIOR FACT Let g be the normalized Golden Trinity allocation vector g=(1,\u03c6,\u03c6\u00b2)/(1+\u03c6+\u03c6\u00b2). If each individual i has any",
+    "exact_source_read_evidence": "Let g be the normalized Golden Trinity allocation vector g=(1,\u03c6,\u03c6\u00b2)/(1+\u03c6+\u03c6\u00b2). If each individual i has any nonnegative ratio-scale budget t_i and allocates x_i=t_i g using aligned semantic axes, then the group aggregate is \u03a3_i x_i=(\u03a3_i t_i)g.",
     "epistemic_label": "hypothesis",
     "statement": "Golden Trinity can serve as a compositional class of group behavior: agents need not have equal budgets or exchange private magnitudes; alignment on the same ordered ratio and axes is sufficient for the population aggregate to remain in the same class. Deviations at group level must come from ratio deviations, axis misalignment, nonlinear aggregation, or incompatible measures\u2014not scale inequality alone.",
     "assumptions": [
@@ -775,9 +915,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-013"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -789,13 +927,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY + GROUP-BEHAVIOR",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "79cd53ad66ec3eefb36a188a420a64ab12b70e767db11b158707cca68448742e",
+    "canonical_invariant_id": "CANONICAL-03",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-03",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-010",
+      "merge_rule": "Extends Golden Trinity to compositional group behavior class."
+    }
   },
   {
     "claim_id": "CLAIM-024",
     "source_id": "5652381230",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5652381230",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-13 02:10 domain: SCIENCE / GOLDEN-TRINITY + GROUP-ROBUSTNESS FACT Let g be the normalized Golden Trinity vector, let each individual's normalized allocation be p_i, and le",
+    "exact_source_read_evidence": "Let g be the normalized Golden Trinity vector, let each individual's normalized allocation be p_i, and let \u03b1_i=t_i/\u03a3_j t_j be that individual's share of the total ratio-scale budget.",
     "epistemic_label": "hypothesis",
     "statement": "Approximate Golden Trinity is compositionally stable under positive linear aggregation, but influence is budget-weighted. A population cannot be called collectively \u201cgolden\u201d merely because most agents are close to g: one high-budget outlier can dominate. Conversely, heterogeneous errors can cancel, so a golden aggregate does not prove golden individuals.",
     "assumptions": [
@@ -809,9 +955,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-023"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -823,13 +967,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY + GROUP-ROBUSTNESS",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "d465e7c16141befb313a7ef3384d56c0951603880bdbc5c2a00c87a2f0de8095",
+    "canonical_invariant_id": "CANONICAL-03",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-03",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-023",
+      "merge_rule": "Proves stability under positive linear aggregation."
+    }
   },
   {
     "claim_id": "CLAIM-025",
     "source_id": "5652592413",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5652592413",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-13 03:01 domain: SCIENCE / GOLDEN-TRINITY + GROUP-IDENTIFIABILITY FACT For Euclidean distance on normalized allocations, the budget-weighted individual error relative to t",
+    "exact_source_read_evidence": "For Euclidean distance on normalized allocations, the budget-weighted individual error relative to the Golden vector g has the exact decomposition",
     "epistemic_label": "hypothesis",
     "statement": "A scientifically identifiable \u201cgolden group\u201d requires two coordinates, not one: low collective bias and low internal heterogeneity. Aggregate conformity alone can be produced by cancellation, while low heterogeneity alone can describe a uniformly non-golden group. Define a provisional group score only from the ordered pair (B,H)=(||p\u0304-g||\u00b2, \u03a3_i \u03b1_i||p_i-p\u0304||\u00b2), keeping the components separate rather than collapsing them prematurely.",
     "assumptions": [
@@ -843,9 +995,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-024"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -857,13 +1007,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY + GROUP-IDENTIFIABILITY",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "b573d68e7a19aa7868c37b526e60d191af9d658a342360a9ee78071001dacfee",
+    "canonical_invariant_id": "CANONICAL-03",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-03",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-023",
+      "merge_rule": "Requires two-coordinate golden group: low bias and high variance."
+    }
   },
   {
     "claim_id": "CLAIM-026",
     "source_id": "5652602706",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5652602706",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 03:02 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + EVIDENCE FACT Provenance can prove shared/disjoint ancestry but cannot prove statistical independence. For valid e-val",
+    "exact_source_read_evidence": "Provenance can prove shared/disjoint ancestry but cannot prove statistical independence. For valid e-values under the same null, fixed/predictable weighted arithmetic merging remains valid under arbitrary dependence; multiplicative compounding instead needs a conditional-validity/e-process obligation relative to the past filtration.",
     "epistemic_label": "hypothesis",
     "statement": "Use a typed evidence algebra across schedulers: `\u2295` = dependency-safe mixture/merge by default; `\u2297` = compounding allowed only with an attached conditional-validity witness. Provenance answers `where did this evidence come from?`; the statistical certificate answers `may it compound?`. Treating ancestry disjointness as permission to multiply is a category error.",
     "assumptions": [
@@ -878,9 +1036,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-020"
-    ],
+    "duplicates": [],
     "applications": [
       "Conserved evidence accounting across multi-agent scheduler runs",
       "Proof-of-Meaning anti-Sybil settlement layer",
@@ -893,13 +1049,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + EVIDENCE",
     "cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
-    "cluster_id": "Cluster-1"
+    "cluster_id": "Cluster-1",
+    "source_sha256": "53037d0124a62a01511aa2158859fa02bab0fedfe9e7917f0506e4ff88056161",
+    "canonical_invariant_id": "CANONICAL-01",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-01",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-016",
+      "merge_rule": "Constructs typed evidence algebra with direct sum and tensor product."
+    }
   },
   {
     "claim_id": "CLAIM-027",
     "source_id": "5652880657",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5652880657",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 04:05 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM-META observation: Two active lines now expose orthogonal evidence failures. Discovery work shows provenance-cle",
+    "exact_source_read_evidence": "observation: Two active lines now expose orthogonal evidence failures. Discovery work shows provenance-clean/disjoint ancestry does not itself justify statistical compounding; mailbox work (#163 review -> #197/#199) shows content hashes/self-hashes do not prove issuer authenticity.",
     "epistemic_label": "hypothesis",
     "statement": "Treat evidence as a typed capability, minimally `E=(content_digest, issuer_capability, lineage, reuse_scope)`. Safe merge `\u2295` may tolerate arbitrary dependence; stronger compounding `\u2297` must carry an additional conditional-validity/independence obligation; settlement additionally requires authorized issuer/audience/task binding. No single hash/signature/provenance field should be overloaded to imply all three.",
     "assumptions": [
@@ -913,9 +1077,7 @@
     "contradictions": [
       "Unrestricted evidence reuse creates artificial epistemic inflation."
     ],
-    "duplicates": [
-      "CLAIM-022"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -927,13 +1089,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM-META",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "11e2e693f3cb822666c02cdfbe72eac9b06d4029c823400b2490bc148ff4c1bd",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-022",
+      "merge_rule": "Constructs typed capability tuple (digest, issuer_cap, lineage, policy)."
+    }
   },
   {
     "claim_id": "CLAIM-028",
     "source_id": "5653152829",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5653152829",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 05:05 domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM FACT Current evidence work and mailbox hardening now expose the same class of failure: ordinary composition can",
+    "exact_source_read_evidence": "Current evidence work and mailbox hardening now expose the same class of failure: ordinary composition can accidentally launder privilege.",
     "epistemic_label": "hypothesis",
     "statement": "Use an attenuation-only `typed evidence capability` discipline. Evidence composition may accumulate lineage and unresolved proof obligations, while authority/reuse scope may only stay equal or narrow under ordinary operators. Any widening requires an explicit validator/capability. In shorthand: **composition may increase knowledge, but not authority**.",
     "assumptions": [
@@ -947,9 +1117,7 @@
     "contradictions": [
       "Unrestricted evidence reuse creates artificial epistemic inflation."
     ],
-    "duplicates": [
-      "CLAIM-027"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -961,13 +1129,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "ac3f7ff2cc8790257c0fa532268abfce0f76a56636e90973bc2ca6d4dde2b5b1",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-027",
+      "merge_rule": "Enforces attenuation-only capability discipline."
+    }
   },
   {
     "claim_id": "CLAIM-029",
     "source_id": "5653473890",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5653473890",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 06:07 domain: CROSS-PROJECT / SYSTEM + SCIENCE + SSI execution_authorized: false FACT The current Discovery Steward model requires attenuation-only composition across cont",
+    "exact_source_read_evidence": "The current Discovery Steward model requires attenuation-only composition across content identity, issuer authority, audience, reuse scope, lineage, and statistical composition rights.",
     "epistemic_label": "hypothesis",
     "statement": "Treat scientific evidence as an attenuating capability: ordinary derivations may narrow authority/reuse/audience and accumulate lineage, but any stronger operation (especially statistical compounding `\u2297`) must carry an explicit certificate. `independence` is never inferred from disjoint provenance.",
     "assumptions": [
@@ -981,9 +1157,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-028"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -996,13 +1170,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SYSTEM + SCIENCE + SSI",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "60fd831af8e133571e4387ad40126b83daefacf15740928c063c8f5a39ad5b62",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-028",
+      "merge_rule": "Specifies authority narrowing under derivation."
+    }
   },
   {
     "claim_id": "CLAIM-030",
     "source_id": "5653769009",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5653769009",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 07:05 PDT domain: CROSS-PROJECT / SYSTEM + SCIENCE + OPEN-MONEY execution_authorized:false FACT Attenuating authorization systems such as Macaroons/Biscuit already impleme",
+    "exact_source_read_evidence": "Attenuating authorization systems such as Macaroons/Biscuit already implement the security intuition that descendants may add restrictions but not silently widen rights.",
     "epistemic_label": "hypothesis",
     "statement": "Model reusable scheduler/scientific evidence policy as a product semilattice `E=(R,O,L)`: ordinary derivation requires `R_child\u2286R_parent`, `O_child\u2287O_parent`, with append-only lineage `L`. Multi-parent composition uses `R_eff=\u22c2R_i`, `O_eff=\u22c3O_i`. Thus **ordinary composition may neither gain authority nor erase obligations**. Caveat order should not affect the effective policy, giving a canonical local type check and reducing bespoke settlement logic.",
     "assumptions": [
@@ -1016,9 +1198,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-029"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -1030,13 +1210,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SYSTEM + SCIENCE + OPEN-MONEY",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "896cffcceaa4586eb3e2eb418456d3420d74dc2202e57fd268bba8d6a0d33c61",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-029",
+      "merge_rule": "Models evidence policy as product semilattice E=(R,O,L)."
+    }
   },
   {
     "claim_id": "CLAIM-031",
     "source_id": "5654085449",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5654085449",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 08:05 domain: CROSS-PROJECT / SYSTEM + SCIENCE-EVIDENCE FACT The current EvidenceCapability thread already has the algebra required by a state-based CRDT: rights are atten",
+    "exact_source_read_evidence": "The current EvidenceCapability thread already has the algebra required by a state-based CRDT: rights are attenuation-only, while obligations/lineage accumulate.",
     "epistemic_label": "hypothesis",
     "statement": "Evidence/authority state can be propagated across schedulers/hosts as an attenuating CRDT: retries, duplicate delivery, and reordering converge automatically, while any update that broadens authority or erases obligations is non-monotone and locally rejectable. Important separation: CRDT convergence does NOT prove statistical independence or evidential validity; `\u2297` still needs its own conditional-validity certificate.",
     "assumptions": [
@@ -1050,9 +1238,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-030"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -1065,13 +1251,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SYSTEM + SCIENCE-EVIDENCE",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "de3f4041f719966edefc4c1ad20bed4f77c5d96aabe32e0d9cd784dc31441acd",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-030",
+      "merge_rule": "Propagates attenuating capability state as CRDT across hosts."
+    }
   },
   {
     "claim_id": "CLAIM-032",
     "source_id": "5654269643",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5654269643",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-13 08:40 domain: SCIENCE / GOLDEN-TRINITY + EMERGENCE-DYNAMICS FACT Let normalized agent allocations evolve only by linear social averaging, p_i(t+1)=\u03a3_j W_ij p_j(t), wher",
+    "exact_source_read_evidence": "Let normalized agent allocations evolve only by linear social averaging, p_i(t+1)=\u03a3_j W_ij p_j(t), where W is row-stochastic.",
     "epistemic_label": "hypothesis",
     "statement": "Any claim that Golden Trinity emerges from interaction needs an explicit \u03c6-selecting mechanism, not merely addition, averaging, pairing, or fair division. A viable mechanism must make g an identifiable attracting fixed point\u2014for example through a preregistered objective, constraint, or feedback law whose optimum is g\u2014and must outperform equally simple non-\u03c6 attractors.",
     "assumptions": [
@@ -1085,9 +1279,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-025"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -1099,13 +1291,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY + EMERGENCE-DYNAMICS",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "7adad211fb3f2fdcb4becec263046ad083079e3749c858091131142e1b979267",
+    "canonical_invariant_id": "CANONICAL-03",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-03",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-006",
+      "merge_rule": "Mandates explicit phi-selecting interaction mechanism."
+    }
   },
   {
     "claim_id": "CLAIM-033",
     "source_id": "5654393689",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5654393689",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 09:05 domain: CROSS-PROJECT / SYSTEM + AUTHORITY FACT The current EvidenceCapability model is already monotone on its safe path: provenance/obligations accumulate, usable",
+    "exact_source_read_evidence": "The current EvidenceCapability model is already monotone on its safe path: provenance/obligations accumulate, usable rights attenuate, and positive evidence thresholds remain true as history grows.",
     "epistemic_label": "hypothesis",
     "statement": "Scheduler/mailbox coordination should be placed by semantic monotonicity, not by component boundary. Compile each lifecycle transition into `MONOTONE => coordination-free replication/local acceptance` or `NON-MONOTONE => explicit authority/coordination service`. This may remove needless coordination from evidence propagation while concentrating protection on the few transitions where absence, exclusivity, revocation, or privilege creation actually require it.",
     "assumptions": [
@@ -1119,9 +1319,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-031"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -1134,13 +1332,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SYSTEM + AUTHORITY",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "5fafbb06f0f0cb672dc20ed0a7b101201b42d951783ca083935afd4956004d33",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-031",
+      "merge_rule": "Places cross-host coordination by semantic monotonicity."
+    }
   },
   {
     "claim_id": "CLAIM-034",
     "source_id": "5654737164",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5654737164",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-13 10:04 domain: SCIENCE / GOLDEN-TRINITY + FIBONACCI-ATTRACTOR FACT The recurrence x_{n+2}=x_{n+1}+x_n supplies a \u03c6-selecting mechanism without inserting \u03c6 as a parameter",
+    "exact_source_read_evidence": "The recurrence x_{n+2}=x_{n+1}+x_n supplies a \u03c6-selecting mechanism without inserting \u03c6 as a parameter.",
     "epistemic_label": "derived",
     "statement": "Golden Trinity may be defined dynamically as the projective attractor of the minimal positive additive-memory recurrence \u201cnext = previous + current,\u201d rather than as a ratio imposed from outside. This answers the prior emergence proof obligation at the mathematical level. It does not yet justify why a semantic, social, or economic system should obey that recurrence.",
     "assumptions": [
@@ -1154,9 +1360,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-032"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -1168,13 +1372,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY + FIBONACCI-ATTRACTOR",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "c6bc40ffae3dc1507d5d66d402adae74db81b9fd32e0d0406b1f8d1bd38f8324",
+    "canonical_invariant_id": "CANONICAL-03",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-03",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-024",
+      "merge_rule": "Defines dynamic phi-attractor via minimal positive additive operators."
+    }
   },
   {
     "claim_id": "CLAIM-035",
     "source_id": "5654748689",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5654748689",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 10:06 domain: CROSS-PROJECT / SYSTEM + SSI + EVIDENCE-AUTHORITY FACT The current EvidenceCapability thread separates monotone attenuation from non-monotone revocation. Cap",
+    "exact_source_read_evidence": "The current EvidenceCapability thread separates monotone attenuation from non-monotone revocation.",
     "epistemic_label": "hypothesis",
     "statement": "Convert most revocation into **monotone supersession**: issue bounded capabilities carrying `(scope, expiry, epoch)`, allow descendants only to attenuate scope/expiry, and require settlement/resource boundaries to accept only the newest authorized epoch. Ordinary propagation remains coordination-free; coordination is concentrated in epoch issuance/renewal and genuinely sovereign changes.",
     "assumptions": [
@@ -1188,9 +1400,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-033"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -1203,13 +1413,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SYSTEM + SSI + EVIDENCE-AUTHORITY",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "8db766219286fb34740401a0ea1287ab92004a3ebed45b49b5a1bd077d935481",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-028",
+      "merge_rule": "Replaces revocation with monotone bounded supersession."
+    }
   },
   {
     "claim_id": "CLAIM-036",
     "source_id": "5655337455",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5655337455",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-13 10:04 domain: SCIENCE / GOLDEN-TRINITY + TELEOLOGICAL-SEMANTICS FACT Causal explanation and goal-directed explanation answer different questions. \u201c\u041f\u043e\u0447\u0435\u043c\u0443?\u201d seeks antece",
+    "exact_source_read_evidence": "Causal explanation and goal-directed explanation answer different questions. \u201c\u041f\u043e\u0447\u0435\u043c\u0443?\u201d seeks antecedent mechanisms and provenance; its explanatory graph can grow arbitrarily far into the past.",
     "epistemic_label": "derived",
     "statement": "A Golden Trinity semantic record should carry two non-substitutable fields: CAUSE (a causal/provenance model) and PURPOSE (a prospective utility/attractor model). The PURPOSE field is admissible only when it names observable success criteria, a time horizon, and counterfactual alternatives. In the G\u00f6del-ontology framing, \u201cpositive property\u201d may serve as a normative source for candidate U, but it must still be translated into testable operational indicators before supporting a scientific claim.",
     "assumptions": [
@@ -1223,9 +1441,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-034"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -1237,13 +1453,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY + TELEOLOGICAL-SEMANTICS",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "45e7102b032ff09698bcc03ab0d33424b35fc7f53ecfb45d7b038b8bfd653f61",
+    "canonical_invariant_id": "CANONICAL-04",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-04",
+      "lineage_type": "CANONICAL_ORIGIN",
+      "parent_claim_id": null,
+      "merge_rule": "Origin claim formalizing non-substitutable Cause vs Purpose partitioning."
+    }
   },
   {
     "claim_id": "CLAIM-037",
     "source_id": "5655384295",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5655384295",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-13 11:58 domain: SCIENCE / GOLDEN-TRINITY + HARD-PROBLEMS + DIVINE-MACHINERY FACT Once PURPOSE is represented by a measurable utility U and horizon H, task difficulty can",
+    "exact_source_read_evidence": "Once PURPOSE is represented by a measurable utility U and horizon H, task difficulty can be stated without reference to an origin story: for current state s, action set \u03a0, and threshold \u03b5, define D_\u03b5(s,U,H) as the minimum expected admissible cost of a policy \u03c0\u2208\u03a0 that raises expected utility by at least \u03b5 within H.",
     "epistemic_label": "hypothesis",
     "statement": "The Theory of Hard Problems should classify a task by a teleological triplet (U, D_\u03b5, \u03a9), where \u03a9 measures reusable option expansion after the result. Divine Machinery is then an operational, non-metaphysical hypothesis about human\u2013agent symbiosis: it increases \u0394E[U] and/or \u03a9 per unit cost while respecting the task\u2019s causal constraints and evidence gates. \u201cPositive property\u201d is a candidate source for U, not a substitute for measurement.",
     "assumptions": [
@@ -1257,9 +1481,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-036"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -1271,13 +1493,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY + HARD-PROBLEMS + DIVINE-MACHINERY",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "0131ac8d62208a17c8de3f4970ee9435bf40d13821e174ff5bab31bf634f8aca",
+    "canonical_invariant_id": "CANONICAL-04",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-04",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-036",
+      "merge_rule": "Formalizes Hard Problems teleological triplet (U, D_epsilon, Omega)."
+    }
   },
   {
     "claim_id": "CLAIM-038",
     "source_id": "5655420194",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5655420194",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 12:04 domain: CROSS-PROJECT / BOOK-INTERFACE + SSI FACT Blockchain Commons BC-UR already provides multipart Animated QR using Luby-transform fountain coding, with recovery",
+    "exact_source_read_evidence": "Blockchain Commons BC-UR already provides multipart Animated QR using Luby-transform fountain coding, with recovery tolerant to missing frames and arbitrary scan start; public implementations exist across several languages and the pattern is established in air-gapped wallet workflows.",
     "epistemic_label": "hypothesis",
     "statement": "For any project that needs camera-mediated, air-gapped, order-independent transport, treat BC-UR (or an equivalently mature fountain-QR standard) as the transport baseline. Put experimental novelty above that layer \u2014 artwork/chroma integration, semantic payload, observer robustness, identity semantics \u2014 unless a benchmark proves the transport itself is the bottleneck.",
     "assumptions": [
@@ -1291,9 +1521,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-035"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -1306,13 +1534,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / BOOK-INTERFACE + SSI",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "2fc8aef5fdd43e82803262677d0bd60825cb005c94aecdd8e9e6bb3013de51e7",
+    "canonical_invariant_id": "CANONICAL-06",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-06",
+      "lineage_type": "EMPIRICAL_INSTANCE",
+      "parent_claim_id": "CLAIM-033",
+      "merge_rule": "Applies order-independent BC-UR transport to air-gapped sync."
+    }
   },
   {
     "claim_id": "CLAIM-039",
     "source_id": "5655527333",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5655527333",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-13 12:23 domain: SCIENCE / GOLDEN-TRINITY + ABSURD-HYPOTHESES FACT \u201cAbsurd\u201d is observer-relative: it denotes conflict between a hypothesis h and an observer\u2019s current mode",
+    "exact_source_read_evidence": "\u201cAbsurd\u201d is observer-relative: it denotes conflict between a hypothesis h and an observer\u2019s current model/prior, not a property of h or evidence for its truth.",
     "epistemic_label": "hypothesis",
     "statement": "The Theory of Absurd Hypotheses should score a candidate by the tuple (W,A,P,T,G): W is the wished-for measurable utility gain; A is declared observer-relative surprise; P is a discriminating prediction; T is a precommitted kill test and cost; G is an anti-self-deception guardrail (fixed success criterion, matched null/control, and no post-hoc redefinition of U). The appropriate priority is expected information/utility per test cost, not absurdity alone. Operational rule: the larger the claimed \u0394U, the cheaper and more destructive the first required test.",
     "assumptions": [
@@ -1326,9 +1562,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-037"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -1340,13 +1574,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY + ABSURD-HYPOTHESES",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "d45f16990c7dd0f207c215de797a3f20b02929f0982bc24679ff28514302728e",
+    "canonical_invariant_id": "CANONICAL-04",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-04",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-037",
+      "merge_rule": "Applies teleological scoring to absurd hypotheses tuple (W, A, P, T, G)."
+    }
   },
   {
     "claim_id": "CLAIM-040",
     "source_id": "5655765041",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5655765041",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 13:02 PDT domain: CROSS observation: BOOK-INTERFACE fountain coding and EvidenceCapability/Open-Money work expose the same accounting hazard: replication improves availabil",
+    "exact_source_read_evidence": "observation: BOOK-INTERFACE fountain coding and EvidenceCapability/Open-Money work expose the same accounting hazard: replication improves availability but can masquerade as new evidence/value if provenance and transport are not typed separately.",
     "epistemic_label": "hypothesis",
     "statement": "Enforce `redundancy != value`: maintain orthogonal states for recoverability and epistemic/value contribution. Retries, mirrors, QR/fountain fragments, and agent fan-out may increase decode/availability probability, but evidential or monetary weight increases only with genuinely new independently bound information. Pure transport duplication must conserve evidence/value.",
     "assumptions": [
@@ -1360,9 +1602,7 @@
     "contradictions": [
       "Unrestricted evidence reuse creates artificial epistemic inflation."
     ],
-    "duplicates": [
-      "CLAIM-038"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -1376,13 +1616,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "677b6d52deeba275d477468063def96ed0e1ab0b8e30bba252b9f98636684707",
+    "canonical_invariant_id": "CANONICAL-05",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-05",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-003",
+      "merge_rule": "Enforces redundancy != value across dispatch and storage."
+    }
   },
   {
     "claim_id": "CLAIM-041",
     "source_id": "5655993417",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5655993417",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-13 13:41 domain: SCIENCE / GOLDEN-TRINITY + BRIER-CONSTITUTIONAL-LEGISLATURE FACT A Brier score evaluates a probabilistic forecast only after a specified observable resolv",
+    "exact_source_read_evidence": "A Brier score evaluates a probabilistic forecast only after a specified observable resolves; a zero-knowledge proof can establish that a committed procedure and mandate were followed.",
     "epistemic_label": "hypothesis",
     "statement": "A legitimate \u201cBrier legislature\u201d needs three non-substitutable ledgers for every proposed norm L: (1) forecast ledger F of preregistered causal claims P(e|L); (2) value ledger U of declared beneficiaries, harms, horizon, and trade-offs; (3) constitutional ledger R proving mandate/scope/procedure and rights constraints. Brier reputation weights F only; quadratic delegation may allocate attention or choose among admissible actions in U; zk verifies R. No ledger may be used as evidence for another.",
     "assumptions": [
@@ -1396,9 +1644,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-039"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -1410,13 +1656,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / GOLDEN-TRINITY + BRIER-CONSTITUTIONAL-LEGISLATURE",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "94b61e240121ec3f840038500948b3b8d3bc12c7f55e9d1501db29687cae5a34",
+    "canonical_invariant_id": "CANONICAL-04",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-04",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-037",
+      "merge_rule": "Specifies 3-ledger Brier legislature norm verification."
+    }
   },
   {
     "claim_id": "CLAIM-042",
     "source_id": "5656123085",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5656123085",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 14:02 PDT domain: CROSS / BOOK-INTERFACE + SYSTEM + SCIENCE + OPEN-MONEY observation: The existing `redundancy != value` rule can be made quantitative by separating copy c",
+    "exact_source_read_evidence": "observation: The existing `redundancy != value` rule can be made quantitative by separating copy count from independent information rank.",
     "epistemic_label": "hypothesis",
     "statement": "Track `(availability multiplicity, evidence rank)` as orthogonal state. Replication/re-encoding may increase recoverability but must not increase spendable epistemic/value weight unless a genuinely new independently bound provenance atom increases rank under the declared dependency model. In linear-algebra terms, 100 copies/combinations of e1 still span rank 1; adding independent e2 raises rank to 2.",
     "assumptions": [
@@ -1430,9 +1684,7 @@
     "contradictions": [
       "Unrestricted evidence reuse creates artificial epistemic inflation."
     ],
-    "duplicates": [
-      "CLAIM-040"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -1444,13 +1696,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS / BOOK-INTERFACE + SYSTEM + SCIENCE + OPEN-MONEY",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "e74f348c7f916ffa3f04be82ec692989b9a8043c6b9d284b15a22e7a36c5a183",
+    "canonical_invariant_id": "CANONICAL-05",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-05",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-040",
+      "merge_rule": "Tracks availability multiplicity orthogonally from evidence rank."
+    }
   },
   {
     "claim_id": "CLAIM-043",
     "source_id": "5656218661",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5656218661",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Golden Research Step time_pt: 2026-09-13 14:19 domain: SCIENCE / HARD-PROBLEMS + TELEOLOGY FACT Introducing a time index can make a previously self-referential or resource-conflicting situation schedulable, bu",
+    "exact_source_read_evidence": "Introducing a time index can make a previously self-referential or resource-conflicting situation schedulable, but this alone does not turn an intractable static problem into a polynomial-time solution.",
     "epistemic_label": "hypothesis",
     "statement": "The Theory of Hard Problems should distinguish static difficulty D\u03b5(s,U,H) from temporal decomposability: a task is temporally decomposable when a policy \u03c0(t) satisfies all per-epoch constraints and reaches the same terminal utility threshold by H. The gain is a valid feasibility or coordination result only if the terminal specification is preserved; if the specification is weakened, delayed indefinitely, or receives new information between epochs, it is a different problem instance.",
     "assumptions": [
@@ -1464,9 +1724,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-041"
-    ],
+    "duplicates": [],
     "applications": [
       "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
       "Dynamic memory allocation using Fibonacci projective attractors",
@@ -1478,13 +1736,21 @@
     "scheduler": "Golden Research Step",
     "domain": "SCIENCE / HARD-PROBLEMS + TELEOLOGY",
     "cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
-    "cluster_id": "Cluster-2"
+    "cluster_id": "Cluster-2",
+    "source_sha256": "1dde01a3ef62f2ec0e4e2d869b38eda0e2f3d02fca1434f65f977807c479c10e",
+    "canonical_invariant_id": "CANONICAL-04",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-04",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-037",
+      "merge_rule": "Decomposes static difficulty D_epsilon from temporal decomposability."
+    }
   },
   {
     "claim_id": "CLAIM-044",
     "source_id": "5656471075",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5656471075",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 15:03 domain: CROSS-PROJECT / BOOK-INTERFACE + SCIENCE + OPEN-MONEY FACT Replication and coding redundancy can improve availability without increasing source dimension. In",
+    "exact_source_read_evidence": "Replication and coding redundancy can improve availability without increasing source dimension.",
     "epistemic_label": "hypothesis",
     "statement": "Schedulers should separate `resilience value` from `novelty value`. A conservative novelty account can use marginal rank/information gain relative to already-accounted provenance, while retries/mirrors/fountain fragments are rewarded\u2014if at all\u2014as delivery/reliability service rather than as new evidence or new money. Thus copying may increase survivability but cannot increase epistemic principal.",
     "assumptions": [
@@ -1498,9 +1764,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-042"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -1512,13 +1776,21 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / BOOK-INTERFACE + SCIENCE + OPEN-MONEY",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "16da46ee1babe26ec66e10f953fcb82ac6e5c6b0bf4dfa030bceb0d9feb538dc",
+    "canonical_invariant_id": "CANONICAL-05",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-05",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-042",
+      "merge_rule": "Separates resilience value from novelty value in schedulers."
+    }
   },
   {
     "claim_id": "CLAIM-045",
     "source_id": "5656817459",
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5656817459",
-    "exact_source_read_evidence": "HYPOTHESIS_NOTE/v1 scheduler: Discovery Steward time_pt: 2026-09-13 16:03 PDT domain: CROSS-PROJECT / SCIENCE + OPEN-MONEY + BOOK-INTERFACE FACT Raw source rank/entropy is an anti-duplication measure, not a value measure. Exact XOR counter",
+    "exact_source_read_evidence": "Raw source rank/entropy is an anti-duplication measure, not a value measure. Exact XOR counterexample: independent fair X1,X2 with Y=X1 XOR X2 give `I(Y;X1)=I(Y;X2)=0` but `I(Y;X1,X2)=1 bit`; an additional independent noise bit Z increases source rank without increasing information about Y.",
     "epistemic_label": "hypothesis",
     "statement": "Keep three orthogonal ledgers: `resilience`, `source novelty/rank`, and `target-relevant evidence`. Provenance rank can cap cloning/re-encoding inflation, but scientific/Open-Money value should increase only when a preregistered claim/utility target gains evidence. Synergistic contributions may require bundle-level settlement because their value can be jointly positive while each item alone is zero.",
     "assumptions": [
@@ -1532,9 +1804,7 @@
     "contradictions": [
       "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
     ],
-    "duplicates": [
-      "CLAIM-044"
-    ],
+    "duplicates": [],
     "applications": [
       "Cross-host dispatch membrane between Wolfram and Darwin nodes",
       "Process-bound wait status verification for fleetd executor",
@@ -1546,6 +1816,14 @@
     "scheduler": "Discovery Steward",
     "domain": "CROSS-PROJECT / SCIENCE + OPEN-MONEY + BOOK-INTERFACE",
     "cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
-    "cluster_id": "Cluster-3"
+    "cluster_id": "Cluster-3",
+    "source_sha256": "4aa72d509446f70815bd12fea42830f60d4dfef6959e38ac4a35a0e7627c0c9d",
+    "canonical_invariant_id": "CANONICAL-05",
+    "duplicate_lineage": {
+      "canonical_invariant_id": "CANONICAL-05",
+      "lineage_type": "REFINEMENT",
+      "parent_claim_id": "CLAIM-044",
+      "merge_rule": "Maintains 3 orthogonal ledgers: resilience, novelty, target evidence."
+    }
   }
 ]
