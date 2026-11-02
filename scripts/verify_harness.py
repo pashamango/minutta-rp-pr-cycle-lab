@@ -3,6 +3,13 @@
 
 import sys
 import unittest
+
+# Make the checkout runnable directly from a clean clone, without requiring an
+# editable install or an ambient PYTHONPATH.
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from amde_num.xi_functional import RiemannXi
 from amde_num.channel_ribbon import RibbonFlowChannel
 from amde_num.channel_winding import WindingNumberChannel
@@ -17,7 +24,7 @@ def main():
     # 1. Run unittest test suite
     print("\n[Phase 1] Executing Automated Unit Test Suite...")
     loader = unittest.TestLoader()
-    suite = loader.discover("tests")
+    suite = loader.discover(str(Path(__file__).resolve().parents[1] / "tests"))
     runner = unittest.TextTestRunner(verbosity=2)
     test_result = runner.run(suite)
 

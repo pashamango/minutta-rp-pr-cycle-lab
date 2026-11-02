@@ -51,5 +51,5 @@ python3 scripts/run_three_channel.py
 
 ### 4. Verify Cryptographic Manifest
 ```bash
-cd evidence && shasum -a 256 -c manifest.sha256
+shasum -a 256 -c evidence/manifest.sha256
 ```
