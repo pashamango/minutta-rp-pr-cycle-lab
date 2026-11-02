@@ -33,6 +33,7 @@ from pathlib import Path
 html = Path('mockups/vhp-05-proof-console.html').read_text()
 assert 'Replay proof' in html and 'EA-001' in html
 assert html.count('<button') >= 3
+assert 'id="reset"' in html
 script = Path('demo/vhp-05-90s-mvp-script.md').read_text()
 assert '90 seconds' in script
 print('VHP-05 artifact smoke checks: PASS')
