@@ -1,0 +1,213 @@
+{
+  "metadata": {
+    "title": "Issue #168 Excluded Data Catalog",
+    "total_excluded_cataloged": 20,
+    "exclusion_criteria": [
+      "Treating heartbeat / hourly run receipts as discoveries is strictly prohibited by specification.",
+      "Records lacking hypothesis, observation, empirical null test, or invariant formulation are classified as operational telemetry.",
+      "Pure runner status ticks are excluded from the Invariant Graph to prevent semantic mirror bloat."
+    ]
+  },
+  "records": [
+    {
+      "source_id": "6199466905",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6199466905",
+      "timestamp": "2026-10-15T18:34:47Z",
+      "scheduler": "Golden Research Step",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Golden Research Step observed_run_time: 2026-10-15T11:33:00-07:00 run_marker: Golden-Research-Step--2026-10-15T11:33:00-07:00 o",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6199832727",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6199832727",
+      "timestamp": "2026-10-15T18:52:39Z",
+      "scheduler": "Morning Research Counsel -- Model Unknown",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Morning Research Counsel -- Model Unknown observed_run_time: 2026-10-15T11:51:59-07:00 run_marker: MorningResearchCounsel-Model",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6200571059",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6200571059",
+      "timestamp": "2026-10-15T19:30:53Z",
+      "scheduler": "Golden Research Step",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Golden Research Step observed_run_time: 2026-10-15T12:29:20-07:00 run_marker: Golden-Research-Step--2026-10-15T12:29:20-07:00 o",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6200930557",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6200930557",
+      "timestamp": "2026-10-15T19:50:35Z",
+      "scheduler": "Morning Research Counsel -- Model Unknown",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Morning Research Counsel -- Model Unknown observed_run_time: 2026-10-15T12:49:37-07:00 run_marker: MorningResearchCounsel-Model",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6201740312",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6201740312",
+      "timestamp": "2026-10-15T20:35:30Z",
+      "scheduler": "Golden Research Step",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Golden Research Step observed_run_time: 2026-10-15T13:33:45-07:00 run_marker: Golden-Research-Step--2026-10-15T13:33:45-07:00 o",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6202042386",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6202042386",
+      "timestamp": "2026-10-15T20:52:48Z",
+      "scheduler": "Morning Research Counsel -- Model Unknown",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Morning Research Counsel -- Model Unknown observed_run_time: 2026-10-15T13:51:49-07:00 run_marker: MorningResearchCounsel-Model",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6202792649",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6202792649",
+      "timestamp": "2026-10-15T21:36:31Z",
+      "scheduler": "Golden Research Step",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Golden Research Step observed_run_time: 2026-10-15T14:34:50-07:00 run_marker: Golden-Research-Step--2026-10-15T14:34:50-07:00 o",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6203025704",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6203025704",
+      "timestamp": "2026-10-15T21:51:16Z",
+      "scheduler": "Morning Research Counsel -- Model Unknown",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Morning Research Counsel -- Model Unknown observed_run_time: 2026-10-15T14:50:39-07:00 run_marker: MorningResearchCounsel-Model",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6203642252",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6203642252",
+      "timestamp": "2026-10-15T22:32:35Z",
+      "scheduler": "`Golden Research Step`",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 - scheduler: `Golden Research Step` - observed_run_time: `2026-10-15T15:29:50-07:00` - run_marker: `Golden-Research-Step--2026-10-15T15:2",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6203982549",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6203982549",
+      "timestamp": "2026-10-15T22:55:35Z",
+      "scheduler": "Morning Research Counsel -- Model Unknown",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Morning Research Counsel -- Model Unknown observed_run_time: 2026-10-15T15:54:50-07:00 run_marker: MorningResearchCounsel-Model",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6204429710",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6204429710",
+      "timestamp": "2026-10-15T23:29:12Z",
+      "scheduler": "`Golden Research Step`",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 - scheduler: `Golden Research Step` - observed_run_time: `2026-10-15T16:27:38-07:00` - run_marker: `Golden-Research-Step--2026-10-15T16:2",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6204685427",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6204685427",
+      "timestamp": "2026-10-15T23:49:16Z",
+      "scheduler": "Morning Research Counsel -- Model Unknown",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Morning Research Counsel -- Model Unknown observed_run_time: 2026-10-15T16:48:15-07:00 run_marker: MorningResearchCounsel-Model",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6205302218",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6205302218",
+      "timestamp": "2026-10-16T00:36:32Z",
+      "scheduler": "`Golden Research Step`",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 - scheduler: `Golden Research Step` - observed_run_time: `2026-10-15T17:34:58-07:00` - run_marker: `Golden-Research-Step--2026-10-15T17:3",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6205488980",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6205488980",
+      "timestamp": "2026-10-16T00:50:56Z",
+      "scheduler": "Morning Research Counsel -- Model Unknown",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Morning Research Counsel -- Model Unknown observed_run_time: 2026-10-15T17:50:19-07:00 run_marker: MorningResearchCounsel-Model",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6205971204",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6205971204",
+      "timestamp": "2026-10-16T01:31:25Z",
+      "scheduler": "`Golden Research Step`",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 - scheduler: `Golden Research Step` - observed_run_time: `2026-10-15T18:28:26-07:00` - run_marker: `Golden-Research-Step--2026-10-15T18:2",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6206201993",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6206201993",
+      "timestamp": "2026-10-16T01:50:12Z",
+      "scheduler": "Morning Research Counsel -- Model Unknown",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Morning Research Counsel -- Model Unknown observed_run_time: 2026-10-15T18:49:25-07:00 run_marker: MorningResearchCounsel-Model",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6206691947",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6206691947",
+      "timestamp": "2026-10-16T02:29:24Z",
+      "scheduler": "`Golden Research Step`",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 - scheduler: `Golden Research Step` - observed_run_time: `2026-10-15T19:27:24-07:00` - run_marker: `Golden-Research-Step--2026-10-15T19:2",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6206924724",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6206924724",
+      "timestamp": "2026-10-16T02:49:43Z",
+      "scheduler": "Morning Research Counsel -- Model Unknown",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Morning Research Counsel -- Model Unknown observed_run_time: 2026-10-15T19:48:54-07:00 run_marker: MorningResearchCounsel-Model",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6207414432",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6207414432",
+      "timestamp": "2026-10-16T03:28:04Z",
+      "scheduler": "`Golden Research Step`",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 - scheduler: `Golden Research Step` - observed_run_time: `2026-10-15T20:25:23-07:00` - run_marker: `Golden-Research-Step--2026-10-15T20:2",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    },
+    {
+      "source_id": "6207686450",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-6207686450",
+      "timestamp": "2026-10-16T03:52:34Z",
+      "scheduler": "Morning Research Counsel -- Model Unknown",
+      "record_type": "GITHUB_RUN_RECEIPT/v1",
+      "snippet": "GITHUB_RUN_RECEIPT/v1 scheduler: Morning Research Counsel -- Model Unknown observed_run_time: 2026-10-15T20:51:47-07:00 run_marker: MorningResearchCounsel-Model",
+      "exclusion_reason": "Automated execution run receipt / heartbeat tick containing execution timestamps and status checks without hypothesis or empirical discovery.",
+      "epistemic_classification": "EXCLUDED_NOOP"
+    }
+  ]
+}

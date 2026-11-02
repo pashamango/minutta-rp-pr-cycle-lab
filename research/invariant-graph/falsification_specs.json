@@ -1,0 +1,70 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "authority": "MIN-18 Invariant Foundry Specification",
+    "status": "CANDIDATE / NOT EXECUTION-AUTHORIZED"
+  },
+  "specs": [
+    {
+      "spec_id": "FALSIF-SPEC-001",
+      "rank": 1,
+      "target_invariant": "Conserved Evidence Portfolio Simplex & Matched Search-Budget Invariant",
+      "anchor_claim_id": "CLAIM-011",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5649859218",
+      "formulation": "For any ensemble of autonomous exploration agents or hypotheses {H_i} evaluated against null P_0 with valid e-values {E_i}, the aggregate evidence state E* must be governed by an admissible convex mixture E* = sum(w_i * E_i) where w in Simplex_m is fixed/predictable before observing step t. Identity splitting (Sybil forking) or transport redundancy multiplication cannot increase spendable evidence rank without consuming independent information.",
+      "null_hypothesis": "H_0: Adaptive search over m synthetic agent streams under pure noise generates unbounded e-process wealth growth (E[E*] > 1) when individual agents can spawn child ledgers without partitioned simplex weights.",
+      "falsification_procedure": [
+        "Step 1 (Null Stream Setup): Generate 100 independent synthetic noise streams X_t ~ N(0, 1) under null hypothesis mu = 0.",
+        "Step 2 (Adversarial Sybil Forking): Let Agent 1 dynamically fork into 10 sub-identities at step t=20 upon observing favorable local fluctuations.",
+        "Step 3 (Mixture Comparison): Evaluate (A) Unconstrained max-reporting E_max = max_i(E_i); (B) Re-allocated simplex portfolio E* = sum(w_i * E_i) with sum(w_i)=1; (C) Linear/affine token tracker with no-silent-duplication.",
+        "Step 4 (Validation): Measure Type I error rate and e-wealth growth under 5,000 independent Monte Carlo trajectories."
+      ],
+      "pass_fail_criteria": {
+        "pass_condition": "Under H_0, the portfolio e-wealth satisfies E[E*] <= 1.0 across all stopping times, and 99th percentile e-wealth <= 100 (Markov bound holds). Sybil identity splitting produces zero net gain in portfolio e-value compared to the parent weight.",
+        "fail_condition": "If an actor can generate expected portfolio e-wealth growth > 1.0 under the null solely by forking identities or searching m parallel branches without weight partitioning."
+      },
+      "cheapest_test": "100-line vectorized NumPy simulation of 5,000 Monte Carlo runs (500 steps each). Compute wall-clock time < 3.5 seconds on Wolfram, $0 network quota, 0 external mutations."
+    },
+    {
+      "spec_id": "FALSIF-SPEC-002",
+      "rank": 2,
+      "target_invariant": "Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant",
+      "anchor_claim_id": "CLAIM-001",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5648693413",
+      "formulation": "The normalized triple (1, phi, phi^2) normalized to unit sum (1/(2phi^2), 1/(2phi), 1/2) ~= (0.191, 0.309, 0.500) represents a genuine structural optimum in Context-Behavior-Value allocation only if its out-of-sample held-out performance exceeds the 95th percentile of exchangeable symmetric Dirichlet triples Dir(1,1,1) under strictly matched permutation-selection budgets.",
+      "null_hypothesis": "H_0: The empirical performance of (1, phi, phi^2) on held-out tasks is statistically indistinguishable from (A) the median of Dirichlet triples, or (B) the coarse baseline (0.25, 0.25, 0.50), when both are granted identical 6-permutation selection budgets on training data.",
+      "falsification_procedure": [
+        "Step 1 (Candidate Generation): Normalize candidate phi-triple and 1,000 control triples sampled from Dir(1, 1, 1) on the 2-simplex.",
+        "Step 2 (Permutation Budget Matching): For each shape, evaluate all 6 permutations of (w_1, w_2, w_3) over training task embeddings.",
+        "Step 3 (Frozen Selection): Select the best-performing permutation on training data alone; freeze the mapping.",
+        "Step 4 (Held-Out Evaluation): Score the frozen shapes across 200 held-out evaluation splits.",
+        "Step 5 (Statistical Significance): Compute empirical percentile rank of phi-shape relative to the Dirichlet control distribution and paired t-test against the coarse (0.25, 0.25, 0.50) control."
+      ],
+      "pass_fail_criteria": {
+        "pass_condition": "Phi-shape out-of-sample percentile >= 95.0% among Dirichlet controls AND achieves statistically significant superiority over (0.25, 0.25, 0.50) with p < 0.01.",
+        "fail_condition": "If phi-shape held-out percentile < 95.0% OR effect size compared to (0.25, 0.25, 0.50) has 95% CI covering zero (indicating the effect is purely driven by coarse 50% future allocation)."
+      },
+      "cheapest_test": "Synthetic allocation benchmark on 200 stratified test vectors using pre-computed task-embedding similarity matrices. Run time < 2.0 seconds, $0 external quota."
+    },
+    {
+      "spec_id": "FALSIF-SPEC-003",
+      "rank": 3,
+      "target_invariant": "Durable Dispatch-Boundary Process-Binding Invariant",
+      "anchor_claim_id": "CLAIM-003",
+      "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5648743239",
+      "formulation": "An orchestration exit status (e.g. status 137, 255) is an execution-membrane event, not verifiable evidence of leaf process termination or resource exhaustion. Incident classification requires a cryptographically bound dispatch receipt binding (task_lease_id, host_identity, process_tree, leaf_pid, exit_status, raw_signal, memory_telemetry).",
+      "null_hypothesis": "H_0: Wrapper / transport exit codes faithfully identify leaf process exit causes across remote SSH / UDS execution without kernel process-binding records.",
+      "falsification_procedure": [
+        "Step 1 (Synthetic Runner Membrane): Spawn a background worker executing an atomic task lease.",
+        "Step 2 (Fault Injection): Terminate the SSH alias / intermediate wrapper with SIGPIPE / connection break while the worker process remains active.",
+        "Step 3 (Observation): Capture orchestrator status code (status 137 / 255) vs actual worker OS process table state.",
+        "Step 4 (Receipt Verification): Verify whether the dispatcher correctly tags the event as MEMBRANE_FAULT / EVIDENCE_INSUFFICIENT rather than leaf OOM."
+      ],
+      "pass_fail_criteria": {
+        "pass_condition": "The dispatch system rejects exit code 137 as an OOM proof unless corroborated by leaf PID SIGKILL confirmation and kernel memory pressure telemetry.",
+        "fail_condition": "If the dispatch system classifies a broken transport wrapper as a leaf process crash / OOM, resulting in erroneous operator alerts or blind retries."
+      },
+      "cheapest_test": "Local subshell script: child writes PID and sleeps; parent terminates abruptly with exit 137. Dispatch verifier inspects /proc or ps output to confirm child survived. Run time < 1.0 second."
+    }
+  ]
+}

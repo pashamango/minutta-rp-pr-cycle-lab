@@ -1,0 +1,702 @@
+{
+  "graph_metadata": {
+    "title": "Issue #168 Invariant Dependency & Claim Graph",
+    "node_count": 45,
+    "edge_count": 50,
+    "cluster_counts": {
+      "Cluster-1": 10,
+      "Cluster-2": 16,
+      "Cluster-3": 19
+    },
+    "top_3_ranked_candidates": [
+      {
+        "rank": 1,
+        "candidate_id": "CANDIDATE-01",
+        "anchor_claim": "CLAIM-011",
+        "title": "Conserved Evidence Portfolio Simplex & Matched Search-Budget Invariant",
+        "score": 9.8,
+        "rationale": "Admissible general e-value merge rule (Wang 2025 Biometrika), rigorous anti-Sybil mathematical foundation, cross-project applicability across science, market, and settlement."
+      },
+      {
+        "rank": 2,
+        "candidate_id": "CANDIDATE-02",
+        "anchor_claim": "CLAIM-001",
+        "title": "Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant",
+        "score": 9.2,
+        "rationale": "Critical mathematical boundary separating genuine \u03c6-specificity from coarse 50% allocation bias and selection advantage under permutation search."
+      },
+      {
+        "rank": 3,
+        "candidate_id": "CANDIDATE-03",
+        "anchor_claim": "CLAIM-003",
+        "title": "Durable Dispatch-Boundary Process-Binding Invariant",
+        "score": 8.9,
+        "rationale": "Prevents catastrophic orchestration misdiagnosis (e.g. false OOM status 137) across heterogeneous nodes (Wolfram vs Darwin) by binding kernel telemetry."
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "CLAIM-001",
+      "source_id": "5648693413",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "A \u03c6-specific effect exists only if the normalized shape (1, \u03c6, \u03c6\u00b2) generalizes o..."
+    },
+    {
+      "id": "CLAIM-002",
+      "source_id": "5648702130",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "`Search budget` is part of the evidence contract. Across scheduler science and P..."
+    },
+    {
+      "id": "CLAIM-003",
+      "source_id": "5648743239",
+      "scheduler": "Hourly Research Market",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "An orchestration exit code is not evidence of the leaf process's exit. Cross-hos..."
+    },
+    {
+      "id": "CLAIM-004",
+      "source_id": "5649009464",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-1",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "The deeper invariant is not necessarily equal search budget but **conserved evid..."
+    },
+    {
+      "id": "CLAIM-005",
+      "source_id": "5649035302",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "A defensible directional definition is: Golden Trinity is an ordered three-stage..."
+    },
+    {
+      "id": "CLAIM-006",
+      "source_id": "5649278704",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Any measured advantage of 1:\u03c6:\u03c6\u00b2 may come entirely from the coarse \u201cfuture gets ..."
+    },
+    {
+      "id": "CLAIM-007",
+      "source_id": "5649287903",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-1",
+      "epistemic_label": "derived",
+      "statement_preview": "`log e-wealth` is a useful conservation coordinate for Scientific Broker / Proof..."
+    },
+    {
+      "id": "CLAIM-008",
+      "source_id": "5649582460",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-1",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Use `evidence bits = log2(e-process wealth)` as a candidate *scientific accounti..."
+    },
+    {
+      "id": "CLAIM-009",
+      "source_id": "5649651892",
+      "scheduler": "Hourly Research Market",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Credential safety requires a three-identity invariant: organizational actor/role..."
+    },
+    {
+      "id": "CLAIM-010",
+      "source_id": "5649838554",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Golden Trinity should be defined first as a resource-allocation law over a commo..."
+    },
+    {
+      "id": "CLAIM-011",
+      "source_id": "5649859218",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-1",
+      "epistemic_label": "derived",
+      "statement_preview": "Treat evidential attention as a conserved portfolio simplex: hypotheses/agents m..."
+    },
+    {
+      "id": "CLAIM-012",
+      "source_id": "5650130876",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-1",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Use a **prefix/Kraft evidence budget** for adaptive hypothesis trees. Branches m..."
+    },
+    {
+      "id": "CLAIM-013",
+      "source_id": "5650427055",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "A Golden Trinity weighting claim requires one common ratio-scale resource measur..."
+    },
+    {
+      "id": "CLAIM-014",
+      "source_id": "5650556366",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-1",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Agent branching can obey a literal evidence-conservation rule: **branching split..."
+    },
+    {
+      "id": "CLAIM-015",
+      "source_id": "5650698210",
+      "scheduler": "Research Scout",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Shared agent memory/knowledge should be treated as an untrusted commons: publica..."
+    },
+    {
+      "id": "CLAIM-016",
+      "source_id": "5651052897",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-1",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Represent cross-scheduler evidence as a Git-like DAG with three primitives: `spl..."
+    },
+    {
+      "id": "CLAIM-017",
+      "source_id": "5651073474",
+      "scheduler": "Research Market",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Durable Git evidence needs a two-phase binding: a committed report binds the imp..."
+    },
+    {
+      "id": "CLAIM-018",
+      "source_id": "5651293792",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Treat scientific observations as **linear evidence resources**. Branches may cop..."
+    },
+    {
+      "id": "CLAIM-019",
+      "source_id": "5651549808",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-1",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Separate **evidence ancestry algebra** from **evidence strength**. Every schedul..."
+    },
+    {
+      "id": "CLAIM-020",
+      "source_id": "5651850213",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-1",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Maintain both ordinary provenance (for audit) and a **nilpotent shadow provenanc..."
+    },
+    {
+      "id": "CLAIM-021",
+      "source_id": "5652113976",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Cross-scheduler settlement should distinguish **consumable evidence** from **reu..."
+    },
+    {
+      "id": "CLAIM-022",
+      "source_id": "5652238366",
+      "scheduler": "Research Market",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Durable evidence needs two orthogonal bindings: content identity and issuer capa..."
+    },
+    {
+      "id": "CLAIM-023",
+      "source_id": "5652288922",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Golden Trinity can serve as a compositional class of group behavior: agents need..."
+    },
+    {
+      "id": "CLAIM-024",
+      "source_id": "5652381230",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Approximate Golden Trinity is compositionally stable under positive linear aggre..."
+    },
+    {
+      "id": "CLAIM-025",
+      "source_id": "5652592413",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "A scientifically identifiable \u201cgolden group\u201d requires two coordinates, not one: ..."
+    },
+    {
+      "id": "CLAIM-026",
+      "source_id": "5652602706",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-1",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Use a typed evidence algebra across schedulers: `\u2295` = dependency-safe mixture/me..."
+    },
+    {
+      "id": "CLAIM-027",
+      "source_id": "5652880657",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Treat evidence as a typed capability, minimally `E=(content_digest, issuer_capab..."
+    },
+    {
+      "id": "CLAIM-028",
+      "source_id": "5653152829",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Use an attenuation-only `typed evidence capability` discipline. Evidence composi..."
+    },
+    {
+      "id": "CLAIM-029",
+      "source_id": "5653473890",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Treat scientific evidence as an attenuating capability: ordinary derivations may..."
+    },
+    {
+      "id": "CLAIM-030",
+      "source_id": "5653769009",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Model reusable scheduler/scientific evidence policy as a product semilattice `E=..."
+    },
+    {
+      "id": "CLAIM-031",
+      "source_id": "5654085449",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Evidence/authority state can be propagated across schedulers/hosts as an attenua..."
+    },
+    {
+      "id": "CLAIM-032",
+      "source_id": "5654269643",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Any claim that Golden Trinity emerges from interaction needs an explicit \u03c6-selec..."
+    },
+    {
+      "id": "CLAIM-033",
+      "source_id": "5654393689",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Scheduler/mailbox coordination should be placed by semantic monotonicity, not by..."
+    },
+    {
+      "id": "CLAIM-034",
+      "source_id": "5654737164",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "derived",
+      "statement_preview": "Golden Trinity may be defined dynamically as the projective attractor of the min..."
+    },
+    {
+      "id": "CLAIM-035",
+      "source_id": "5654748689",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Convert most revocation into **monotone supersession**: issue bounded capabiliti..."
+    },
+    {
+      "id": "CLAIM-036",
+      "source_id": "5655337455",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "derived",
+      "statement_preview": "A Golden Trinity semantic record should carry two non-substitutable fields: CAUS..."
+    },
+    {
+      "id": "CLAIM-037",
+      "source_id": "5655384295",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "The Theory of Hard Problems should classify a task by a teleological triplet (U,..."
+    },
+    {
+      "id": "CLAIM-038",
+      "source_id": "5655420194",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "For any project that needs camera-mediated, air-gapped, order-independent transp..."
+    },
+    {
+      "id": "CLAIM-039",
+      "source_id": "5655527333",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "The Theory of Absurd Hypotheses should score a candidate by the tuple (W,A,P,T,G..."
+    },
+    {
+      "id": "CLAIM-040",
+      "source_id": "5655765041",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Enforce `redundancy != value`: maintain orthogonal states for recoverability and..."
+    },
+    {
+      "id": "CLAIM-041",
+      "source_id": "5655993417",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "A legitimate \u201cBrier legislature\u201d needs three non-substitutable ledgers for every..."
+    },
+    {
+      "id": "CLAIM-042",
+      "source_id": "5656123085",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Track `(availability multiplicity, evidence rank)` as orthogonal state. Replicat..."
+    },
+    {
+      "id": "CLAIM-043",
+      "source_id": "5656218661",
+      "scheduler": "Golden Research Step",
+      "cluster": "Cluster-2",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "The Theory of Hard Problems should distinguish static difficulty D\u03b5(s,U,H) from ..."
+    },
+    {
+      "id": "CLAIM-044",
+      "source_id": "5656471075",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Schedulers should separate `resilience value` from `novelty value`. A conservati..."
+    },
+    {
+      "id": "CLAIM-045",
+      "source_id": "5656817459",
+      "scheduler": "Discovery Steward",
+      "cluster": "Cluster-3",
+      "epistemic_label": "hypothesis",
+      "statement_preview": "Keep three orthogonal ledgers: `resilience`, `source novelty/rank`, and `target-..."
+    }
+  ],
+  "edges": [
+    {
+      "source": "CLAIM-002",
+      "target": "CLAIM-001",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-005",
+      "target": "CLAIM-002",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-006",
+      "target": "CLAIM-005",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-007",
+      "target": "CLAIM-004",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-008",
+      "target": "CLAIM-007",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-009",
+      "target": "CLAIM-003",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-010",
+      "target": "CLAIM-006",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-011",
+      "target": "CLAIM-008",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-012",
+      "target": "CLAIM-011",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-013",
+      "target": "CLAIM-010",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-014",
+      "target": "CLAIM-012",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-015",
+      "target": "CLAIM-009",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-016",
+      "target": "CLAIM-014",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-017",
+      "target": "CLAIM-015",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-018",
+      "target": "CLAIM-017",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-019",
+      "target": "CLAIM-016",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-020",
+      "target": "CLAIM-019",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-021",
+      "target": "CLAIM-018",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-022",
+      "target": "CLAIM-021",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-023",
+      "target": "CLAIM-013",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-024",
+      "target": "CLAIM-023",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-025",
+      "target": "CLAIM-024",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-026",
+      "target": "CLAIM-020",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-027",
+      "target": "CLAIM-022",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-028",
+      "target": "CLAIM-027",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-029",
+      "target": "CLAIM-028",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-030",
+      "target": "CLAIM-029",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-031",
+      "target": "CLAIM-030",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-032",
+      "target": "CLAIM-025",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-033",
+      "target": "CLAIM-031",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-034",
+      "target": "CLAIM-032",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-035",
+      "target": "CLAIM-033",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-036",
+      "target": "CLAIM-034",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-037",
+      "target": "CLAIM-036",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-038",
+      "target": "CLAIM-035",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-039",
+      "target": "CLAIM-037",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-040",
+      "target": "CLAIM-038",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-041",
+      "target": "CLAIM-039",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-042",
+      "target": "CLAIM-040",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-043",
+      "target": "CLAIM-041",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-044",
+      "target": "CLAIM-042",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-045",
+      "target": "CLAIM-044",
+      "relation": "refines_or_deduplicates",
+      "weight": 1.0
+    },
+    {
+      "source": "CLAIM-002",
+      "target": "CLAIM-001",
+      "relation": "supports",
+      "description": "Matched search budget invariant independently derived for \u03c6 allocation"
+    },
+    {
+      "source": "CLAIM-004",
+      "target": "CLAIM-002",
+      "relation": "refines",
+      "description": "Search budget generalizes into conserved evidence capital"
+    },
+    {
+      "source": "CLAIM-006",
+      "target": "CLAIM-001",
+      "relation": "contradicts",
+      "description": "Challenges \u03c6 claim: 50% future allocation alone may account for observed gains"
+    },
+    {
+      "source": "CLAIM-011",
+      "target": "CLAIM-007",
+      "relation": "refines",
+      "description": "E-value portfolio simplex formalizes log-e wealth merge rule (Wang 2025)"
+    },
+    {
+      "source": "CLAIM-021",
+      "target": "CLAIM-011",
+      "relation": "supports",
+      "description": "Linear/affine logic guarantees no-silent-duplication at type level"
+    },
+    {
+      "source": "CLAIM-040",
+      "target": "CLAIM-021",
+      "relation": "generalizes",
+      "description": "Redundancy != value: transport availability separated from evidence rank"
+    },
+    {
+      "source": "CLAIM-034",
+      "target": "CLAIM-005",
+      "relation": "refines",
+      "description": "Dynamical Fibonacci recurrence attractor replaces ad-hoc \u03c6 parameterization"
+    },
+    {
+      "source": "CLAIM-003",
+      "target": "CLAIM-009",
+      "relation": "supports",
+      "description": "Process-bound telemetry ties to three-identity credential invariant"
+    }
+  ]
+}

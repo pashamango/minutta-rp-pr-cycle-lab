@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NormalizedClaimUnit",
+  "description": "Structured epistemic claim unit extracted from upstream Issue #168 comments",
+  "type": "object",
+  "required": [
+    "claim_id",
+    "source_id",
+    "source_url",
+    "exact_source_read_evidence",
+    "epistemic_label",
+    "statement",
+    "assumptions",
+    "null_test",
+    "contradictions",
+    "duplicates",
+    "applications",
+    "versions",
+    "scheduler",
+    "domain",
+    "cluster"
+  ],
+  "properties": {
+    "claim_id": {
+      "type": "string"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "exact_source_read_evidence": {
+      "type": "string",
+      "minLength": 10
+    },
+    "epistemic_label": {
+      "type": "string",
+      "enum": [
+        "fact",
+        "hypothesis",
+        "derived",
+        "user testimony"
+      ]
+    },
+    "statement": {
+      "type": "string"
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "null_test": {
+      "type": "object",
+      "required": [
+        "null_hypothesis",
+        "test_procedure",
+        "rejection_threshold"
+      ],
+      "properties": {
+        "null_hypothesis": {
+          "type": "string"
+        },
+        "test_procedure": {
+          "type": "string"
+        },
+        "rejection_threshold": {
+          "type": "string"
+        }
+      }
+    },
+    "contradictions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "duplicates": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "applications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scheduler": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "cluster": {
+      "type": "string"
+    }
+  }
+}
