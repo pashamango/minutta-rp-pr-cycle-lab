@@ -1,0 +1,41 @@
+{
+  "schema": "EA-001",
+  "schema_version": "1.0",
+  "card_id": "EA-001-WHEELCORE-REGULARIZED-DISTRIBUTIVITY",
+  "title": "Regularized distributivity keeps singular values visible",
+  "product": "WheelCore",
+  "status": "demo-receipt",
+  "claim": {
+    "statement": "For x=1, y=1, z=infinity, (x+y)z + 0z = xz + yz.",
+    "type": "conditional-theorem",
+    "depends_on": ["AXM-W07"]
+  },
+  "witness": {
+    "x": "1",
+    "y": "1",
+    "z": "infinity",
+    "domain": ["0", "1", "-1", "2/3", "-5/7", "infinity", "bottom"]
+  },
+  "steps": [
+    {"id": "S1", "expression": "(1 + 1) * infinity", "value": "infinity", "note": "left branch"},
+    {"id": "S2", "expression": "0 * infinity", "value": "bottom", "note": "regularizer exposes the singularity"},
+    {"id": "S3", "expression": "infinity + bottom", "value": "bottom", "note": "left side"},
+    {"id": "S4", "expression": "1 * infinity + 1 * infinity", "value": "bottom", "note": "right side"},
+    {"id": "S5", "expression": "left side = right side", "value": "PASS", "note": "regularized equality"}
+  ],
+  "boundary": {
+    "classical_claim": "(x+y)z = xz + yz",
+    "counterexample": "2*infinity = infinity, while infinity + infinity = bottom",
+    "interpretation": "Classical distributivity is not valid across singular values; the regularized form is the scoped claim."
+  },
+  "interaction": {
+    "replay_label": "Replay proof",
+    "replay_target": "mockups/vhp-05-proof-console.html#ea-001",
+    "next_card": "EA-002-RECIPROCAL-INVOLUTION"
+  },
+  "evidence": {
+    "source_context": "VHP-01/VHP-02 WheelCore representative-domain audit",
+    "verification_command": "python3 tools/verify-vhp-paper verify",
+    "not_claimed": ["production theorem prover execution", "universal classical distributivity"]
+  }
+}
