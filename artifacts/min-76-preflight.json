@@ -1,0 +1,18 @@
+{
+  "schema": "NICLI_D_SOAK_PREFLIGHT/v1",
+  "issue_id": "MIN-76",
+  "run_id": "run-6d688e0b0a3a",
+  "status": "BLOCKED",
+  "host_resolution": "UNKNOWN",
+  "display_candidates": ["DISPLAY-07", "DISPLAY-007"],
+  "soak_24h": "PENDING",
+  "launchd_changed": false,
+  "credentials_changed": false,
+  "tailnet_changed": false,
+  "blockers": [
+    "authoritative DISPLAY identifier and host coordinates are absent",
+    "fresh host OS/owner/capacity evidence is absent",
+    "no real 24-hour receipt exists"
+  ],
+  "next_valid_command": "Resolve exact DISPLAY host coordinates, then run the host-specific read-only preflight before loading any worker"
+}
