@@ -2,7 +2,10 @@
 """Fail-closed audit verification gate for AMDE-NUM Arb ball-arithmetic harness."""
 
 import sys
+from pathlib import Path
 import unittest
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 from amde_num.xi_functional import RiemannXi
 from amde_num.channel_ribbon import RibbonFlowChannel
 from amde_num.channel_winding import WindingNumberChannel
@@ -17,7 +20,7 @@ def main():
     # 1. Run unittest test suite
     print("\n[Phase 1] Executing Automated Unit Test Suite...")
     loader = unittest.TestLoader()
-    suite = loader.discover("tests")
+    suite = loader.discover(str(ROOT / "tests"))
     runner = unittest.TextTestRunner(verbosity=2)
     test_result = runner.run(suite)
 

@@ -32,6 +32,7 @@ class HeightBlockResult:
     channel_1_ribbon: Dict[str, Any]
     channel_2_winding: Dict[str, Any]
     channel_3_li: Dict[str, Any]
+    controls: Dict[str, Any]
     scale_predictability_confirmed: bool
     verdict: str
 
@@ -73,6 +74,28 @@ class ThreeChannelExperiment:
             steps_per_edge=80,
         )
         ch2_summary = winding_res.to_dict()
+        narrow_winding = self.ch2.count_zeros_in_box(
+            sigma_min=0.2, sigma_max=0.8, t_min=t_min, t_max=t_max,
+            steps_per_edge=80,
+        )
+
+        # Descriptive controls only: endpoint amplitudes and strip-width agreement.
+        endpoint_values = {
+            "t_min_f0": self.ch1.run_channel(t_val=t_min, n_levels=5).f0.midpoint,
+            "t_mid_f0": ribbon_res.f0.midpoint,
+            "t_max_f0": self.ch1.run_channel(t_val=t_max, n_levels=5).f0.midpoint,
+        }
+        controls = {
+            "height_control": endpoint_values,
+            "width_control": {
+                "wide_sigma": [0.1, 0.9],
+                "narrow_sigma": [0.2, 0.8],
+                "wide_zero_count": winding_res.proven_zero_count,
+                "narrow_zero_count": narrow_winding.proven_zero_count,
+                "counts_agree": winding_res.proven_zero_count == narrow_winding.proven_zero_count,
+            },
+            "inference_guard": "Descriptive controls only; three blocks do not establish a predictive model.",
+        }
 
         # Channel 3: Universal Li coefficients lambda_1..lambda_8
         li_res = self.ch3.compute_coefficients(max_n=8)
@@ -104,6 +127,7 @@ class ThreeChannelExperiment:
             channel_1_ribbon=ch1_summary,
             channel_2_winding=ch2_summary,
             channel_3_li=ch3_summary,
+            controls=controls,
             scale_predictability_confirmed=scale_predictability_confirmed,
             verdict=verdict,
         )
