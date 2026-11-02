@@ -10,5 +10,5 @@ WheelCore eliminates arithmetic singularities by formalizing Carlström Wheel Th
 - **Proof Engine:** Python 3.10+ Wheel Property Engine & AST Auditor
 - **Axiom Audit:** 8/8 Carlström wheel properties verified on 7-element domain (1,190 checks)
 - **Repository:** `https://github.com/pashamango/minutta-rp-pr-cycle-lab.git`
-- **Commit SHA:** `71d669674f9b47b7be6395913b6e5fc88edb4739`
-- **Verification Command:** `python3 tools/verify-vhp-pitch verify pitch/vhp-01-reference-pitch.md`
+- **Commit SHA:** `935f0251dd372d4e21cb77d26ac2ee3ff4f77d68`
+- **Verification Command:** `python3 tools/verify-vhp-pitch check-all`

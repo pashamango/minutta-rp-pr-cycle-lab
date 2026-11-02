@@ -247,10 +247,11 @@ def get_git_head_sha(root_dir: Path):
 
 OUTDATED_REJECTED_SHAS = {
     "511565cc3c68e51ad616726579b9f613399038cd",  # Rejected baseline lacking full 7-element audit and AST auditor
+    "71d669674f9b47b7be6395913b6e5fc88edb4739",  # Outdated ancestor containing bypass mechanisms and mismatched pitch
 }
 
 
-def verify_receipt_commit(receipt_commit: str, root_dir: Path):
+def verify_receipt_commit(receipt_commit: str, root_dir: Path, expected_commit: str = None):
     head_sha = get_git_head_sha(root_dir)
     if not head_sha:
         return True, "Not inside a valid git repository; commit match check skipped."
@@ -262,7 +263,11 @@ def verify_receipt_commit(receipt_commit: str, root_dir: Path):
         return False, f"Receipt commit '{receipt_commit}' is not a valid 40-character hex SHA"
 
     if receipt_commit in OUTDATED_REJECTED_SHAS:
-        return False, f"Receipt commit '{receipt_commit}' is a known outdated/rejected baseline commit."
+        return False, f"Receipt commit '{receipt_commit}' is a known outdated/rejected baseline or ancestor commit."
+
+    if expected_commit:
+        if receipt_commit != expected_commit:
+            return False, f"Receipt commit '{receipt_commit}' does not match expected audited commit '{expected_commit}'"
 
     if receipt_commit == head_sha:
         return True, f"Receipt commit '{receipt_commit}' strictly matches checkout HEAD ({head_sha})"
@@ -277,11 +282,121 @@ def verify_receipt_commit(receipt_commit: str, root_dir: Path):
             timeout=5
         )
         if res.returncode == 0 and res.stdout.strip() == receipt_commit:
-            return True, f"Receipt commit '{receipt_commit}' strictly matches audited target commit (parent of {head_sha})"
+            return True, f"Receipt commit '{receipt_commit}' strictly matches audited target commit (parent HEAD^ of {head_sha})"
     except Exception:
         pass
 
-    return False, f"Receipt commit '{receipt_commit}' does not match checked out HEAD ({head_sha})"
+    return False, f"Receipt commit '{receipt_commit}' does not match checked out HEAD ({head_sha}) or audited target commit (parent HEAD^)"
+
+
+def verify_audited_commit_tree(audited_commit: str, receipt_data: dict, root_dir: Path):
+    """
+    Verifies that the pinned audited commit tree contains all target artifacts with
+    matching SHA-256 hashes, and that the verifier script inside the audited commit
+    contains NO forbidden bypass mechanisms (CANONICAL_TARGET_SHAS, cat-file)
+    and passes static AST auditing.
+    """
+    issues = []
+    log = []
+
+    if not audited_commit or not re.fullmatch(r"[0-9a-fA-F]{40}", audited_commit):
+        return False, f"Invalid audited commit SHA: '{audited_commit}'", [f"Invalid audited commit SHA: '{audited_commit}'"]
+
+    if audited_commit in OUTDATED_REJECTED_SHAS:
+        return False, f"Audited commit '{audited_commit}' is a known outdated/rejected baseline.", [f"Audited commit '{audited_commit}' is in OUTDATED_REJECTED_SHAS"]
+
+    # Verify commit exists in git
+    res = subprocess.run(
+        ["git", "rev-parse", "--verify", f"{audited_commit}^{{commit}}"],
+        cwd=str(root_dir),
+        capture_output=True,
+        text=True
+    )
+    if res.returncode != 0:
+        return False, f"Audited commit '{audited_commit}' not found in repository", [f"Audited commit '{audited_commit}' not found in git history"]
+
+    target_artifacts = receipt_data.get("audited_tree_artifacts") or receipt_data.get("audited_target_artifacts") or receipt_data.get("target_artifacts", {})
+    if not target_artifacts:
+        issues.append("Receipt does not contain 'audited_tree_artifacts' or 'target_artifacts' dictionary")
+
+    for art_name, art_info in target_artifacts.items():
+        rel_path = art_info.get("path")
+        expected_sha = art_info.get("sha256")
+        if not rel_path or not expected_sha:
+            issues.append(f"Artifact '{art_name}' missing path or sha256 in receipt")
+            continue
+
+        res_art = subprocess.run(
+            ["git", "show", f"{audited_commit}:{rel_path}"],
+            cwd=str(root_dir),
+            capture_output=True,
+            text=True
+        )
+        if res_art.returncode != 0:
+            issues.append(f"Audited commit '{audited_commit[:8]}' is missing artifact '{rel_path}'")
+            continue
+
+        actual_sha = hashlib.sha256(res_art.stdout.encode("utf-8")).hexdigest()
+        if actual_sha != expected_sha:
+            issues.append(
+                f"Audited commit '{audited_commit[:8]}' artifact '{rel_path}' SHA-256 mismatch: "
+                f"expected {expected_sha}, got {actual_sha}"
+            )
+        else:
+            log.append(f"Audited commit '{audited_commit[:8]}' artifact '{rel_path}' SHA-256 verified ({actual_sha[:16]}...)")
+
+    # Verify verifier in audited commit
+    res_v = subprocess.run(
+        ["git", "show", f"{audited_commit}:tools/verify-vhp-pitch"],
+        cwd=str(root_dir),
+        capture_output=True,
+        text=True
+    )
+    if res_v.returncode != 0:
+        issues.append(f"Audited commit '{audited_commit[:8]}' is missing tools/verify-vhp-pitch")
+    else:
+        verifier_source = res_v.stdout
+        if "CANONICAL_TARGET_SHAS" in verifier_source:
+            issues.append(f"Audited commit '{audited_commit[:8]}' verifier contains forbidden bypass 'CANONICAL_TARGET_SHAS'")
+        if "cat-file" in verifier_source:
+            issues.append(f"Audited commit '{audited_commit[:8]}' verifier contains forbidden bypass 'cat-file'")
+
+        # AST audit on audited verifier
+        try:
+            tree = ast.parse(verifier_source)
+            target_func = next((n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef) and n.name == "verify_wheel_axioms"), None)
+            if not target_func:
+                issues.append(f"Audited commit '{audited_commit[:8]}' verifier missing 'verify_wheel_axioms' function in AST")
+            else:
+                pass_nodes = [n for n in ast.walk(target_func) if isinstance(n, ast.Pass)]
+                if pass_nodes:
+                    issues.append(f"Audited commit '{audited_commit[:8]}' verifier has unreviewed pass stub in verify_wheel_axioms")
+                compares = [n for n in ast.walk(target_func) if isinstance(n, ast.Compare)]
+                if len(compares) < 8:
+                    issues.append(f"Audited commit '{audited_commit[:8]}' verifier has insufficient comparisons ({len(compares)} < 8)")
+                strings = [n.value for n in ast.walk(target_func) if isinstance(n, ast.Constant) and isinstance(n.value, str)]
+                full_text = " ".join(strings)
+                expected_axioms = [f"AXM-W0{i}" for i in range(1, 9)]
+                missing_axioms = [ax for ax in expected_axioms if ax not in full_text]
+                if missing_axioms:
+                    issues.append(f"Audited commit '{audited_commit[:8]}' verifier missing axiom handlers: {missing_axioms}")
+                if not any("AST" in iss for iss in issues):
+                    log.append(f"Audited commit '{audited_commit[:8]}' verifier AST audit passed (8 axioms, 0 stubs, no bypasses)")
+        except Exception as e:
+            issues.append(f"Audited commit '{audited_commit[:8]}' verifier AST parsing failed: {e}")
+
+    if issues:
+        return False, f"Audited commit tree verification failed with {len(issues)} issue(s)", issues
+    return True, f"Audited commit '{audited_commit[:8]}' tree strictly verified across all target artifacts and clean verifier", log
+
+
+def normalize_pitch_text(text: str) -> str:
+    t = text.replace(r"$\mathbb{W}(\mathbb{Q})$", "W(Q)")
+    t = t.replace(r"\mathbb{W}(\mathbb{Q})", "W(Q)")
+    t = t.replace(r"\infty", "∞")
+    t = t.replace(r"\bot", "⊥")
+    t = t.replace("$", "")
+    return t.strip()
 
 
 def validate_pitch_schema(data: dict, schema: dict):
@@ -297,7 +412,7 @@ def validate_pitch_schema(data: dict, schema: dict):
     # Explicit schema rule validation
     required_top = [
         "venture_name", "subtitle", "executive_hook", "formal_breakthrough",
-        "verification_receipt", "character_count", "max_allowed_symbols", "status"
+        "verification_receipt", "canonical_pitch_sha256", "character_count", "max_allowed_symbols", "status"
     ]
     for req in required_top:
         if req not in data:
@@ -307,6 +422,10 @@ def validate_pitch_schema(data: dict, schema: dict):
         return False, "Schema error: venture_name must be non-empty string"
     if not isinstance(data["subtitle"], str) or len(data["subtitle"]) < 1:
         return False, "Schema error: subtitle must be non-empty string"
+
+    c_sha = data.get("canonical_pitch_sha256")
+    if not isinstance(c_sha, str) or not re.fullmatch(r"[0-9a-fA-F]{64}", c_sha):
+        return False, "Schema error: canonical_pitch_sha256 must be a valid 64-character hex SHA-256 digest"
 
     eh = data["executive_hook"]
     if not isinstance(eh, str) or len(eh) < 50 or len(eh) > 800:
@@ -432,9 +551,33 @@ def cmd_verify(file_path: Path):
         root_dir = file_path.resolve().parent
         while root_dir.parent != root_dir and not (root_dir / ".git").exists():
             root_dir = root_dir.parent
-        c_ok, c_msg = verify_receipt_commit(receipt_commit, root_dir)
+
+        receipt_file = root_dir / "pitch" / "artifacts" / "pitch_verification_receipt.json"
+        expected_audited = None
+        if receipt_file.exists():
+            try:
+                with open(receipt_file, "r", encoding="utf-8") as rf:
+                    rdata = json.load(rf)
+                    expected_audited = rdata.get("audited_commit") or rdata.get("commit_sha")
+            except Exception:
+                pass
+
+        c_ok, c_msg = verify_receipt_commit(receipt_commit, root_dir, expected_commit=expected_audited)
         if c_ok:
             print(f"Commit Coordinate: ✅ {c_msg}")
+            try:
+                rel_path = file_path.relative_to(root_dir)
+                res_show = subprocess.run(
+                    ["git", "show", f"{receipt_commit}:{rel_path}"],
+                    cwd=str(root_dir),
+                    capture_output=True,
+                    text=True
+                )
+                if res_show.returncode == 0:
+                    tree_sha = hashlib.sha256(res_show.stdout.encode("utf-8")).hexdigest()
+                    print(f"Audited Target Tree Artifact: ✅ git show {receipt_commit[:8]}:{rel_path} verified ({tree_sha[:16]}...)")
+            except Exception:
+                pass
         else:
             print(f"Commit Coordinate: ❌ {c_msg}")
             issues.append(f"Commit coordinate mismatch: {c_msg}")
@@ -449,19 +592,53 @@ def cmd_verify(file_path: Path):
         return 1
 
 
-def cmd_check_all(root_dir: Path):
-    print("=== VHP-01 Comprehensive Pitch Verification Suite ===")
-    ref_pitch = root_dir / "pitch" / "vhp-01-reference-pitch.md"
-    tmpl_pitch = root_dir / "pitch" / "vhp-01-pitch-template.md"
-    receipt_file = root_dir / "pitch" / "artifacts" / "pitch_verification_receipt.json"
+def cmd_check_all(root_dir: Path, receipt_path: Path = None, ref_json_path: Path = None, ref_pitch_path: Path = None):
+    receipt_file = receipt_path if receipt_path else (root_dir / "pitch" / "artifacts" / "pitch_verification_receipt.json")
     schema_file = root_dir / "pitch" / "artifacts" / "pitch_schema.json"
-    ref_json = root_dir / "pitch" / "artifacts" / "reference_pitch.json"
+    ref_json = ref_json_path if ref_json_path else (root_dir / "pitch" / "artifacts" / "reference_pitch.json")
+    ref_pitch = ref_pitch_path if ref_pitch_path else (root_dir / "pitch" / "vhp-01-reference-pitch.md")
+    tmpl_pitch = root_dir / "pitch" / "vhp-01-pitch-template.md"
 
-    targets = [ref_pitch, tmpl_pitch]
+    receipt_data = {}
+    if receipt_file.exists():
+        try:
+            with open(receipt_file, "r", encoding="utf-8") as rf:
+                receipt_data = json.load(rf)
+        except Exception:
+            pass
+
+    audited_target = receipt_data.get("audited_commit") or receipt_data.get("commit_sha") or "UNKNOWN"
+    head_sha = get_git_head_sha(root_dir) or "UNKNOWN"
+
+    print("=" * 60)
+    print("VHP-01 Formal Verification Suite & Receipt Auditor")
+    print(f"Target Proof Commit (audited):  {audited_target}")
+    print(f"Signing Receipt Commit:         {head_sha} (HEAD)")
+    print("=" * 60)
+
     all_ok = True
 
+    # Audited Commit Tree Verification (git show <sha>:<path>)
+    print(f"\nAuditing Audited Commit Tree (git show {audited_target[:8]}):")
+    if audited_target and audited_target != "UNKNOWN":
+        tree_ok, tree_summary, tree_details = verify_audited_commit_tree(audited_target, receipt_data, root_dir)
+        if tree_ok:
+            for item in tree_details:
+                print(f"  ✅ {item}")
+            print(f"  ✅ Tree Audit: {tree_summary}")
+        else:
+            print(f"  ❌ Tree Audit Failure: {tree_summary}")
+            for iss in tree_details:
+                print(f"     - {iss}")
+            all_ok = False
+    else:
+        print("  ❌ No audited_commit specified in receipt")
+        all_ok = False
+
+    targets = [ref_pitch, tmpl_pitch]
+
     for target in targets:
-        print(f"\nAuditing: {target.relative_to(root_dir)}")
+        print(f"\nAuditing: {target.relative_to(root_dir) if target.is_relative_to(root_dir) else target.name}")
         ok, issues, meta = analyze_pitch(target)
         if ok:
             print(f"  ✅ {meta['char_count']} symbols (<= {MAX_ALLOWED_SYMBOLS}) | SHA-256: {meta['sha256'][:16]}...")
@@ -475,16 +652,22 @@ def cmd_check_all(root_dir: Path):
     print(f"\nAuditing JSON Artifacts:")
     loaded_data = {}
     for jf in [schema_file, receipt_file, ref_json]:
+        display_path = jf.name
+        try:
+            display_path = str(jf.relative_to(root_dir))
+        except ValueError:
+            pass
         if not jf.exists():
-            print(f"  ❌ Missing: {jf.relative_to(root_dir)}")
+            print(f"  ❌ Missing: {display_path}")
             all_ok = False
         else:
             try:
                 with open(jf, "r", encoding="utf-8") as f:
-                    loaded_data[jf.name] = json.load(f)
-                print(f"  ✅ Parsed valid JSON: {jf.relative_to(root_dir)}")
+                    key = "pitch_verification_receipt.json" if jf == receipt_file else ("reference_pitch.json" if jf == ref_json else jf.name)
+                    loaded_data[key] = json.load(f)
+                print(f"  ✅ Parsed valid JSON: {display_path}")
             except Exception as e:
-                print(f"  ❌ Invalid JSON {jf.relative_to(root_dir)}: {e}")
+                print(f"  ❌ Invalid JSON {display_path}: {e}")
                 all_ok = False
 
     # Schema Validation of reference_pitch.json against pitch_schema.json
@@ -496,10 +679,10 @@ def cmd_check_all(root_dir: Path):
             print(f"  ❌ Schema Validation Failure: {s_msg}")
             all_ok = False
 
-    # Verify Receipt Commit matches HEAD / immutable baseline
+    # Verify Receipt Commit matches audited target commit across all representations
     if "reference_pitch.json" in loaded_data:
         ref_commit = loaded_data["reference_pitch.json"].get("verification_receipt", {}).get("commit_sha")
-        c_ok, c_msg = verify_receipt_commit(ref_commit, root_dir)
+        c_ok, c_msg = verify_receipt_commit(ref_commit, root_dir, expected_commit=audited_target)
         if c_ok:
             print(f"  ✅ Receipt Commit in reference_pitch.json: {c_msg}")
         else:
@@ -510,24 +693,152 @@ def cmd_check_all(root_dir: Path):
     _, _, ref_meta = analyze_pitch(ref_pitch)
     md_commit = ref_meta.get("receipt_commit")
     if md_commit:
-        c_ok, c_msg = verify_receipt_commit(md_commit, root_dir)
+        c_ok, c_msg = verify_receipt_commit(md_commit, root_dir, expected_commit=audited_target)
         if c_ok:
             print(f"  ✅ Reference Pitch Markdown Commit: {c_msg}")
         else:
             print(f"  ❌ Reference Pitch Markdown Commit Mismatch: {c_msg}")
             all_ok = False
+    else:
+        print("  ❌ Missing Commit SHA in Reference Pitch Markdown")
+        all_ok = False
 
-    # Cross-check receipt SHA with actual file SHA
+    # Cross-check Verification Command synchronization across all representations
+    ref_cmd = loaded_data.get("reference_pitch.json", {}).get("verification_receipt", {}).get("verification_command")
+    receipt_cmd = loaded_data.get("pitch_verification_receipt.json", {}).get("verification_command")
+
+    md_text = ref_pitch.read_text(encoding="utf-8") if ref_pitch.exists() else ""
+    md_cmd_match = re.search(r"Verification Command:\*{0,2}\s*`?([^\n`]+)`?", md_text)
+    md_cmd = md_cmd_match.group(1).strip() if md_cmd_match else None
+
+    if ref_cmd and receipt_cmd and ref_cmd != receipt_cmd:
+        print(f"  ❌ Verification command mismatch: reference_pitch.json ('{ref_cmd}') != receipt ('{receipt_cmd}')")
+        all_ok = False
+    if md_cmd and receipt_cmd and md_cmd != receipt_cmd:
+        print(f"  ❌ Verification command mismatch: Markdown ('{md_cmd}') != receipt ('{receipt_cmd}')")
+        all_ok = False
+    if ref_cmd and md_cmd and ref_cmd == receipt_cmd and md_cmd == receipt_cmd:
+        print(f"  ✅ Verification Command synchronized across all representations: {receipt_cmd}")
+
+    # Cross-check Canonical Published Pitch Digest against Receipt
+    print(f"\nAuditing Canonical Published Pitch Digest:")
     if receipt_file.exists():
         receipt = loaded_data.get("pitch_verification_receipt.json", {})
-        ref_expected_sha = receipt.get("target_artifacts", {}).get("reference_pitch", {}).get("sha256")
-        ref_content = ref_pitch.read_text(encoding="utf-8")
-        ref_actual_sha = hashlib.sha256(ref_content.encode("utf-8")).hexdigest()
-        if ref_expected_sha == ref_actual_sha:
-            print(f"  ✅ Receipt SHA-256 matches reference pitch ({ref_actual_sha[:16]}...)")
-        else:
-            print(f"  ❌ Receipt SHA-256 mismatch! Expected {ref_expected_sha}, got {ref_actual_sha}")
+        ref_content = ref_pitch.read_text(encoding="utf-8") if ref_pitch.exists() else ""
+        actual_canonical_sha = hashlib.sha256(ref_content.encode("utf-8")).hexdigest()
+        actual_symbols = len(ref_content)
+
+        checked_any = False
+        if "canonical_artifacts" in receipt and "reference_pitch" in receipt["canonical_artifacts"]:
+            c_spec = receipt["canonical_artifacts"]["reference_pitch"]
+            c_sha = c_spec.get("sha256")
+            c_sym = c_spec.get("symbol_count")
+            if c_sha != actual_canonical_sha:
+                print(f"  ❌ Canonical Pitch SHA-256 mismatch! Expected {c_sha}, got {actual_canonical_sha}")
+                all_ok = False
+            else:
+                print(f"  ✅ Canonical Pitch SHA-256 verified: {actual_canonical_sha[:16]}...")
+            if c_sym and c_sym != actual_symbols:
+                print(f"  ❌ Canonical Pitch symbol count mismatch! Expected {c_sym}, got {actual_symbols}")
+                all_ok = False
+            else:
+                print(f"  ✅ Canonical Pitch symbol count verified: {actual_symbols} symbols")
+            checked_any = True
+
+        if "target_artifacts" in receipt and "reference_pitch" in receipt["target_artifacts"]:
+            t_spec = receipt["target_artifacts"]["reference_pitch"]
+            t_sha = t_spec.get("sha256")
+            t_sym = t_spec.get("symbol_count")
+            if t_sha != actual_canonical_sha:
+                print(f"  ❌ Target artifacts reference_pitch SHA-256 mismatch! Expected {t_sha}, got {actual_canonical_sha}")
+                all_ok = False
+            else:
+                print(f"  ✅ Target artifacts reference_pitch SHA-256 verified: {actual_canonical_sha[:16]}...")
+            checked_any = True
+
+        if not checked_any:
+            print("  ❌ No canonical_artifacts or target_artifacts found in receipt")
             all_ok = False
+
+    # Cross-check Structured Binding (reference_pitch.json <-> Canonical Pitch)
+    print(f"\nAuditing Structured Binding (reference_pitch.json <-> Canonical Pitch):")
+    if "reference_pitch.json" in loaded_data and ref_pitch.exists():
+        ref_json_data = loaded_data["reference_pitch.json"]
+        ref_text = ref_pitch.read_text(encoding="utf-8")
+        actual_md_sha = hashlib.sha256(ref_text.encode("utf-8")).hexdigest()
+
+        # 1. Digest binding
+        ref_json_sha = ref_json_data.get("canonical_pitch_sha256")
+        if not ref_json_sha:
+            print("  ❌ reference_pitch.json missing 'canonical_pitch_sha256' field")
+            all_ok = False
+        elif ref_json_sha != actual_md_sha:
+            print(f"  ❌ reference_pitch.json canonical_pitch_sha256 mismatch: expected {actual_md_sha}, got {ref_json_sha}")
+            all_ok = False
+        else:
+            print(f"  ✅ reference_pitch.json canonical_pitch_sha256 matches Canonical Markdown: {ref_json_sha[:16]}...")
+
+        # 2. Executive Hook text binding
+        hook_match = re.search(r"## 1\.\s+Executive Hook\s*\n([\s\S]*?)(?=\n##|$)", ref_text)
+        md_hook = hook_match.group(1).strip() if hook_match else ""
+        json_hook = ref_json_data.get("executive_hook", "").strip()
+        if not md_hook or md_hook != json_hook:
+            print(f"  ❌ Executive Hook content mismatch between reference_pitch.json and Markdown")
+            all_ok = False
+        else:
+            print("  ✅ Executive Hook structured content matches Canonical Markdown")
+
+        # 3. Formal Breakthrough text binding
+        breakthrough_match = re.search(r"## 2\.\s+Formal Breakthrough\s*\n([\s\S]*?)(?=\n##|$)", ref_text)
+        md_breakthrough = breakthrough_match.group(1).strip() if breakthrough_match else ""
+        json_breakthrough = ref_json_data.get("formal_breakthrough", "").strip()
+        norm_md = normalize_pitch_text(md_breakthrough)
+        norm_json = normalize_pitch_text(json_breakthrough)
+        if not md_breakthrough or norm_md != norm_json:
+            print(f"  ❌ Formal Breakthrough content mismatch between reference_pitch.json and Markdown")
+            all_ok = False
+        else:
+            print("  ✅ Formal Breakthrough structured content matches Canonical Markdown")
+
+        # 4. Title / Venture name binding
+        title_match = re.search(r"^#\s*([^:\n]+):\s*([^\n]+)", ref_text, re.MULTILINE)
+        if title_match:
+            md_venture = title_match.group(1).strip()
+            md_subtitle = title_match.group(2).strip()
+            if ref_json_data.get("venture_name") != md_venture:
+                print(f"  ❌ Venture name mismatch: json '{ref_json_data.get('venture_name')}' != md '{md_venture}'")
+                all_ok = False
+            if ref_json_data.get("subtitle") != md_subtitle:
+                print(f"  ❌ Subtitle mismatch: json '{ref_json_data.get('subtitle')}' != md '{md_subtitle}'")
+                all_ok = False
+            if ref_json_data.get("venture_name") == md_venture and ref_json_data.get("subtitle") == md_subtitle:
+                print(f"  ✅ Title and subtitle match Canonical Markdown: {md_venture}: {md_subtitle}")
+
+        # 5. Character count binding
+        if ref_json_data.get("character_count") != len(ref_text):
+            print(f"  ❌ Character count mismatch: reference_pitch.json ({ref_json_data.get('character_count')}) != Markdown ({len(ref_text)})")
+            all_ok = False
+        else:
+            print(f"  ✅ Character count matches Canonical Markdown: {len(ref_text)} symbols")
+
+    # Cross-check receipt SHA with audited target commit tree artifact
+    if receipt_file.exists():
+        receipt = loaded_data.get("pitch_verification_receipt.json", {})
+        tree_expected_sha = receipt.get("audited_tree_artifacts", {}).get("reference_pitch", {}).get("sha256")
+        if tree_expected_sha:
+            res_tree = subprocess.run(
+                ["git", "show", f"{audited_target}:pitch/vhp-01-reference-pitch.md"],
+                cwd=str(root_dir),
+                capture_output=True,
+                text=True
+            )
+            if res_tree.returncode == 0:
+                tree_actual_sha = hashlib.sha256(res_tree.stdout.encode("utf-8")).hexdigest()
+                if tree_expected_sha == tree_actual_sha:
+                    print(f"  ✅ Audited target commit ({audited_target[:8]}) tree artifact matches historical receipt ({tree_actual_sha[:16]}...)")
+                else:
+                    print(f"  ❌ Audited target tree artifact SHA-256 mismatch! Expected {tree_expected_sha}, got {tree_actual_sha}")
+                    all_ok = False
 
     # Static AST Audit
     print(f"\nStatic AST Audit (verify-vhp-pitch):")
@@ -563,7 +874,17 @@ def main():
 
     subcommand = sys.argv[1]
     if subcommand == "check-all":
-        return cmd_check_all(root_dir)
+        import argparse
+        parser = argparse.ArgumentParser(prog="verify-vhp-pitch check-all", add_help=False)
+        parser.add_argument("receipt_pos", nargs="?", default=None)
+        parser.add_argument("--receipt", default=None)
+        parser.add_argument("--ref-json", default=None)
+        parser.add_argument("--ref-pitch", default=None)
+        args, _ = parser.parse_known_args(sys.argv[2:])
+        receipt_arg = Path(args.receipt) if args.receipt else (Path(args.receipt_pos) if args.receipt_pos else None)
+        ref_json_arg = Path(args.ref_json) if args.ref_json else None
+        ref_pitch_arg = Path(args.ref_pitch) if args.ref_pitch else None
+        return cmd_check_all(root_dir, receipt_path=receipt_arg, ref_json_path=ref_json_arg, ref_pitch_path=ref_pitch_arg)
     elif subcommand == "check-axioms":
         ok, msg, *rest = verify_wheel_axioms()
         print(f"Axiom Properties: {'PASS' if ok else 'FAIL'} - {msg}")

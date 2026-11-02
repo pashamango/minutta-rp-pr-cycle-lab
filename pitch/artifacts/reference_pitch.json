@@ -8,10 +8,11 @@
     "proof_engine": "Python 3.10+ Wheel Property Engine & AST Auditor",
     "axiom_audit": "8/8 Carlström wheel properties verified on 7-element domain (1,190 checks)",
     "repository": "https://github.com/pashamango/minutta-rp-pr-cycle-lab.git",
-    "commit_sha": "71d669674f9b47b7be6395913b6e5fc88edb4739",
-    "verification_command": "python3 tools/verify-vhp-pitch verify pitch/vhp-01-reference-pitch.md"
+    "commit_sha": "935f0251dd372d4e21cb77d26ac2ee3ff4f77d68",
+    "verification_command": "python3 tools/verify-vhp-pitch check-all"
   },
-  "character_count": 1475,
+  "canonical_pitch_sha256": "ee961615f57bd09b452b9e4efe976e29bf1d1da6843a8058f590cfe946d32763",
+  "character_count": 1446,
   "max_allowed_symbols": 1500,
   "status": "VALID"
 }

@@ -3,13 +3,49 @@
   "ticket": "MIN-59",
   "project": "VHP-001 — Template Venture Product (Venture Hackathon Package)",
   "standard": "VHP-01-PITCH-v1.0",
-  "target_artifacts": {
+  "audited_commit": "935f0251dd372d4e21cb77d26ac2ee3ff4f77d68",
+  "audited_tree_artifacts": {
     "reference_pitch": {
       "path": "pitch/vhp-01-reference-pitch.md",
       "sha256": "a463b5579a6450060b81b82b16697f8797d4c10686a884e0b0c4af0a8e08c313",
       "symbol_count": 1475,
       "symbol_limit": 1500,
+      "compliant": true,
+      "description": "Historical reference pitch in audited commit 935f0251 before commit synchronization"
+    },
+    "template": {
+      "path": "pitch/vhp-01-pitch-template.md",
+      "sha256": "0afa754a4caa5f0226f5caa6c6bbb03c9232a17da90187ed235c56d295d9ca9a",
+      "symbol_count": 1218,
+      "symbol_limit": 1500,
       "compliant": true
+    }
+  },
+  "canonical_artifacts": {
+    "reference_pitch": {
+      "path": "pitch/vhp-01-reference-pitch.md",
+      "sha256": "ee961615f57bd09b452b9e4efe976e29bf1d1da6843a8058f590cfe946d32763",
+      "symbol_count": 1446,
+      "symbol_limit": 1500,
+      "compliant": true,
+      "description": "Canonical published pitch protected by cryptographic verification receipt"
+    },
+    "template": {
+      "path": "pitch/vhp-01-pitch-template.md",
+      "sha256": "0afa754a4caa5f0226f5caa6c6bbb03c9232a17da90187ed235c56d295d9ca9a",
+      "symbol_count": 1218,
+      "symbol_limit": 1500,
+      "compliant": true
+    }
+  },
+  "target_artifacts": {
+    "reference_pitch": {
+      "path": "pitch/vhp-01-reference-pitch.md",
+      "sha256": "ee961615f57bd09b452b9e4efe976e29bf1d1da6843a8058f590cfe946d32763",
+      "symbol_count": 1446,
+      "symbol_limit": 1500,
+      "compliant": true,
+      "description": "Canonical published pitch protected by cryptographic verification receipt"
     },
     "template": {
       "path": "pitch/vhp-01-pitch-template.md",
@@ -28,11 +64,11 @@
     "proof_engine": "Python 3.10+ Wheel Property Engine & AST Auditor",
     "axiom_audit": "8/8 Carlström wheel properties verified on 7-element domain (1,190 checks)",
     "repository": "https://github.com/pashamango/minutta-rp-pr-cycle-lab.git",
-    "commit_sha": "71d669674f9b47b7be6395913b6e5fc88edb4739",
-    "verification_command": "python3 tools/verify-vhp-pitch verify pitch/vhp-01-reference-pitch.md"
+    "commit_sha": "935f0251dd372d4e21cb77d26ac2ee3ff4f77d68",
+    "verification_command": "python3 tools/verify-vhp-pitch check-all"
   },
-  "commit_sha": "71d669674f9b47b7be6395913b6e5fc88edb4739",
-  "verification_command": "python3 tools/verify-vhp-pitch verify pitch/vhp-01-reference-pitch.md",
+  "commit_sha": "935f0251dd372d4e21cb77d26ac2ee3ff4f77d68",
+  "verification_command": "python3 tools/verify-vhp-pitch check-all",
   "audit_passed": true,
-  "timestamp": "2026-11-02T22:56:00Z"
+  "timestamp": "2026-11-02T23:59:00Z"
 }
