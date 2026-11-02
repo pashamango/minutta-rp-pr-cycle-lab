@@ -1,7 +1,7 @@
 # MIN-24 — Next Epoch conjecture and counterexample agenda
 
 Status: `CANDIDATE / NOT EXECUTION-AUTHORIZED`  
-Run: `run-999a3e4478d4`  
+Run: `run-ec77ad266175`
 Scope: hypothesis generation from the emergent-attractor core; no claim about the Riemann Hypothesis.
 
 ## Outcome
@@ -54,3 +54,15 @@ The critical line `Re(s)=1/2` is a hypothesis-generator only. None of P1–P3 ma
 
 This is a research agenda, not an execution authorization or a Lean proof. The underlying registry in `research/next-epoch-proposals.json` is the authoritative badge/status record. Independent QA should check the registry against this document and run only the listed cheap tests after specialists are provisioned.
 
+## Evidence / Artifacts
+
+- `research/next-epoch-conjectures.md` — human-readable ranked agenda and guardrails.
+- `research/next-epoch-proposals.json` — machine-readable proposal registry; each proposal has an explicit `CONJECTURE` badge, conditional theorem badges, dependencies, cheap test, and negative examples.
+- `codex-insights/2026-11-02-min-24-next-epoch.md` — insight-outbox record.
+
+## Checks
+
+- Registry/document alignment: PASS by inspection; P1–P3, ranks, badges, tests, dependencies, and counterexamples agree.
+- Zeta guardrail: PASS by inspection; the document explicitly makes `Re(s)=1/2` hypothesis-generator-only and states the missing analytic bridge.
+- Execution authorization: NOT RUN; status remains `CANDIDATE / NOT EXECUTION-AUTHORIZED`.
+- Independent Lean/math QA: PENDING; specialists are not provisioned.
