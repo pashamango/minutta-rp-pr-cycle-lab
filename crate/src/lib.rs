@@ -5,6 +5,7 @@ pub mod claims;
 pub mod critical_strip;
 pub mod geoid_navigator;
 pub mod math_core;
+pub mod flash_paper;
 
 use std::cell::RefCell;
 
