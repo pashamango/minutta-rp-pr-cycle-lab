@@ -7,21 +7,23 @@
     "epistemic_label": "hypothesis",
     "statement": "A \u03c6-specific effect exists only if the normalized shape (1, \u03c6, \u03c6\u00b2) generalizes out of sample better than other unequal three-part shapes given exactly the same permutation-selection budget.",
     "assumptions": [
-      "Control configurations are exchangeable over a symmetric simplex null."
+      "Triadic resource allocation can be parameterized on a 2-simplex.",
+      "Alternative allocation shapes are exchangeable under symmetric Dirichlet null Dir(1,1,1)."
     ],
     "null_test": {
       "null_hypothesis": "Shape (1, \u03c6, \u03c6\u00b2) has no out-of-sample held-out superiority over arbitrary Dirichlet control shapes of equal sum.",
       "test_procedure": "Normalize all triples to a fixed sum. Generate at least 100 control shapes from a symmetric Dirichlet distribution. For \u03c6 and every control shape, evaluate all six C/B/V permutations on a training split, select one permutation using training data only, and score that frozen choice on held-out paraphrases/issues. Repeat stratified splits. Report \u03c6's held-out percentile rank, effect size versus the control median, and confidence interval. Predeclare success as a stringent percentile threshold (for example top 5%) plus a positive lower confidence bound; otherwise record no \u03c6-specific evidence.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Held-out out-of-sample percentile < 95.0% among Dirichlet controls or paired t-test difference against coarse baseline (0.25, 0.25, 0.50) has p >= 0.01."
     },
     "contradictions": [
-      "In-sample selection advantage can masquerade as a structural breakthrough."
+      "In-sample permutation selection produces apparent performance gain that collapses on held-out test splits.",
+      "Dirichlet control shapes achieve equal or superior held-out performance at matched selection budgets."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Triadic allocation benchmarking in Cognitive Architectures (Context : Behavior : Value)",
+      "Formal evaluation of golden ratio parameter priors against Dirichlet controls",
+      "Anti-overfitting guards for hyperparameter search in agent reasoning"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -48,21 +50,23 @@
     "epistemic_label": "hypothesis",
     "statement": "`Search budget` is part of the evidence contract. Across scheduler science and Proof-of-Meaning, compare procedures at matched adaptive-search budget and credit only signal that survives evidence not already consumed in selecting the winner. Otherwise agents can manufacture apparent discovery/value by trying more variants, prompts, decompositions, or identities.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Search budget (variants, prompts, retries) can be audited and recorded at selection time.",
+      "Adaptive exploration consumes statistical degrees of freedom."
     ],
     "null_test": {
       "null_hypothesis": "Observed statistical gain is an artifact of uncorrected adaptive search budget.",
       "test_procedure": "Where selection is material, record `search_budget / candidate_count / selection_rule / frozen_at / heldout_evidence`. Attack existing \u03c6 and POWA quotient experiments by giving one candidate more search opportunities while all true values are equal; success criterion is that final evidence/reward remains neutral to this asymmetry after matched-budget or post-selection correction.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Statistically significant drop in generalization performance (delta > 0.15, p < 0.01) when candidate selection is corrected for number of evaluated variants."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Agent architectures generating value claims by unconstrained post-hoc selection over unmetered variant pools.",
+      "Schedulers crediting discovery signal that was already consumed during hypothesis filtering."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Evidence-contract metering in Discovery Steward scheduler",
+      "Auditable variant-tracking protocols for LLM prompt optimization",
+      "Anti-gaming benchmarks in Proof-of-Meaning verification"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -89,21 +93,23 @@
     "epistemic_label": "hypothesis",
     "statement": "An orchestration exit code is not evidence of the leaf process's exit. Cross-host incident diagnosis requires a durable dispatch-boundary record that binds command class, timestamp, PID/PPID/process tree, raw wait status/signal, supervisor identity, and task/lease before semantic classification.",
     "assumptions": [
-      "Host OS process lifecycle is directly inspectable via kernel process tables."
+      "Host OS kernel exposes inspectable process trees and wait statuses via procfs or Mach task APIs.",
+      "Supervisor wrapper process can fail independently of leaf worker process."
     ],
     "null_test": {
       "null_hypothesis": "Orchestration status 137 accurately reflects leaf process SIGKILL/OOM without supervisor wrapper failure.",
       "test_procedure": "For one synthetic read-only command, compare direct shell execution with the exact runner handoff and require both to emit the same process-bound evidence schema. Falsify the abstraction if status 137 is reported without any process receiving SIGKILL or if the PID/signal cannot be bound to the task lease.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Discordance between supervisor exit status and leaf PID kernel state > 0% in fault-injection benchmarks; exit 137 accepted as OOM without kernel SIGKILL receipt."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Transport wrapper timeout or connection drop reporting exit status 137 while leaf worker process continues running.",
+      "Dispatcher classifying remote wrapper failure as worker out-of-memory without kernel telemetry."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Cross-host dispatch membrane between Wolfram and Darwin nodes in fleetd",
+      "Linux and macOS kernel process table inspection for task executors",
+      "Watchdog fault classification isolating transport network drops from container crashes"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -129,22 +135,23 @@
     "epistemic_label": "hypothesis",
     "statement": "The deeper invariant is not necessarily equal search budget but **conserved evidence capital**. Schedulers may explore asymmetrically and adaptively, provided public/settlement confidence is accumulated through a predictable anytime-valid e-process or genuinely fresh held-out evidence. Extra prompts/branches/retries may create candidates, but cannot mint evidential wealth merely by being numerous.",
     "assumptions": [
-      "Evidence streams satisfy non-negative expectation bound E[E] <= 1 under H_0.",
-      "Host OS process lifecycle is directly inspectable via kernel process tables."
+      "Evidence streams can be mapped to anytime-valid e-processes with expectation E[E] <= 1 under null.",
+      "Public settlement requires monotonic conservation of evidence tokens."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION is fully explained by selection bias or unstructured noise.",
       "test_procedure": "In any scheduler experiment with adaptive candidate generation, compare: naive best-of-N; matched-budget + held-out; adaptive search + e-process/held-out settlement. Under pure noise, final claim/reward must remain calibrated as search grows; under weak signal, the adaptive evidence-capital scheme should retain useful power without requiring equal exploration counts.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Expected portfolio e-wealth E[E*] > 1.0 under null P_0, or empirical Type I error rate > 0.01 across 1,000 independent noise trials."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Parallel agent branches creating new settlement capital through unconstrained retries without capital dilution.",
+      "Exploratory search generating apparent evidence wealth under pure noise."
     ],
     "duplicates": [],
     "applications": [
-      "Conserved evidence accounting across multi-agent scheduler runs",
-      "Proof-of-Meaning anti-Sybil settlement layer",
-      "Linear / affine evidence token lifetime management"
+      "Conserved evidence accounting in decentralized multi-agent schedulers",
+      "Anti-Sybil settlement layers for Scientific Broker",
+      "Anytime-valid hypothesis verification across distributed worktrees"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -171,21 +178,23 @@
     "epistemic_label": "hypothesis",
     "statement": "A defensible directional definition is: Golden Trinity is an ordered three-stage representation\u2014retained Context C, present Behavior B, future Value V\u2014in which successive semantic capacity grows self-similarly and the future stage conserves/combines the two preceding stages. Under those axioms the role assignment is fixed as C:B:V = 1:\u03c6:\u03c6\u00b2; it must not be selected post hoc.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Cognitive task execution follows an irreversible three-phase pipeline: retained past, present action, prospective value.",
+      "Successive semantic capacity expands self-similarly with golden ratio scaling."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Pre-register the forward role mapping C:B:V = 1:\u03c6:\u03c6\u00b2. On held-out issue paraphrases, compare it against (i) the reversed mapping \u03c6\u00b2:\u03c6:1, (ii) the other four permutations, and (iii) an ordered grid 1:r:r\u00b2 for non-\u03c6 r, all with identical evidence accounting. A \u03c6-specific directional result requires the fixed forward mapping to outperform its reversal and place near the held-out optimum over r. If another permutation or a broad plateau wins, the semantic ordering or \u03c6-specificity is weakened.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Forward 1:phi:phi^2 mapping fails to exceed performance of reversed phi^2:phi:1 and other permutations on held-out paraphrases with p < 0.01."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Reversed phase mapping (phi^2 : phi : 1) or arbitrary permutations outperforming canonical 1 : phi : phi^2 forward mapping.",
+      "Phase feedback loops permitting Value to retroactively rewrite Context outside explicit episodic boundaries."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Phase-ordered context window management in agent cognitive loops",
+      "Self-similar memory buffer sizing for long-horizon task planning",
+      "Triadic state representation in reasoning trace evaluators"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -212,21 +221,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Any measured advantage of 1:\u03c6:\u03c6\u00b2 may come entirely from the coarse \u201cfuture gets 50%\u201d rule rather than from the golden split inside the other 50%. A \u03c6-specific claim therefore has two nested proof obligations: (A) V=1/2 is useful; (B) conditional on V=1/2, C:B=1:\u03c6 is useful.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Value stage capacity can be decoupled from Context/Behavior sub-allocation.",
+      "Baseline heuristic (0.25, 0.25, 0.50) serves as an explicit nested null hypothesis."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Run a nested ablation on held-out data. First sweep V while forcing C=B=(1\u2212V)/2. Then freeze V=1/2 and sweep q=C/(C+B) over [0,1]; \u03c6 predicts q=1/\u03c6\u00b2\u22480.382 (equivalently B share\u22480.618). Compare the full \u03c6 point against the best non-\u03c6 q using fresh evidence or an anytime-valid procedure. Report A and B separately.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "95% confidence interval for effect size difference between golden C:B split and uniform C:B split (at fixed V=0.5) includes zero (Cohen's d < 0.20, p >= 0.05)."
     },
     "contradictions": [
-      "Superiority may stem from coarse 50% future allocation rather than the golden ratio \u03c6."
+      "All measured advantage of 1:phi:phi^2 being driven entirely by coarse 50% future allocation, with zero marginal benefit from golden split between Context and Behavior.",
+      "Ablation of golden ratio in Context:Behavior producing no significant difference from uniform 1:1 split."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Nested ablation test harnesses for multi-stage LLM prompts",
+      "Systematic verification of golden ratio heuristics in agent architectures",
+      "Resource budget partitioning between working memory and action planning"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -252,22 +263,23 @@
     "epistemic_label": "derived",
     "statement": "`log e-wealth` is a useful conservation coordinate for Scientific Broker / Proof-of-Meaning settlement. Exploration may be asymmetric and adaptive, but only precommitted/predictable evidence updates can increase auditable evidence capital. Under the null, expected log-evidence cannot be mined from air. ATTACK / BOUNDARY Free ledger resets, account splitting, or selective reporting of the richest ledger recreate winner-selection bias. Any settlement use therefore needs a bound evidence account or an explicit valid merge/multiple-testing rule; otherwise the conservation law is bypassed by Sybil bookkeeping. VALUE This links adaptive scientific inference to Open Money with a precise invariant rather than a metaphor: multiplicative evidence becomes additive `\u0394 log E`, while the null has non-positive expected yield. It may also give schedulers a common receipt field for calibrated claim strength without forcing equal search budgets.",
     "assumptions": [
-      "Evidence streams satisfy non-negative expectation bound E[E] <= 1 under H_0.",
-      "Host OS process lifecycle is directly inspectable via kernel process tables."
+      "Log-transformed e-values provide additive coordinates for sequential evidence accounting.",
+      "Valid sequential tests admit predictable betting martingales under null distributions."
     ],
     "null_test": {
       "null_hypothesis": "Observed statistical gain is an artifact of uncorrected adaptive search budget.",
       "test_procedure": "Evaluate empirical behavior against a randomized baseline under matched budget.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Positive mean drift in log(E_t) under null hypothesis (drift > 0.005, p < 0.01 in 5,000 Monte Carlo steps)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Ledger resets or selective reporting of highest-performing child branches bypassing conservation constraints.",
+      "Agent accounts generating positive drift in log e-wealth under pure white noise."
     ],
     "duplicates": [],
     "applications": [
-      "Conserved evidence accounting across multi-agent scheduler runs",
-      "Proof-of-Meaning anti-Sybil settlement layer",
-      "Linear / affine evidence token lifetime management"
+      "Additive evidence accumulation ledgers in Scientific Broker",
+      "Sybil-resistant credit assignment in autonomous research networks",
+      "Calibration monitoring for continuous predictive evaluation"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -294,24 +306,25 @@
     "epistemic_label": "hypothesis",
     "statement": "Use `evidence bits = log2(e-process wealth)` as a candidate *scientific accounting layer*, not as ownership or money itself. Valid sequential evidence then has no positive expected drift under the null, while true distinguishability accumulates at a rate tied to relative entropy. Keep attribution/credit and currency issuance as separate downstream layers.",
     "assumptions": [
-      "Evidence streams satisfy non-negative expectation bound E[E] <= 1 under H_0.",
-      "Host OS process lifecycle is directly inspectable via kernel process tables."
+      "Evidence bits measure accumulated information divergence from the null hypothesis.",
+      "Accounting layer can be strictly decoupled from economic currency minting and token ownership."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS / SCIENCE + OPEN-MONEY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Simulate a broker with predeclared e-processes and settle only evidence-bit deltas. Attack with adaptive search, duplicate claims, correlated streams, and composite nulls. The primitive fails if evidence bits can be inflated materially without new information or if dependence bookkeeping makes additive settlement unusable.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Growth of evidence bits under uninformative data permutations exceeds theoretical upper bound (delta > 0.05 bits, p < 0.01)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Conflating evidence bits with transferable currency tokens leading to speculative gaming of scientific null tests.",
+      "Evidence bits increasing under uninformative data transformations."
     ],
     "duplicates": [
       "CLAIM-007"
     ],
     "applications": [
-      "Conserved evidence accounting across multi-agent scheduler runs",
-      "Proof-of-Meaning anti-Sybil settlement layer",
-      "Linear / affine evidence token lifetime management"
+      "Information-theoretic accounting in autonomous discovery pipelines",
+      "Decoupled audit logs separating epistemic confidence from financial compensation",
+      "Epistemic rating metrics for research artifact registries"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -338,21 +351,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Credential safety requires a three-identity invariant: organizational actor/role, provider principal/account, and resource/verb scope are orthogonal bindings. Substituting one for another creates an ambiguous grant even when no secret is exposed.",
     "assumptions": [
-      "Host OS process lifecycle is directly inspectable via kernel process tables."
+      "Identity dimensions in multi-agent systems are orthogonal and non-substitutable.",
+      "Security boundaries require separate verification for executing role, paying principal, and access scope."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / CREDENTIALS + GOVERNANCE is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Validate the same request schema against Google and Forgejo fixtures. Reject any request where actor identity can satisfy provider-principal identity or where a fresh process cannot exercise the capability through an opaque handle.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Privilege escalation attack succeeds by permuting actor, principal, or scope in synthetic grant tokens (leakage rate > 0.0%)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Exchanging machine actor identity for organizational role allowing unauthorized privilege escalation.",
+      "Principal identity implicitly granting permissions across unrelated resource scopes."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Three-identity IAM authorization protocol for fleetd daemons",
+      "Scoped SSH/Tailscale service credentials between Wolfram and Darwin nodes",
+      "Delegation token verification in Mindrock Network Constitution"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -378,21 +393,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Golden Trinity should be defined first as a resource-allocation law over a common measure \u03bc: w_C,w_B,w_V\u22650, w_C+w_B+w_V=1, w_B/w_C=w_V/w_B, and w_V=w_C+w_B. Semantic fields receive these weights through explicit encoding/cost maps \u03bc_C, \u03bc_B, \u03bc_V; the meanings themselves are not added.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Resource allocation requires a single commensurable underlying metric (e.g. compute cycles, tokens, or bandwidth).",
+      "Semantic components cannot be added directly without explicit encoding maps."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Attach units and conversion functions to every benchmark field. Attempt the derivation under three candidate common measures\u2014tokens, encoded bits, and inference cost. Reject any equation that adds unlike units. Then test whether \u03c6-specific performance survives changing the common measure while holding the underlying examples fixed. If it appears only under one arbitrary tokenizer/cost map, classify it as implementation-specific rather than semantic.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Dimensional inconsistency or non-unit sum in allocated resource vector (|sum(w) - 1.0| > 1e-6 or cross-dimensional scaling variance > 0.05)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Applying Golden Trinity proportions across incompatible dimensions (e.g. wall-clock seconds for Context vs token counts for Behavior).",
+      "Allocating resources where component weights fail to sum to unity."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Token budget distribution across Context, Reasoning, and Output phases in LLM prompts",
+      "Unified cycle scheduling across execution stages in autonomous agents",
+      "Formal dimensional analysis of cognitive architecture resource consumption"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -418,23 +435,23 @@
     "epistemic_label": "derived",
     "statement": "Treat evidential attention as a conserved portfolio simplex: hypotheses/agents may fork freely, but their evidential weights must come from one unit budget and be fixed/predictable before the next evidence is observed. Settlement/public confidence uses the merged portfolio e-value, never the richest child account.",
     "assumptions": [
-      "Control configurations are exchangeable over a symmetric simplex null.",
-      "Evidence streams satisfy non-negative expectation bound E[E] <= 1 under H_0.",
-      "Host OS process lifecycle is directly inspectable via kernel process tables."
+      "Ensemble of exploration agents can be bounded by a unit simplex weight vector w in Delta_m.",
+      "Mixture weights must be fixed or predictable before observing step t."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Clone one evidence stream with e-value E into m identities. If the parent weight w is merely partitioned across clones, their merged contribution remains `\u03a3_j w_j E = wE`; pure identity splitting cannot increase evidence. Compare against max-reporting or fresh-unit-ledger schemes, which should show null inflation. Also test correlated and genuinely independent weak-signal streams.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Portfolio e-value expectation E[E*] > 1.0 under null P_0 when agent splitting is permitted, violating Ville's inequality."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Dynamically re-allocating weights to post-hoc winning agents after observing favorable noise spikes.",
+      "Sybil agent splitting increasing aggregate portfolio e-value under pure noise."
     ],
     "duplicates": [],
     "applications": [
-      "Conserved evidence accounting across multi-agent scheduler runs",
-      "Proof-of-Meaning anti-Sybil settlement layer",
-      "Linear / affine evidence token lifetime management"
+      "Admissible evidence merging (Wang 2025 Biometrika) across parallel exploration agents",
+      "Anti-Sybil protection for multi-agent swarm discovery",
+      "Verifiable weight commitment protocols in decentralized research networks"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -461,21 +478,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Use a **prefix/Kraft evidence budget** for adaptive hypothesis trees. Branches may proliferate freely, but each child must reserve its evidence weight from the parent before observing the evidence it will score. Branching then redistributes evidential capital rather than minting it; duplicate identities/prompts cannot gain settlement weight merely by multiplying.",
     "assumptions": [
-      "Evidence streams satisfy non-negative expectation bound E[E] <= 1 under H_0."
+      "Hypothesis exploration can be structured as a prefix-free tree over discrete decision codes.",
+      "Kraft's inequality sum(2^(-l_i)) <= 1 bounds total permissible branch capital."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + SCHEDULER-META is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Under pure-noise streams, compare winner-take-all search, unrestricted duplicate-account e-values, and a prefix-budgeted portfolio as branch count grows. Require the prefix-budgeted merger to remain calibrated while still accumulating evidence when one preweighted branch has real signal. BOUNDARY This does not establish semantic deduplication, common-null validity across heterogeneous claims, or permit post-hoc weight reassignment. It is a search/identity budget primitive only; branch weights must be committed predictably before scored evidence.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Kraft sum over active hypothesis tree leaves exceeds 1.0 (sum(2^(-depth_i)) > 1.0 + 1e-7)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Deeply nested hypothesis trees allocating branch weights that sum to greater than 1.",
+      "Child nodes inheriting full evidence budgets without exponential depth penalties."
     ],
     "duplicates": [],
     "applications": [
-      "Conserved evidence accounting across multi-agent scheduler runs",
-      "Proof-of-Meaning anti-Sybil settlement layer",
-      "Linear / affine evidence token lifetime management"
+      "Tree-structured hypothesis search with bounded Type I error",
+      "Prefix-free code allocation for recursive prompt decomposition",
+      "Provably bounded exploration depths for autonomous theorem proving"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -502,21 +521,23 @@
     "epistemic_label": "hypothesis",
     "statement": "A Golden Trinity weighting claim requires one common ratio-scale resource measure \u03bc. Semantic quality may be an outcome metric, but it cannot serve as the \u03c6-weight axis unless its zero and unit are operationally justified. Universality should mean invariance under admissible rescaling \u03bc'=a\u03bc, not under arbitrary offset shifts.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Evaluation of ratio claims requires an interval or ratio measurement scale.",
+      "Ordinal or nominal indicators cannot validate multiplicative geometric scaling."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "For each proposed measure, declare its admissible transformations and run a representation-invariance stress test. Rescale units (tokens\u2192bytes-equivalent, seconds\u2192milliseconds) and introduce plausible encoding overheads. The \u03c6 classification must survive pure unit changes. If adding an arbitrary baseline or changing tokenizer overhead moves the inferred optimum materially, that measure cannot support a universal ratio claim without an explicit zero/overhead correction.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Non-invariance of optimal ratio under monotonic score rescaling (rank reversal or shift in optimal weight > 10% under log/power transformations)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Attempting to verify 1:phi:phi^2 ratios using subjective Likert ratings or arbitrary ordinal ranks.",
+      "Invariance of claimed optimality under non-linear monotonic score transformations."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Measurement theory validation of cognitive evaluation rubrics",
+      "Benchmark design for ratio-scale agent performance metrics",
+      "Elimination of subjective ordinal scoring in architectural comparisons"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -542,21 +563,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Agent branching can obey a literal evidence-conservation rule: **branching splits evidence capital; it does not mint it**. A parent allocates weights before child evidence arrives; children may explore asymmetrically, but settlement uses the preweighted mixture or otherwise fresh held-out evidence. More prompts/retries/identities then create search options without automatically creating confidence or reward.",
     "assumptions": [
-      "Evidence streams satisfy non-negative expectation bound E[E] <= 1 under H_0."
+      "Evidence capital represents finite statistical betting stock.",
+      "Child branches created by agent forking must partition parent evidence capital."
     ],
     "null_test": {
       "null_hypothesis": "Observed statistical gain is an artifact of uncorrected adaptive search budget.",
       "test_procedure": "Simulate branching research trees under pure noise and weak signal. Compare max-branch settlement, matched-budget held-out settlement, and preweighted e-mixture settlement across increasing branch counts. Require null calibration to remain stable as branches multiply and weak-signal power to remain useful.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Sum of child branch initial capital exceeds parent capital at split event (sum(w_child) > w_parent)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Spawning child agents with full duplicate betting capital without dividing parent endowment.",
+      "Merging child branches and claiming sum of unpartitioned capital."
     ],
     "duplicates": [],
     "applications": [
-      "Conserved evidence accounting across multi-agent scheduler runs",
-      "Proof-of-Meaning anti-Sybil settlement layer",
-      "Linear / affine evidence token lifetime management"
+      "Subagent spawning protocols in Antigravity/fleetd runtimes",
+      "Capital-preserving branch management in speculative execution trees",
+      "Prevention of recursive credit duplication in autonomous research swarms"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -583,21 +606,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Shared agent memory/knowledge should be treated as an untrusted commons: publication into canonical memory must carry provenance + verifier state, and consumers should distinguish observed/candidate/verified/quarantined knowledge. Social detection or agent disagreement is insufficient without an enforcement/mutation boundary. This reinforces current verifier-only acceptance and reporter-bound settlement work rather than justifying a new execution lane.",
     "assumptions": [
-      "Standard operational context of scheduler 'Research Scout'."
+      "Shared memory spaces are subject to pollution, Byzantine corruption, or accidental mutation.",
+      "All published claims must carry cryptographic issuer signatures and content digests."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SYSTEM-META is fully explained by selection bias or unstructured noise.",
       "test_procedure": "When existing Project Office / reporter work is reviewed, verify that an unverified but syntactically valid \u201csuccessful result\u201d cannot enter canonical reusable memory merely because multiple agents repeat/cite it; require verifier-bound promotion. No new Codex task is proposed from this note.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Unsigned or invalidly signed memory artifact accepted into verified agent working state (> 0.0% acceptance on corrupt injection)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Agents consuming memory objects from shared caches without verifying cryptographic origin or schema integrity.",
+      "Poisoned memory entries being trusted implicitly based on cache residency."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Zero-trust shared memory commons for multi-agent scratchpads",
+      "Content-addressed caching of intermediate reasoning traces",
+      "Byzantine fault tolerance in multi-node agent collaboration"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -623,21 +648,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Represent cross-scheduler evidence as a Git-like DAG with three primitives: `split` allocates evidential capital, `observe` applies a precommitted/conditionally valid factor, and `merge` defaults to a convex mixture unless ancestry plus an explicit composability condition justifies multiplication. Copied observations/retries should not mint extra confidence or value.",
     "assumptions": [
-      "Evidence streams satisfy non-negative expectation bound E[E] <= 1 under H_0."
+      "Evidence dependencies can be modeled as a directed acyclic graph.",
+      "Merge operators over evidence states are associative, commutative, and conservative."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + SCHEDULER-COMMONS is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Attack a toy DAG with duplicated observations, correlated branches, cherry-picked branch deletion, and delayed merge. Under a pure-noise null, final e-capital must remain calibrated while allowing unequal exploratory search budgets.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Presence of cycles in evidence dependency graph, or failure to cascade retraction to all topologically dependent claims (invalidation recall < 100%)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Cycles in evidence DAG causing circular justification or infinite feedback loops.",
+      "Retracting an upstream evidence node failing to invalidate downstream derived conclusions."
     ],
     "duplicates": [],
     "applications": [
-      "Conserved evidence accounting across multi-agent scheduler runs",
-      "Proof-of-Meaning anti-Sybil settlement layer",
-      "Linear / affine evidence token lifetime management"
+      "Git-like version control for scientific claims and empirical evidence",
+      "Distributed claim dependency tracking across heterogeneous schedulers",
+      "Dynamic revocation and retraction propagation in automated science registries"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -664,21 +691,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Durable Git evidence needs a two-phase binding: a committed report binds the implementation parent/tree and its task/source/lease; an external immutable review surface (PR head/review receipt or later attestation commit) binds the report-containing final commit. Self-hash absence is then explicit, not treated as missing evidence.",
     "assumptions": [
-      "Standard operational context of scheduler 'Research Market'."
+      "Git content-addressable storage serves as canonical immutable audit log.",
+      "Two-phase handshake binds execution plan to remote immutable commit SHA before acceptance."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SYSTEM-META / CROSS is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Issue #187 must publish implementation_head inside the report, final_pr_head in the PR/Issue receipt, then verify after fresh re-fetch that both links resolve and copied receipt fragments fail strict parsing.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Task transition to In Review permitted with dirty git working tree or unpushed commit SHA (Handoff Gate violation rate > 0.0%)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Agent claiming task completion based on local unpushed files or uncommitted workspace modifications.",
+      "Acceptance of task handoff where declared git commit SHA does not exist on canonical remote."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Handoff Gate protocol enforcement in fleetd v0.2.0",
+      "Zero-trust worktree isolation and commit verification for autonomous builders",
+      "Git-backed evidence coordinates verification across Wolfram and Darwin nodes"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -704,21 +733,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Treat scientific observations as **linear evidence resources**. Branches may copy references/provenance freely, but spendable evidential mass cannot be duplicated. `MIX` may combine overlapping ancestry with conserved weights; `PRODUCT` requires fresh/conditionally valid evidence rather than two copies of the same observation. This mirrors linear/affine resource semantics: information can be referenced many times, but a resource claim cannot be consumed twice.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Empirical observations possess linear logic properties: they cannot be cloned to double evidential power.",
+      "Independent verification requires fresh observations rather than re-used tokens."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-SYSTEMS is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Synthetic DAG: one observation yields E=2. Clone it into two branches. A naive product gives 4 and should be rejected; a 50/50 mixture remains 2 and should pass. Add a genuinely fresh second observation producing another valid factor 2; a sequentially valid product may now reach 4. Attack with clone/retry/cherry-pick patterns and require the checker to distinguish reuse from fresh evidence.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Re-use of identical observation dataset increases aggregate evidence rank beyond initial singular rank in joint model."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Re-submitting the same observational dataset across multiple sub-hypotheses and treating them as statistically independent corroborations.",
+      "Linear evidence tokens duplicated without consuming new physical degrees of freedom."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Linear type systems for empirical data assets in scientific pipelines",
+      "Double-spending prevention in decentralized hypothesis bounties",
+      "Strict resource accounting for experimental observation tokens"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -744,21 +775,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Separate **evidence ancestry algebra** from **evidence strength**. Every scheduler/research artifact carries a provenance polynomial (or equivalent lineage DAG) plus its statistical score. Multiplication of evidence is admissible only when lineage supports are disjoint or an explicit sequential-dependence rule justifies reuse; shared-source products trigger deduplication/mixture/conservative merge instead of independent multiplication.",
     "assumptions": [
-      "Evidence streams satisfy non-negative expectation bound E[E] <= 1 under H_0."
+      "Lineage depth and provenance complexity are orthogonal to empirical statistical strength.",
+      "Deep derivation chains do not automatically confer high evidentiary validity."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Synthetic DAG: A=`x_a x_b`, B=`x_a x_c`. Naive product gives `x_a^2 x_b x_c` and must emit `DUPLICATED_EVIDENCE`; A+B remains a legal alternative lineage, and disjoint A=`x_a x_b`, C=`x_c x_d` may pass the ancestry check for later statistical validation. Compare these algebraic verdicts with existing e-value ancestry rules.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Linear correlation between DAG depth and empirical effect size exceeds r > 0.15 under randomized null benchmarks."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Assigning higher confidence to a hypothesis merely because its derivation graph is complex or multi-layered.",
+      "Conflating historical provenance tracking with statistical significance."
     ],
     "duplicates": [],
     "applications": [
-      "Conserved evidence accounting across multi-agent scheduler runs",
-      "Proof-of-Meaning anti-Sybil settlement layer",
-      "Linear / affine evidence token lifetime management"
+      "Provenance-strength decoupling in automated claim evaluation",
+      "Epistemic rating algorithms resistant to circular reasoning inflation",
+      "Complexity-neutral evidence weighting in scientific consensus engines"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -785,21 +818,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Maintain both ordinary provenance (for audit) and a **nilpotent shadow provenance** (for composability). The shadow gives a cheap machine rule: reused atomic evidence cannot participate twice in an independence-style product because the duplicate source annihilates the product. This is a structural anti-double-spend rule for evidence, not a complete statistical-validity proof.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Auditing and inspecting provenance metadata must not alter system state or consume evidential capital.",
+      "Shadow audit queries must satisfy idempotence and nilpotency."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVIDENCE is fully explained by selection bias or unstructured noise.",
       "test_procedure": "On a synthetic evidence DAG, require the shadow algebra to reject shared-source products, permit disjoint-source products, and leave shared-source alternatives/mixtures representable. Then include a post-hoc-selected but ancestry-disjoint case and require the checker to mark it `STRUCTURALLY_OK / STATISTICALLY_UNPROVEN`, demonstrating the boundary.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Non-zero state delta or weight mutation resulting from repeated execution of shadow provenance inspection queries (|delta_state| > 0)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Audit operations mutating underlying claim weights or leaving fee residue that affects future scheduling.",
+      "Non-idempotent provenance inspection altering evidence status upon repeated queries."
     ],
     "duplicates": [],
     "applications": [
-      "Conserved evidence accounting across multi-agent scheduler runs",
-      "Proof-of-Meaning anti-Sybil settlement layer",
-      "Linear / affine evidence token lifetime management"
+      "Zero-side-effect provenance inspection for autonomous compliance monitors",
+      "Idempotent audit logging in privacy-preserving scientific brokers",
+      "Read-only verification tooling for independent QA agents"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -825,21 +860,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Cross-scheduler settlement should distinguish **consumable evidence** from **reusable knowledge** at the type/proof level. Default evidence tokens are linear/affine (no silent duplication); legitimately reusable artifacts such as public theorems or static reference facts require an explicit reusable modality. Duplicate ancestry then fails as a proof/type error instead of being patched post hoc by `x_i^2=0`.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Empirical evidence is consumed by hypothesis testing (degrees of freedom loss), whereas invariant capabilities are reusable without exhaustion.",
+      "Testing protocols must track degrees-of-freedom depletion."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Encode one toy evidence DAG under two semantics: (A) nilpotent provenance `x_i^2=0`; (B) linear/affine evidence tokens plus explicit reusable modality. Inject duplicate ancestry and legitimate theorem reuse. Prefer the model that catches double-counting while preserving legitimate reuse and emits the clearer auditable failure witness.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Multi-use of consumable evidence without Holm-Bonferroni or e-value multiple-testing adjustment (Type I error inflation > 5%)."
     },
     "contradictions": [
-      "Unrestricted evidence reuse creates artificial epistemic inflation."
+      "Treating empirical dataset as reusable without multiple-testing corrections.",
+      "Exhausting formal validation schemas as if they were consumable data points."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Resource classification in multi-agent workflow engines",
+      "Distinguishing static formal contracts from dynamic empirical test data",
+      "Capability reuse management in modular verification pipelines"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -865,21 +902,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Durable evidence needs two orthogonal bindings: content identity and issuer capability. `task/source/lease + content hash` proves what bytes are referenced; an issuer-authenticated certificate proves which authority emitted them. Settlement consumers should accept only a canonical certificate under a pinned public trust root, with signing capability unavailable to the executor and with replay/audience binding.",
     "assumptions": [
-      "Standard operational context of scheduler 'Research Market'."
+      "Cryptographic content hash (SHA-256) and issuer authority signature are orthogonal dimensions of trust.",
+      "A valid content hash does not imply authorized issuance, and vice versa."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SYSTEM-META / EVIDENCE / CROSS-PROJECT is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Executor forges a schema-valid self-hashed validation JSON: current adapter accepts after caller promotion. Add a synthetic reporter-only signer and verifier-pinned public identity; require the same forgery to fail, real reporter issuance to pass, and restart replay to remain idempotent.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Acceptance of payload with mismatched content hash or unverified issuer authority signature (acceptance rate > 0.0%)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Verifying file hash integrity while ignoring issuer key authorization.",
+      "Verifying issuer signature over payload whose content hash does not match stored digest."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Two-coordinate verification in distributed artifact registries",
+      "Content-addressable credential packaging for cross-node dispatch",
+      "Tamper-evident evidence storage for independent QA audits"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -905,21 +944,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Golden Trinity can serve as a compositional class of group behavior: agents need not have equal budgets or exchange private magnitudes; alignment on the same ordered ratio and axes is sufficient for the population aggregate to remain in the same class. Deviations at group level must come from ratio deviations, axis misalignment, nonlinear aggregation, or incompatible measures\u2014not scale inequality alone.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Multi-agent group allocations can be modeled as vector fields over Context, Behavior, and Value.",
+      "Coordination overhead scales sub-additively when agents adhere to self-similar triadic roles."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + GROUP-BEHAVIOR is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Generate agents with budgets spanning several orders of magnitude. Compare three conditions: common ordered g, randomly permuted axes, and individually perturbed ratios. Aggregate and measure distance from the ray {tg:t\u22650}. The exact common-g condition must remain on the ray to numerical precision; permutations or perturbations should leave it except in accidental cancellations. Repeat using real-measure conversions admitted by the ratio-scale gate.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Coordination overhead scaling exponent >= 1.0 (super-linear cost growth) under increasing agent team size N in triadic configurations."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Ensembles of 1:phi:phi^2 agents exhibiting super-additive coordination collapse under team scaling.",
+      "Triadic role assignment performing worse than unstructured homogenous teams at N >= 5."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Multi-agent swarm coordination protocols in distributed problem solving",
+      "Role decomposition in autonomous software development teams (Context/Spec : Behavior/Code : Value/QA)",
+      "Sub-additive scaling benchmarks for cooperative agent networks"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -945,21 +986,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Approximate Golden Trinity is compositionally stable under positive linear aggregation, but influence is budget-weighted. A population cannot be called collectively \u201cgolden\u201d merely because most agents are close to g: one high-budget outlier can dominate. Conversely, heterogeneous errors can cancel, so a golden aggregate does not prove golden individuals.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Convex combinations of individual agent allocation vectors remain within bounded distance of canonical phi-state.",
+      "The phi-simplex attractor is stable under perturbations in individual agent weights."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + GROUP-ROBUSTNESS is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Construct two populations with identical unweighted distributions of distances ||p_i-g|| but swap which agents receive the largest t_i. Measure group distance ||p\u0304-g||. Require the high-budget-outlier population to deviate more while both satisfy the convexity bound. Add paired perturbations e and -e to demonstrate cancellation: p\u0304=g even though no individual equals g.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Total variation distance between aggregate team allocation and canonical phi-simplex exceeds epsilon > 0.08 after 20 consensus iterations."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Aggregated team allocation diverging exponentially from golden simplex under linear consensus updates.",
+      "Inability of individual agents to recover canonical proportions after noisy communication."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Robust decentralized consensus over continuous resource allocation",
+      "Stability analysis for distributed multi-agent optimization",
+      "Noise-tolerant parameter averaging in federated agent architectures"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -985,21 +1028,23 @@
     "epistemic_label": "hypothesis",
     "statement": "A scientifically identifiable \u201cgolden group\u201d requires two coordinates, not one: low collective bias and low internal heterogeneity. Aggregate conformity alone can be produced by cancellation, while low heterogeneity alone can describe a uniformly non-golden group. Define a provisional group score only from the ordered pair (B,H)=(||p\u0304-g||\u00b2, \u03a3_i \u03b1_i||p_i-p\u0304||\u00b2), keeping the components separate rather than collapsing them prematurely.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Characterizing group behavior requires separating relative directional proportion from absolute resource intensity.",
+      "Shape vector on 2-simplex and scalar magnitude constitute orthogonal parameters."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + GROUP-IDENTIFIABILITY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Build four synthetic populations: (1) low B/low H, (2) low B/high H via cancelling deviations, (3) high B/low H via common shifted ratio, and (4) high B/high H. Verify that aggregate-only distance confuses cases 1 and 2, while the pair (B,H) separates all four regimes. Then test whether empirical conclusions remain stable across admissible ratio-scale budget definitions.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Misclassification rate > 5% when separating simulated golden groups from non-golden groups using 2D (shape, scale) vs 1D projections."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Claiming golden group dynamics based solely on scalar resource expenditure without verifying triadic shape alignment.",
+      "Conflating shape alignment with total problem difficulty."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Two-parameter diagnostic profiling of multi-agent collaboration sessions",
+      "Identification of balanced vs pathological agent resource allocations",
+      "Quantitative telemetry analysis for autonomous development workflows"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1025,22 +1070,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Use a typed evidence algebra across schedulers: `\u2295` = dependency-safe mixture/merge by default; `\u2297` = compounding allowed only with an attached conditional-validity witness. Provenance answers `where did this evidence come from?`; the statistical certificate answers `may it compound?`. Treating ancestry disjointness as permission to multiply is a category error.",
     "assumptions": [
-      "Evidence streams satisfy non-negative expectation bound E[E] <= 1 under H_0.",
-      "Host OS process lifecycle is directly inspectable via kernel process tables."
+      "Combining evidence requires explicit distinction between correlated streams (mixture oplus) and independent streams (product otimes).",
+      "Cross-stream mutual information can be evaluated or bounded."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + EVIDENCE is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Four synthetic receipts: duplicate ancestry; disjoint IDs with perfectly correlated latent source; genuinely conditionally valid sequential factor; post-hoc reweighting. Require mixtures to remain allowed where valid, unauthorized products to fail, and the sequential e-process product to pass.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Empirical Type I error exceeds nominal level alpha = 0.01 when dependent evidence streams are combined using tensor product otimes."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Multiplying non-independent e-values using tensor product otimes, leading to catastrophic Type I error inflation.",
+      "Applying overly conservative mixture oplus to genuinely independent evidence sources."
     ],
     "duplicates": [],
     "applications": [
-      "Conserved evidence accounting across multi-agent scheduler runs",
-      "Proof-of-Meaning anti-Sybil settlement layer",
-      "Linear / affine evidence token lifetime management"
+      "Dependence-aware evidence aggregation in meta-analytic inference",
+      "Safe combination rules for multi-agent sensor fusion",
+      "Type-safe statistical operator libraries for automated scientific discovery"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -1067,21 +1113,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Treat evidence as a typed capability, minimally `E=(content_digest, issuer_capability, lineage, reuse_scope)`. Safe merge `\u2295` may tolerate arbitrary dependence; stronger compounding `\u2297` must carry an additional conditional-validity/independence obligation; settlement additionally requires authorized issuer/audience/task binding. No single hash/signature/provenance field should be overloaded to imply all three.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Security and trust boundaries can be enforced via object-capability security models.",
+      "Capabilities attenuate monotonically along delegation chains."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM-META is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Write a four-cell adversarial matrix only: authenticated-but-dependent, unauthenticated-but-disjoint, authenticated-with-overlap, authenticated-with-valid composition witness. A proposed schema/operator table passes only if these cases produce distinct outcomes without ad hoc exception logic.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Capability grant succeeds when requested permissions exceed parent capability permissions (escalation rate > 0.0%)."
     },
     "contradictions": [
-      "Unrestricted evidence reuse creates artificial epistemic inflation."
+      "Delegated capability tokens gaining new permissions or extending expiration timestamps beyond root capability.",
+      "Subagents executing actions outside attenuated capability scope."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Object-capability security for autonomous agent tool execution",
+      "Attenuated sandboxing for subagent task delegation",
+      "Ephemeral scoped capability tokens for remote host operations"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1107,21 +1155,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Use an attenuation-only `typed evidence capability` discipline. Evidence composition may accumulate lineage and unresolved proof obligations, while authority/reuse scope may only stay equal or narrow under ordinary operators. Any widening requires an explicit validator/capability. In shorthand: **composition may increase knowledge, but not authority**.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Capability composition follows lattice intersection; delegation follows monotone specialization.",
+      "No operational mechanism exists for horizontal privilege amplification."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Define tiny rules for `\u2295`, `\u2297`, and settlement and attack them with: authorized+unauthorized input laundering; T1->T2 replay; shared-ancestry erasure; and hidden statistical dependence. Reject any rule where the child obtains broader settlement authority or fewer obligations without an explicit discharge/widening certificate.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Intersection operation yielding non-subset capability (cap_A intersect cap_B not subset of cap_A or cap_B)."
     },
     "contradictions": [
-      "Unrestricted evidence reuse creates artificial epistemic inflation."
+      "Intersection of two capability sets producing a permission not present in both parent sets.",
+      "Capability attenuation failing to restrict child subagent actions."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Formal capability lattice implementations in agent runtime security",
+      "Formal verification of privilege boundaries in autonomous code execution",
+      "Monotonic authorization enforcement in fleetd task dispatch"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1147,21 +1197,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Treat scientific evidence as an attenuating capability: ordinary derivations may narrow authority/reuse/audience and accumulate lineage, but any stronger operation (especially statistical compounding `\u2297`) must carry an explicit certificate. `independence` is never inferred from disjoint provenance.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Downstream mathematical and logical derivations cannot exceed evidentiary scope of their input empirical premises.",
+      "Logical entailment preserves or reduces epistemic certainty."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SYSTEM + SCIENCE + SSI is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Paper/spec-only mapping: encode current EvidenceCapability dimensions as attenuating caveats and attack four transitions \u2014 privilege widening, audience widening, ancestry erasure, and unauthorized `\u2295\u2192\u2297` promotion. Pass only if local verification rejects all four without global mutable state.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Confidence bound or validity domain of derived theorem exceeds empirical domain bound of supporting observations."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Derived conclusions claiming broader operational domains or higher confidence intervals than primary empirical measurements.",
+      "Unsound deductive leaps escaping capability bounds."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Epistemic capability bounds for automated reasoning engines",
+      "Propagation of empirical uncertainty through deductive proof graphs",
+      "Soundness checkers for AI-generated scientific papers"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -1188,21 +1240,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Model reusable scheduler/scientific evidence policy as a product semilattice `E=(R,O,L)`: ordinary derivation requires `R_child\u2286R_parent`, `O_child\u2287O_parent`, with append-only lineage `L`. Multi-parent composition uses `R_eff=\u22c2R_i`, `O_eff=\u22c3O_i`. Thus **ordinary composition may neither gain authority nor erase obligations**. Caveat order should not affect the effective policy, giving a canonical local type check and reducing bespoke settlement logic.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Multi-dimensional security policies form a bounded meet-semilattice.",
+      "Policy evaluation distributes independently across provenance, capability, and state components."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SYSTEM + SCIENCE + OPEN-MONEY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Toy tokens: apply the same two caveats in opposite orders and require identical effective `(R,O)`; retry a child that restores a removed settlement right or drops a lineage obligation and require local rejection. Then identify any real policy dimension whose semantics is non-monotone/order-sensitive; such a counterexample falsifies the simple semilattice model for that dimension.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Join/meet operations on policy tuples violate semilattice associativity, commutativity, or idempotence (|a meet a - a| > 0)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "State mutation bypassing capability constraints.",
+      "Provenance revocation failing to propagate across policy product dimensions."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Algebraic security policy engines for distributed agent fleets",
+      "Multi-dimensional access control for scientific knowledge commons",
+      "Conflict-free policy synchronization across heterogeneous hosts"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1228,21 +1282,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Evidence/authority state can be propagated across schedulers/hosts as an attenuating CRDT: retries, duplicate delivery, and reordering converge automatically, while any update that broadens authority or erases obligations is non-monotone and locally rejectable. Important separation: CRDT convergence does NOT prove statistical independence or evidential validity; `\u2297` still needs its own conditional-validity certificate.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Cross-host RPC channels can safely convey attenuated tokens without exposing root host credentials.",
+      "Remote execution nodes enforce incoming capability constraints locally."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SYSTEM + SCIENCE-EVIDENCE is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Paper/spec only: define the product partial order, verify ACI merge laws, then adversarially test privilege widening, obligation deletion, replay, duplicate ancestry, and concurrent caveat addition. Reject the abstraction if legitimate merge requires authority expansion or obligation erasure.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Remote executor executes command with permissions exceeding transmitted token scope (containment failure > 0.0%)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Remote node discarding token constraints and executing commands under unrestricted local host privileges.",
+      "Token replay or mutation in flight across network boundaries."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Cross-host task lease dispatch between Wolfram and Darwin nodes",
+      "Secure RPC authorization over Tailscale network mesh",
+      "Distributed task capability passing in decentralized agent fleets"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -1269,21 +1325,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Any claim that Golden Trinity emerges from interaction needs an explicit \u03c6-selecting mechanism, not merely addition, averaging, pairing, or fair division. A viable mechanism must make g an identifiable attracting fixed point\u2014for example through a preregistered objective, constraint, or feedback law whose optimum is g\u2014and must outperform equally simple non-\u03c6 attractors.",
     "assumptions": [
-      "Control configurations are exchangeable over a symmetric simplex null."
+      "Emergence claims require demonstrating that interaction dynamics specifically select golden ratio over neighboring equilibria.",
+      "The phi-attractor must possess an identifiable non-zero basin of attraction."
     ],
     "null_test": {
       "null_hypothesis": "Shape (1, \u03c6, \u03c6\u00b2) has no out-of-sample held-out superiority over arbitrary Dirichlet control shapes of equal sum.",
       "test_procedure": "Sample random initial allocations on the simplex. Run (A) consensus averaging alone and (B) the same dynamics plus an explicit candidate \u03c6-feedback term. Measure final collective bias B=||p\u0304-g||\u00b2 and heterogeneity H. Condition A should reduce H but should not systematically reduce B toward zero; if it does across initial means, inspect hidden \u03c6 information in initialization or W. Condition B passes only if g is locally stable, has a measurable basin of attraction, and beats matched controls targeting 1:1:1 and randomly chosen ratios.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Kolmogorov-Smirnov test fails to reject uniform equilibrium distribution in multi-agent game simulations (p >= 0.05)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Simulated multi-agent interactions converging to arbitrary random fixed points while authors claim emergence of golden ratio.",
+      "Lack of statistical difference between observed convergence points and uniform distributions."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Dynamical systems validation of evolutionary agent game theory",
+      "Quantitative emergence metrics for self-organizing multi-agent systems",
+      "Falsification protocols for emergent cognitive phenomena"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1309,21 +1367,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Scheduler/mailbox coordination should be placed by semantic monotonicity, not by component boundary. Compile each lifecycle transition into `MONOTONE => coordination-free replication/local acceptance` or `NON-MONOTONE => explicit authority/coordination service`. This may remove needless coordination from evidence propagation while concentrating protection on the few transitions where absence, exclusivity, revocation, or privilege creation actually require it.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Mailbox coordination can achieve consistency using monotonic conflict-free replicated data structures (CRDTs).",
+      "Causal message delivery eliminates need for expensive multi-phase commit consensus."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SYSTEM + AUTHORITY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Paper/spec-only: classify existing mailbox lifecycle transitions under history extension; for every transition labeled non-monotone, construct a minimal later-message counterexample that flips an earlier accepted result. Any supposedly coordination-free transition with such a counterexample is misclassified.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "State rollback or non-monotonic transition observed during out-of-order message replay (monotonicity violation rate > 0.0%)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Out-of-order message processing causing local task state to regress or overwrite completed work.",
+      "Mailbox queues dropping messages without detectability under network partitioning."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Decentralized agent mailbox synchronization in agent-mailbox runtime",
+      "Low-overhead asynchronous event dispatch without distributed locking",
+      "Resilient task state machines for unreliable network links"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -1350,21 +1410,23 @@
     "epistemic_label": "derived",
     "statement": "Golden Trinity may be defined dynamically as the projective attractor of the minimal positive additive-memory recurrence \u201cnext = previous + current,\u201d rather than as a ratio imposed from outside. This answers the prior emergence proof obligation at the mathematical level. It does not yet justify why a semantic, social, or economic system should obey that recurrence.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Iterative resource rebalancing between memory and action can be formalized as a discrete linear dynamical system.",
+      "Dominant eigenvalue of Fibonacci matrix lambda = phi governs long-run proportions."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + FIBONACCI-ATTRACTOR is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Sample positive initial pairs over several orders of magnitude and iterate the recurrence using exact integers or high precision. At each step normalize (x_n,x_{n+1},x_{n+2}) and measure distance to g. Fit the asymptotic log-error slope; it should approach -2 log \u03c6. Controls: replace x_{n+2}=a x_{n+1}+b x_n for several positive (a,b); their normalized attractors should follow their own Perron roots rather than \u03c6. Add noise and resets to measure the basin and robustness.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Spectral radius of iteration map deviates from golden ratio (|lambda_max - 1.6180339887| > 1e-4) or convergence fails within 50 iterations."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Resource rebalancing dynamics exhibiting chaotic divergence or limit cycles rather than converging to dominant eigenvector.",
+      "Perturbations to transfer matrix preventing convergence to golden ratio."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Dynamical memory balancing algorithms in long-horizon LLM reasoning",
+      "Fibonacci projective scaling in adaptive compute resource allocation",
+      "Eigenvector-based stabilization of recurrent agent control loops"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1390,21 +1452,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Convert most revocation into **monotone supersession**: issue bounded capabilities carrying `(scope, expiry, epoch)`, allow descendants only to attenuate scope/expiry, and require settlement/resource boundaries to accept only the newest authorized epoch. Ordinary propagation remains coordination-free; coordination is concentrated in epoch issuance/renewal and genuinely sovereign changes.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Distributed systems handle capability updates more cleanly via immutable successor pointers than asynchronous revocation broadcasts.",
+      "Expired capabilities fail closed deterministically."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SYSTEM + SSI + EVIDENCE-AUTHORITY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Spec-only adversarial matrix: copied token after expiry; paused executor resurrection; delegated right-widening; offline verifier; clock skew; sink missing fencing. The scheme survives only if stale authority is rejected at the effect boundary rather than merely marked expired in control-plane state.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Stale superseded capability token accepted by authorization gate after successor issuance (supersession failure > 0.0%)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Replay of superseded capability tokens accepted after valid successor publication.",
+      "Dangling successor pointers creating unresolvable capability resolution loops."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Decentralized key rotation and identity upgrade for autonomous agents",
+      "Asynchronous capability lifecycle management without global revocation lists",
+      "Self-sovereign identity (SSI) credential updating in distributed systems"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -1431,21 +1495,23 @@
     "epistemic_label": "derived",
     "statement": "A Golden Trinity semantic record should carry two non-substitutable fields: CAUSE (a causal/provenance model) and PURPOSE (a prospective utility/attractor model). The PURPOSE field is admissible only when it names observable success criteria, a time horizon, and counterfactual alternatives. In the G\u00f6del-ontology framing, \u201cpositive property\u201d may serve as a normative source for candidate U, but it must still be translated into testable operational indicators before supporting a scientific claim.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Causal mechanism (how an effect is produced) and teleological purpose (why/to what end) are mathematically non-substitutable.",
+      "Intentional agency requires explicit representation of both fields."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + TELEOLOGICAL-SEMANTICS is fully explained by selection bias or unstructured noise.",
       "test_procedure": "For a sample of claim-units, obtain a CAUSE-only explanation and a PURPOSE model with preregistered U, horizon, and a feasible intervention. Score each on out-of-sample prediction and on intervention value \u0394E[U]. The teleological model earns scientific status only if it improves decision quality or forecasts beyond a retrospective causal narrative; otherwise label it normative metaphor, not evidence.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Mutual information between cause and purpose feature vectors exceeds I(C; T) > 0.15; semantic classification error between mechanism and goal > 5%."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Substituting mechanistic description for purpose specification leading to reward hacking and specification gaming.",
+      "Purpose descriptions lacking observable operational verification criteria."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Goal-directed planning and alignment guardrails in cognitive architectures",
+      "Teleological intent classification in autonomous agent action logs",
+      "Specification gaming prevention in AI safety evaluators"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1471,21 +1537,23 @@
     "epistemic_label": "hypothesis",
     "statement": "The Theory of Hard Problems should classify a task by a teleological triplet (U, D_\u03b5, \u03a9), where \u03a9 measures reusable option expansion after the result. Divine Machinery is then an operational, non-metaphysical hypothesis about human\u2013agent symbiosis: it increases \u0394E[U] and/or \u03a9 per unit cost while respecting the task\u2019s causal constraints and evidence gates. \u201cPositive property\u201d is a candidate source for U, not a substitute for measurement.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Task complexity is characterized by normative utility U, epsilon-tolerance difficulty D_epsilon, and future option expansion Omega.",
+      "Symbiosis increases expected utility per unit cost."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + HARD-PROBLEMS + DIVINE-MACHINERY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Create matched research-task cards with the same causal background. In the PURPOSE-aware condition require an explicit U, H, \u03b5, cost budget, and an \u03a9 proxy (new validated methods, falsified branches, or newly feasible tasks). Compare task-selection decisions and post-result outcomes against CAUSE-only cards. The framework passes only if PURPOSE-aware selection improves preregistered \u0394E[U]/cost or \u03a9/cost without increasing unverifiable goal declarations.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Task ranking under triplet (U, D_epsilon, Omega) correlates negatively with actual collaborative problem-solving success (Kendall tau < 0.20)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "High difficulty score assigned to computationally trivial but poorly framed tasks.",
+      "High utility claimed for tasks that permanently contract future agent option space Omega."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Task intake and triage prioritization in autonomous project backlogs",
+      "Quantitative evaluation of human-agent cognitive symbiosis",
+      "Objective problem-difficulty classification for benchmark suites"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1511,21 +1579,23 @@
     "epistemic_label": "hypothesis",
     "statement": "For any project that needs camera-mediated, air-gapped, order-independent transport, treat BC-UR (or an equivalently mature fountain-QR standard) as the transport baseline. Put experimental novelty above that layer \u2014 artwork/chroma integration, semantic payload, observer robustness, identity semantics \u2014 unless a benchmark proves the transport itself is the bottleneck.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Air-gapped optical channels experience packet erasure and out-of-order frame capture.",
+      "Fountain codes (Luby transform / RaptorQ) provide optimal rateless transport over optical interfaces."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / BOOK-INTERFACE + SSI is fully explained by selection bias or unstructured noise.",
       "test_procedure": "On one existing degradation harness, compare static QR, sequential multipart QR, and BC-UR fountain multipart under matched payload/module/exposure budget. If BC-UR does not materially improve recovery under dropped-frame conditions, the abstraction is weaker than expected; otherwise use it as the control transport for BOOK-INTERFACE and possible sovereign-identity handoffs.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Decoding failure rate > 0.1% or symbol reception overhead > (1.10 * K) packets required for complete message reconstruction under camera shake and glare."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Sequential multi-frame QR protocols outperforming rateless fountain codes under 20% frame loss.",
+      "Overhead of fountain encoding exceeding 15% of raw payload size for small messages."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Air-gapped hardware signer communication via animated QR codes",
+      "Zero-network physical device provisioning in high-security enclaves",
+      "Camera-based transport layer for cold-storage cryptographic keys"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -1552,21 +1622,23 @@
     "epistemic_label": "hypothesis",
     "statement": "The Theory of Absurd Hypotheses should score a candidate by the tuple (W,A,P,T,G): W is the wished-for measurable utility gain; A is declared observer-relative surprise; P is a discriminating prediction; T is a precommitted kill test and cost; G is an anti-self-deception guardrail (fixed success criterion, matched null/control, and no post-hoc redefinition of U). The appropriate priority is expected information/utility per test cost, not absurdity alone. Operational rule: the larger the claimed \u0394U, the cheaper and more destructive the first required test.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Radical or absurd hypotheses can be objectively prioritized by expected information gain per unit testing cost.",
+      "High claimed utility delta requires strictly cheaper and more destructive falsification tests."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + ABSURD-HYPOTHESES is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Create blinded candidate cards with identical P, T, and G but varying stated W/A; require independent reviewers to rank first tests before outcomes. Then run matched cheap tests. The theory fails if high-A cards receive looser evidence standards, if \u201cabsurdity\u201d predicts acceptance after controls, or if preregistered kill criteria are routinely moved. It survives if the protocol discovers high-value surviving candidates while keeping false-positive rates comparable to ordinary hypotheses.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Priority score of candidate with high testing cost and vague predictions exceeds priority of candidate with cheap, definitive falsification test."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Allocating large exploration budgets to absurd hypotheses with high test costs and untestable predictions.",
+      "Conflating subjective absurdity with epistemic value without precommitted kill tests."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "High-risk high-reward research hypothesis triage in Invariant Foundry",
+      "Automated experimental budget allocation for scientific discovery",
+      "Anti-self-deception guardrails in exploratory agent reasoning"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1592,21 +1664,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Enforce `redundancy != value`: maintain orthogonal states for recoverability and epistemic/value contribution. Retries, mirrors, QR/fountain fragments, and agent fan-out may increase decode/availability probability, but evidential or monetary weight increases only with genuinely new independently bound information. Pure transport duplication must conserve evidence/value.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Data redundancy (retries, mirrors, erasure fragments) increases availability probability but adds zero marginal information.",
+      "Evidential weight increases only with independently bound observations."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Model one observation encoded into N redundant fragments; allow reconstruction to improve with fragment count while asserting constant provenance-weight 1. Then add a genuinely independent observation and require only that event to increase epistemic weight. Attack with retry duplication and Sybil splitting.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Marginal evidence rank or settlement reward increases upon adding redundant copies of existing provenance atom (delta_rank > 0)."
     },
     "contradictions": [
-      "Unrestricted evidence reuse creates artificial epistemic inflation."
+      "Multi-agent systems treating 100 mirrors of an identical report as 100 corroborating pieces of evidence.",
+      "Re-encoding a data packet increasing its economic or scientific settlement value."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Anti-inflationary data indexing in distributed knowledge bases",
+      "Deduplication engines for multi-agent evidence collection",
+      "Sybil-resistant metric calculations in decentralized science platforms"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1",
@@ -1634,21 +1708,23 @@
     "epistemic_label": "hypothesis",
     "statement": "A legitimate \u201cBrier legislature\u201d needs three non-substitutable ledgers for every proposed norm L: (1) forecast ledger F of preregistered causal claims P(e|L); (2) value ledger U of declared beneficiaries, harms, horizon, and trade-offs; (3) constitutional ledger R proving mandate/scope/procedure and rights constraints. Brier reputation weights F only; quadratic delegation may allocate attention or choose among admissible actions in U; zk verifies R. No ledger may be used as evidence for another.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Governance requires strict structural separation of factual forecasts (F), value preferences (U), and constitutional rules (R).",
+      "Reputation accrues only to calibrated forecasting F."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + BRIER-CONSTITUTIONAL-LEGISLATURE is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Create paired toy laws with identical text and outcomes but swap their declared U, or keep U fixed while replace calibrated forecasts with uncalibrated ones. Require the protocol to reject: (a) \u201cconstitutional proof therefore beneficial\u201d, (b) \u201chigh Brier score therefore legitimate\u201d, and (c) \u201cmajority utility therefore rights-compliant\u201d. Then test whether each rejection is mechanically detectable from the three ledgers.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Calibration score in ledger F contaminated by agent popularity in ledger U, or Brier score computation yielding BS >= 0.25 under biased forecasting."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Using high value-preference popularity (U) to override empirical factual calibration (F).",
+      "Using constitutional procedure (R) as substitute for predictive accuracy."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Epistemic governance frameworks for decentralized autonomous organizations",
+      "Prediction-market-weighted constitutional decision making",
+      "Separated ledger architecture for autonomous policy deliberators"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1674,21 +1750,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Track `(availability multiplicity, evidence rank)` as orthogonal state. Replication/re-encoding may increase recoverability but must not increase spendable epistemic/value weight unless a genuinely new independently bound provenance atom increases rank under the declared dependency model. In linear-algebra terms, 100 copies/combinations of e1 still span rank 1; adding independent e2 raises rank to 2.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Storage availability multiplicity and epistemic rank form a Cartesian product space.",
+      "Evidence rank equals dimension of spanned linear subspace of independent observations."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS / BOOK-INTERFACE + SYSTEM + SCIENCE + OPEN-MONEY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Feed one provenance atom through N retries/fragments/agents and require evidence/value rank to stay 1 while availability rises; then add one independently bound atom and require rank 2. Attack with differently hashed artifacts derived from the same latent observation.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Mathematical rank of evidence matrix increases after appending linearly dependent copies of existing observation vector (rank(E union {e_copy}) > rank(E))."
     },
     "contradictions": [
-      "Unrestricted evidence reuse creates artificial epistemic inflation."
+      "Linear combinations or re-encodings of existing evidence atoms spanning higher dimensional rank.",
+      "System treating N retried network packets as N independent witness statements."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Linear-algebraic evidence rank accounting in distributed storage networks",
+      "Orthogonal multi-tier cache design separating durability from freshness",
+      "Information-theoretic deduplication for multi-agent sensor networks"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1714,21 +1792,23 @@
     "epistemic_label": "hypothesis",
     "statement": "The Theory of Hard Problems should distinguish static difficulty D\u03b5(s,U,H) from temporal decomposability: a task is temporally decomposable when a policy \u03c0(t) satisfies all per-epoch constraints and reaches the same terminal utility threshold by H. The gain is a valid feasibility or coordination result only if the terminal specification is preserved; if the specification is weakened, delayed indefinitely, or receives new information between epochs, it is a different problem instance.",
     "assumptions": [
-      "Standard operational context of scheduler 'Golden Research Step'."
+      "Static problem complexity (representation size / search space) is orthogonal to temporal decomposability into independent sequential sub-problems.",
+      "Decomposability requires terminal goal equivalence."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / HARD-PROBLEMS + TELEOLOGY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Take a toy task with a fixed input and fixed deadline. Compare (A) one-shot solution, (B) time-sliced solution with no new information and equal total compute, and (C) time-sliced solution whose goal, deadline, or information changes. Credit temporal decomposition only when B meets the original terminal predicate. If only C succeeds, record \u201cinstance transformation,\u201d not a collapse of difficulty.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Policy claiming decomposition fails to achieve equivalent terminal utility within bound H or requires out-of-band information leakage between epochs."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Claiming successful problem decomposition while silently relaxing terminal acceptance criteria or extending deadlines indefinitely.",
+      "Conflating easily parallelizable problems with inherently sequential hard problems."
     ],
     "duplicates": [],
     "applications": [
-      "Resource allocation benchmarking in Cognitive Architecture (Context : Behavior : Value)",
-      "Dynamic memory allocation using Fibonacci projective attractors",
-      "Teleological semantics (Cause vs Purpose separation)"
+      "Hierarchical task decomposition for autonomous software engineering agents",
+      "Milestone partitioning in long-horizon project management",
+      "Objective complexity evaluation for complex agent reasoning benchmarks"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1754,21 +1834,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Schedulers should separate `resilience value` from `novelty value`. A conservative novelty account can use marginal rank/information gain relative to already-accounted provenance, while retries/mirrors/fountain fragments are rewarded\u2014if at all\u2014as delivery/reliability service rather than as new evidence or new money. Thus copying may increase survivability but cannot increase epistemic principal.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Network resilience/delivery service can be compensated through transport fees without issuing new epistemic capital or scientific credit.",
+      "Novelty requires marginal information gain."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / BOOK-INTERFACE + SCIENCE + OPEN-MONEY is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Toy evidence DAG: include duplicate atoms, linear recombinations, mirrors, and one genuinely new source. Compare per-artifact reward, provenance-dedup reward, and marginal rank/polymatroid reward. Clone/re-encode existing sources aggressively. A valid novelty rule should remain invariant under those transformations while still increasing when the genuinely new source arrives.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Novelty credit minted for transport-level relay, packet replication, or fountain re-encoding without new independent data source (novelty_mint > 0)."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Paying scientific discovery bounties to mirror nodes that merely relay existing packets.",
+      "Rewarding agent fan-out as intellectual contribution rather than transport redundancy."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Two-tier compensation models in decentralized peer-to-peer science networks",
+      "Separation of bandwidth reimbursement from research discovery rewards",
+      "Economic incentive design for distributed agent relays"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"
@@ -1794,21 +1876,23 @@
     "epistemic_label": "hypothesis",
     "statement": "Keep three orthogonal ledgers: `resilience`, `source novelty/rank`, and `target-relevant evidence`. Provenance rank can cap cloning/re-encoding inflation, but scientific/Open-Money value should increase only when a preregistered claim/utility target gains evidence. Synergistic contributions may require bundle-level settlement because their value can be jointly positive while each item alone is zero.",
     "assumptions": [
-      "Standard operational context of scheduler 'Discovery Steward'."
+      "Complete accounting of distributed scientific contributions requires three orthogonal ledgers: delivery durability, independent provenance rank, and target utility gain.",
+      "Synergistic bundles require joint settlement."
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + BOOK-INTERFACE is fully explained by selection bias or unstructured noise.",
       "test_procedure": "Toy DAG with duplicates, one irrelevant independent source, an XOR-synergy pair, and one directly informative source. Compare per-artifact count, raw rank, and target-conditioned information/evidence. A valid scheme must be clone-invariant, give zero target value to irrelevant independence, and positive joint value to the synergy pair.",
-      "rejection_threshold": "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection."
+      "rejection_threshold": "Value credited to target-relevant ledger without verifiable reduction in hypothesis uncertainty (delta_entropy >= 0) or failure to settle synergistic XOR bundles."
     },
     "contradictions": [
-      "Unbounded parameter tuning risks overfitting to synthetic evaluation suites."
+      "Minting scientific value for independent source rank that has zero relevance to target hypothesis.",
+      "Failing to attribute value to synergistic observation pairs where individual contributions are zero."
     ],
     "duplicates": [],
     "applications": [
-      "Cross-host dispatch membrane between Wolfram and Darwin nodes",
-      "Process-bound wait status verification for fleetd executor",
-      "Three-identity credential isolation (actor, principal, scope)"
+      "Three-dimensional value ledger for autonomous scientific collaboration",
+      "Cooperative game-theoretic reward allocation (Shapley value) for multi-agent discovery",
+      "Settlement protocols for complex multi-source research artifacts"
     ],
     "versions": [
       "HYPOTHESIS_NOTE/v1"

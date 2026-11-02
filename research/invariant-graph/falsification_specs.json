@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "1.1",
+    "version": "1.2",
     "authority": "MIN-18 Invariant Foundry Specification",
     "status": "CANDIDATE / NOT EXECUTION-AUTHORIZED",
     "scoring_rubric": {
@@ -11,9 +11,175 @@
         "C3_cross_domain_generality": 0.2,
         "C4_test_cost_efficiency": 0.15
       },
-      "formula": "S = 0.35*C1 + 0.30*C2 + 0.20*C3 + 0.15*C4"
+      "formula": "S = 0.35*C1 + 0.30*C2 + 0.20*C3 + 0.15*C4",
+      "criteria_definitions": {
+        "C1_rigor_and_falsifiability": {
+          "description": "Existence of closed-form mathematical/probabilistic formulations, exact martingales, and explicit null hypotheses with deterministic decision thresholds.",
+          "bands": {
+            "9.0-10.0": "Closed-form test statistic with provable error bounds (e-process martingales, Dirichlet simplex coordinates, OS kernel binding structs).",
+            "7.5-8.9": "Semi-formal protocol/state-machine with operational pass/fail rules, but depends on heuristic thresholds or environment assumptions.",
+            "6.0-7.4": "Qualitative structural partition or taxonomy lacking exact mathematical test statistic or sharp rejection threshold.",
+            "below_6.0": "Informal hypothesis without falsifiable operational null test."
+          }
+        },
+        "C2_anti_sybil_and_grounding": {
+          "description": "Mathematical resistance against identity splitting, search-budget inflation, and prompt gaming; grounded directly in primary empirical evidence.",
+          "bands": {
+            "9.5-10.0": "Provable anti-Sybil immunity (e.g., unit simplex conservation sum(w)=1); directly grounded in Issue #168 comment evidence.",
+            "8.5-9.4": "Strong cryptographic or kernel-level identity binding (Ed25519 proof-of-possession, OS process tables) resisting single-host forgery.",
+            "7.0-8.4": "Heuristic deduplication or semantic similarity thresholding; partially vulnerable to high-dimensional split attacks or paraphrasing.",
+            "below_7.0": "No anti-Sybil defense; susceptible to duplicate inflation."
+          }
+        },
+        "C3_cross_domain_generality": {
+          "description": "Applicability across scientific discovery, decentralized agent swarms, systems runtime execution, and economic accounting.",
+          "bands": {
+            "9.0-10.0": "Universal across multi-agent consensus, scientific hypothesis testing, distributed compute allocation, and economic settlement.",
+            "8.0-8.9": "Broadly applicable across distributed execution systems and multi-host infrastructure, but specialized to runtime/OS semantics.",
+            "7.0-7.9": "Domain-specific to prompt engineering, task taxonomy, or semantic representation; limited transfer to systems or cryptographic accounting.",
+            "below_7.0": "Narrow single-use or project-specific applicability."
+          }
+        },
+        "C4_test_cost_efficiency": {
+          "description": "Feasibility and wall-clock execution time of the cheapest bounded falsification protocol on local commodity hardware with zero external API spend.",
+          "bands": {
+            "9.5-10.0": "Ultra-low-cost reproducible test: < 3.5s wall-clock time on commodity CPU, $0 external API/network spend, pure vectorized code or local mock.",
+            "9.0-9.4": "Low-cost local test: < 5.0s compute, requires local OS subshell/pipe execution, $0 external spend.",
+            "7.5-8.9": "Moderate test cost: requires multi-host coordination, daemon execution, or larger corpora evaluation > 5.0s.",
+            "below_7.5": "High test cost: external paid APIs, specialized hardware, or human-in-the-loop validation."
+          }
+        }
+      }
     }
   },
+  "all_canonical_evaluations": [
+    {
+      "canonical_invariant_id": "CANONICAL-01",
+      "title": "Conserved Evidence Portfolio Simplex & Matched Search-Budget Invariant",
+      "anchor_claim_id": "CLAIM-011",
+      "domain_cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
+      "component_scores": {
+        "C1_rigor_and_falsifiability": 9.8,
+        "C2_anti_sybil_and_grounding": 10.0,
+        "C3_cross_domain_generality": 9.5,
+        "C4_test_cost_efficiency": 9.8
+      },
+      "component_justifications": {
+        "C1_rigor_and_falsifiability": "Closed-form e-process martingale formulation (Wang 2025 Biometrika admissible merge) with exact Ville's inequality bound P(sup E_t >= 1/alpha) <= alpha.",
+        "C2_anti_sybil_and_grounding": "Provable anti-Sybil immunity; identity splitting without weight partitioning yields zero expected e-wealth advantage under H_0. Grounded directly in Issue #168 comment 5649859218.",
+        "C3_cross_domain_generality": "Universal across all agent search, scientific hypothesis generation, and decentralized discovery validation.",
+        "C4_test_cost_efficiency": "5,000 Monte Carlo runs execute in < 3.5s via vectorized pure Python/NumPy, $0 external quota, 0 daemon dependencies."
+      },
+      "composite_score": 9.8,
+      "rank": 1,
+      "selection_status": "SELECTED_TOP_3"
+    },
+    {
+      "canonical_invariant_id": "CANONICAL-03",
+      "title": "Golden Trinity Ratio Permutation-Matched Dirichlet Simplex Invariant",
+      "anchor_claim_id": "CLAIM-001",
+      "domain_cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
+      "component_scores": {
+        "C1_rigor_and_falsifiability": 9.2,
+        "C2_anti_sybil_and_grounding": 9.0,
+        "C3_cross_domain_generality": 9.0,
+        "C4_test_cost_efficiency": 9.8
+      },
+      "component_justifications": {
+        "C1_rigor_and_falsifiability": "Analytical (1, phi, phi^2) normalized to unit simplex (0.191, 0.309, 0.500), explicit null hypothesis against Dir(1,1,1) under 6-permutation selection matching.",
+        "C2_anti_sybil_and_grounding": "Controls for search-budget mining by strictly matching permutation selection budgets between candidate and controls.",
+        "C3_cross_domain_generality": "Broad application across cognitive architecture triadic allocation (Context : Behavior : Value) and resource scheduling.",
+        "C4_test_cost_efficiency": "Evaluates 1,000 Dirichlet controls across precomputed 200 held-out splits in < 2.0s with $0 external quota."
+      },
+      "composite_score": 9.2,
+      "rank": 2,
+      "selection_status": "SELECTED_TOP_3"
+    },
+    {
+      "canonical_invariant_id": "CANONICAL-05",
+      "title": "Durable Dispatch-Boundary Process-Binding Invariant",
+      "anchor_claim_id": "CLAIM-003",
+      "domain_cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
+      "component_scores": {
+        "C1_rigor_and_falsifiability": 8.6,
+        "C2_anti_sybil_and_grounding": 9.2,
+        "C3_cross_domain_generality": 8.8,
+        "C4_test_cost_efficiency": 9.2
+      },
+      "component_justifications": {
+        "C1_rigor_and_falsifiability": "Formal kernel process receipt struct binding (task_lease_id, host_identity, process_tree, leaf_pid, exit_status, raw_signal, memory_telemetry) differentiating membrane fault from leaf OOM.",
+        "C2_anti_sybil_and_grounding": "Kernel process table and PID lineage prevent spoofed exit statuses and transport wrapper failures from masquerading as worker failures.",
+        "C3_cross_domain_generality": "Essential across all distributed execution nodes (Wolfram, Darwin, remote runners).",
+        "C4_test_cost_efficiency": "Local subshell child/parent exit simulation runs in < 1.0s with $0 external network."
+      },
+      "composite_score": 8.9,
+      "rank": 3,
+      "selection_status": "SELECTED_TOP_3"
+    },
+    {
+      "canonical_invariant_id": "CANONICAL-06",
+      "title": "Cryptographic Zero-Trust Membrane & Mutual Multi-Pass Invariant",
+      "anchor_claim_id": "CLAIM-018",
+      "domain_cluster": "Cluster-3: Distributed Membrane, Host Isolation & Identity Boundaries",
+      "component_scores": {
+        "C1_rigor_and_falsifiability": 8.4,
+        "C2_anti_sybil_and_grounding": 9.4,
+        "C3_cross_domain_generality": 8.2,
+        "C4_test_cost_efficiency": 8.8
+      },
+      "component_justifications": {
+        "C1_rigor_and_falsifiability": "Formal state machine and Ed25519 challenge-response mutual authentication protocol; relies on host key-ring and monotonic timestamp synchronization assumptions.",
+        "C2_anti_sybil_and_grounding": "High cryptographic anti-Sybil protection via Ed25519 proof-of-possession, though bounded by root key security.",
+        "C3_cross_domain_generality": "Specialized to node-to-node transport and RPC membrane security (xHTTP / Tailscale); less directly applicable to statistical inference.",
+        "C4_test_cost_efficiency": "Cryptographic handshake test executes in < 2.5s locally via ed25519 signatures with $0 external spend."
+      },
+      "composite_score": 8.7,
+      "rank": 4,
+      "selection_status": "BELOW_TOP_3_THRESHOLD"
+    },
+    {
+      "canonical_invariant_id": "CANONICAL-02",
+      "title": "Target-Conditioned Redundancy vs. True Value Invariant",
+      "anchor_claim_id": "CLAIM-019",
+      "domain_cluster": "Cluster-1: Epistemic Accounting & Anti-Sybil Invariants",
+      "component_scores": {
+        "C1_rigor_and_falsifiability": 8.2,
+        "C2_anti_sybil_and_grounding": 8.5,
+        "C3_cross_domain_generality": 8.4,
+        "C4_test_cost_efficiency": 8.6
+      },
+      "component_justifications": {
+        "C1_rigor_and_falsifiability": "Semi-formal information-theoretic trade-off between redundancy and marginal information gain; lacks closed-form martingale bound for non-linear embedding spaces.",
+        "C2_anti_sybil_and_grounding": "Penalizes duplicate discovery streams via semantic similarity thresholds, but vulnerable to adversarial paraphrasing that evades cosine thresholds.",
+        "C3_cross_domain_generality": "Applies across multi-agent search and deduplication, but primarily cognitive and evaluative.",
+        "C4_test_cost_efficiency": "Requires embedding computation or similarity matrix calculation over text corpus (~3.0s compute)."
+      },
+      "composite_score": 8.4,
+      "rank": 5,
+      "selection_status": "BELOW_TOP_3_THRESHOLD"
+    },
+    {
+      "canonical_invariant_id": "CANONICAL-04",
+      "title": "Teleological Semantics & Asymmetric Cause-Purpose Partitioning Invariant",
+      "anchor_claim_id": "CLAIM-036",
+      "domain_cluster": "Cluster-2: Golden Trinity & Ratio Dynamics",
+      "component_scores": {
+        "C1_rigor_and_falsifiability": 7.6,
+        "C2_anti_sybil_and_grounding": 7.8,
+        "C3_cross_domain_generality": 8.0,
+        "C4_test_cost_efficiency": 8.5
+      },
+      "component_justifications": {
+        "C1_rigor_and_falsifiability": "Structural separation of efficient cause vs telos/purpose in agent task representations; qualitative ontology rather than quantitative statistical null hypothesis.",
+        "C2_anti_sybil_and_grounding": "Heuristic teleological labeling provides moderate prompt-gaming resistance, but subjective labeling noise remains higher than mathematical/cryptographic invariants.",
+        "C3_cross_domain_generality": "Applicable to agent intent modeling and prompt evaluation, but does not generalize to runtime transport or distributed kernel execution.",
+        "C4_test_cost_efficiency": "Evaluation requires running semantic classification checks over benchmark prompts (~2.5s)."
+      },
+      "composite_score": 7.9,
+      "rank": 6,
+      "selection_status": "BELOW_TOP_3_THRESHOLD"
+    }
+  ],
   "specs": [
     {
       "spec_id": "FALSIF-SPEC-001",
