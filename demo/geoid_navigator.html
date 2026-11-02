@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMDE | Geoid Navigator (WASM)</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="pkg/amde_demo_wasm.js"></script>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="brand-badge">AMDE-RP-002</span>
+      <h1>Geoid Navigator</h1>
+    </div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-btn">Portal</a>
+      <a href="critical_strip.html" class="nav-btn">Critical Strip</a>
+      <a href="geoid_navigator.html" class="nav-btn active">Geoid Navigator</a>
+    </div>
+    <div class="engine-status" id="engineStatus">
+      <span class="status-dot"></span>
+      <span id="statusText">WASM Initializing...</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- 4-Stage Pipeline Flow Header -->
+    <div class="pipeline-flow">
+      <div class="stage-node active" id="nodeFactorize">
+        <div class="stage-number">Stage 1</div>
+        <div class="stage-name">FACTORIZE</div>
+        <div class="stage-morphism">ISO &bull; &Delta;I = 0</div>
+      </div>
+      <div class="stage-node" id="nodeEvolve">
+        <div class="stage-number">Stage 2</div>
+        <div class="stage-name">EVOLVE</div>
+        <div class="stage-morphism">APPROX &bull; Dynamical</div>
+      </div>
+      <div class="stage-node" id="nodeCanonicalize">
+        <div class="stage-number">Stage 3</div>
+        <div class="stage-name">CANONICALIZE</div>
+        <div class="stage-morphism">ADJOINT / LOSSY</div>
+      </div>
+      <div class="stage-node" id="nodeReconstruct">
+        <div class="stage-number">Stage 4</div>
+        <div class="stage-name">RECONSTRUCT</div>
+        <div class="stage-morphism">ISO &bull; &Delta;I = 0</div>
+      </div>
+    </div>
+
+    <div class="grid-layout">
+      <!-- Main Column: Charts & State Inspection -->
+      <div class="main-column">
+        <!-- Prime Valuation Spectrum Canvas -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              Prime Valuation Spectrum: (p &mapsto; v<sub>p</sub> &middot; ln(p))
+            </span>
+            <span class="badge badge-iso" id="spectrumBadge">Exact Isomorphism Profile</span>
+          </div>
+          <canvas id="spectrumCanvas" width="900" height="230"></canvas>
+        </div>
+
+        <!-- Trajectory Orbit Canvas -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Dynamical Orbit Trajectory & Descent Frontier
+            </span>
+            <span class="badge badge-approx" id="trajectoryBadge">Orbit Preview</span>
+          </div>
+          <canvas id="trajectoryCanvas" width="900" height="200"></canvas>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Controls & Claims Feed -->
+      <div class="sidebar-column">
+        <!-- Input & Operator Controls -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Pipeline Controls</span>
+            <span class="badge badge-iso">LIVE WASM</span>
+          </div>
+
+          <!-- Integer input -->
+          <div class="control-group">
+            <div class="control-label">
+              <span>Seed State n &in; N<sup>+</sup></span>
+              <span class="control-val" id="inputValDisplay">27</span>
+            </div>
+            <input type="number" id="inputN" min="1" max="1000000000" value="27" style="width: 100%; background: var(--bg-surface-elevated); border: 1px solid var(--border-color); color: #fff; padding: 0.5rem; border-radius: 5px; font-family: var(--font-mono); font-size: 1rem;">
+            <div class="btn-group" style="margin-top: 0.5rem;">
+              <button class="btn-sm" onclick="setN(27)">27 (Collatz)</button>
+              <button class="btn-sm" onclick="setN(60)">60 (2&sup2;&middot;3&middot;5)</button>
+              <button class="btn-sm" onclick="setN(840)">840 (Highly Composite)</button>
+              <button class="btn-sm" onclick="setN(1024)">1024 (2<sup>10</sup>)</button>
+              <button class="btn-sm" onclick="setN(2310)">2310 (Primorial)</button>
+            </div>
+          </div>
+
+          <!-- Operator Rule -->
+          <div class="control-group">
+            <div class="control-label">
+              <span>Evolution Dynamic</span>
+            </div>
+            <select id="ruleSelect" style="width: 100%; background: var(--bg-surface-elevated); border: 1px solid var(--border-color); color: #fff; padding: 0.5rem; border-radius: 5px; font-family: var(--font-mono); font-size: 0.85rem;" onchange="updatePipeline()">
+              <option value="0">Syracuse Operator: S(n) = (3n+1)/2^v2</option>
+              <option value="1">Standard Collatz: n/2 or 3n+1</option>
+              <option value="2">Golden Contraction: round(phi * n)</option>
+              <option value="3">Modular Odd: (3n+5)/2^v2</option>
+            </select>
+          </div>
+
+          <!-- Prime Truncation Horizon -->
+          <div class="control-group">
+            <div class="control-label">
+              <span>Galois Truncation Horizon K</span>
+              <span class="control-val" id="kValDisplay">4 primes</span>
+            </div>
+            <input type="range" id="horizonK" min="1" max="10" value="4" oninput="updateK(this.value)">
+          </div>
+
+          <button class="btn-primary" onclick="runPipelineCycle()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Execute Full 4-Phase Cycle
+          </button>
+        </div>
+
+        <!-- State Transformation Metrics -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Geoid Lattice Metrics</span>
+            <span class="badge badge-iso" id="descentBadge">DESCENT VERIFIED</span>
+          </div>
+          <table class="metrics-table">
+            <tr>
+              <td>Input State n<sub>0</sub></td>
+              <td id="mN0">27</td>
+            </tr>
+            <tr>
+              <td>Factorized Height I(n<sub>0</sub>)</td>
+              <td id="mHeight0">3.295837</td>
+            </tr>
+            <tr>
+              <td>Valuation Entropy H(v)</td>
+              <td id="mEntropy">0.000000</td>
+            </tr>
+            <tr>
+              <td>Evolved State n<sub>1</sub></td>
+              <td id="mN1" style="color: var(--cyan);">41</td>
+            </tr>
+            <tr>
+              <td>Canonical State n*</td>
+              <td id="mNCan" style="color: var(--gold);">41</td>
+            </tr>
+            <tr>
+              <td>Reconstructed n*</td>
+              <td id="mNRecon" style="color: var(--emerald);">41</td>
+            </tr>
+            <tr>
+              <td>Strict Descent (n* &lt; n<sub>0</sub>)</td>
+              <td id="mStrictDescent" style="color: var(--rose);">false</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Cryptographic Receipts Stream -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Audited Claim Receipts</span>
+            <span class="badge badge-iso">4 RECEIPTS</span>
+          </div>
+          <div id="receiptsFeed" style="display: flex; flex-direction: column; gap: 0.6rem; max-height: 280px; overflow-y: auto;">
+            <!-- Dynamic receipts populated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    AMDE-RP-002 Interactive WebAssembly Demos &bull; Mindrock Autonomous Architecture (Wolfram / Agy) &bull; Zero-server client execution
+  </footer>
+
+  <script>
+    let engine = null;
+    let currentN = 27;
+    let currentRule = 0;
+    let currentK = 4;
+    let lastPipelineResult = null;
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      try {
+        engine = await window.amdeEngine.init();
+        document.getElementById("statusText").innerText = "WASM Ready (v" + (engine.exports.amde_wasm_version()/100).toFixed(1) + ")";
+        
+        document.getElementById("inputN").addEventListener("change", (e) => {
+          setN(parseInt(e.target.value) || 1);
+        });
+
+        runPipelineCycle();
+      } catch (err) {
+        console.error("Initialization failed:", err);
+        document.getElementById("statusText").innerText = "WASM Load Error";
+        document.getElementById("statusText").style.color = "var(--rose)";
+      }
+    });
+
+    function setN(val) {
+      currentN = Math.max(1, Math.min(1000000000, val));
+      document.getElementById("inputN").value = currentN;
+      document.getElementById("inputValDisplay").innerText = currentN;
+      runPipelineCycle();
+    }
+
+    function updateK(val) {
+      currentK = parseInt(val);
+      document.getElementById("kValDisplay").innerText = currentK + " primes";
+      runPipelineCycle();
+    }
+
+    function runPipelineCycle() {
+      if (!engine) return;
+
+      currentRule = parseInt(document.getElementById("ruleSelect").value);
+      
+      // Call WASM full 4-stage pipeline
+      lastPipelineResult = engine.geoidFullCycle(currentN, currentRule, currentK);
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      if (!lastPipelineResult) return;
+      const res = lastPipelineResult;
+
+      // Update metrics table
+      document.getElementById("mN0").innerText = res.initial_n;
+      document.getElementById("mHeight0").innerText = res.factorize.height.toFixed(6);
+      document.getElementById("mEntropy").innerText = res.factorize.entropy.toFixed(6);
+      document.getElementById("mN1").innerText = res.evolve.n;
+      document.getElementById("mNCan").innerText = res.canonicalize.n;
+      document.getElementById("mNRecon").innerText = res.reconstructed_n;
+
+      const isDescent = res.is_descent;
+      document.getElementById("mStrictDescent").innerText = isDescent ? "true (Strict Descent)" : "false (Ascent/Equal)";
+      document.getElementById("mStrictDescent").style.color = isDescent ? "var(--emerald)" : "var(--rose)";
+
+      document.getElementById("descentBadge").innerText = isDescent ? "DESCENT VERIFIED" : "EXPANSION STEP";
+      document.getElementById("descentBadge").className = isDescent ? "badge badge-iso" : "badge badge-lossy";
+
+      // Render receipts feed
+      const feed = document.getElementById("receiptsFeed");
+      feed.innerHTML = "";
+
+      for (let c of res.claims) {
+        const badgeClass = c.transformation_kind === "ISO" ? "badge-iso" :
+                           c.transformation_kind === "APPROXIMATE" ? "badge-approx" :
+                           c.transformation_kind === "ADJOINT" ? "badge-adjoint" : "badge-lossy";
+
+        const card = document.createElement("div");
+        card.className = "claim-card";
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; margin-bottom: 0.25rem;">
+            <span style="color: var(--cyan); font-weight: 600;">${c.claim_id}</span>
+            <span class="badge ${badgeClass}">${c.transformation_kind} &bull; ${c.epistemic_status}</span>
+          </div>
+          <div style="color: var(--text-muted); font-size: 0.75rem;">${c.title}</div>
+          <div style="color: var(--text-dim); font-size: 0.72rem; margin: 0.2rem 0;">${c.notes}</div>
+          <div class="claim-hash">SHA256: ${c.sha256}</div>
+        `;
+        feed.appendChild(card);
+      }
+
+      renderSpectrumCanvas();
+      renderTrajectoryCanvas();
+    }
+
+    function renderSpectrumCanvas() {
+      const canvas = document.getElementById("spectrumCanvas");
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const coords = lastPipelineResult.factorize.coordinates;
+      if (!coords || coords.length === 0) {
+        ctx.fillStyle = "var(--text-dim)";
+        ctx.font = "14px monospace";
+        ctx.fillText("n = 1 (Trivial Unit State, Height = 0)", 30, h / 2);
+        return;
+      }
+
+      const totalHeight = lastPipelineResult.factorize.height || 1.0;
+      const barWidth = Math.min(80, (w - 60) / coords.length - 15);
+      const startX = 40;
+
+      for (let i = 0; i < coords.length; i++) {
+        const c = coords[i];
+        const barHeight = (c.weight / totalHeight) * (h - 70);
+        const x = startX + i * (barWidth + 20);
+        const y = (h - 40) - barHeight;
+
+        // Bar gradient
+        const grad = ctx.createLinearGradient(x, y, x, h - 40);
+        grad.addColorStop(0, "var(--cyan)");
+        grad.addColorStop(1, "rgba(6, 182, 212, 0.2)");
+
+        ctx.fillStyle = grad;
+        ctx.fillRect(x, y, barWidth, barHeight);
+
+        ctx.strokeStyle = "var(--cyan)";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, y, barWidth, barHeight);
+
+        // Labels
+        ctx.fillStyle = "#fff";
+        ctx.font = "12px monospace";
+        ctx.fillText(`p=${c.prime}`, x + 5, h - 22);
+
+        ctx.fillStyle = "var(--gold)";
+        ctx.font = "11px monospace";
+        ctx.fillText(`v=${c.exponent}`, x + 5, y - 6);
+      }
+
+      // Axis line
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(20, h - 40);
+      ctx.lineTo(w - 20, h - 40);
+      ctx.stroke();
+    }
+
+    function renderTrajectoryCanvas() {
+      const canvas = document.getElementById("trajectoryCanvas");
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const traj = lastPipelineResult.trajectory;
+      if (!traj || traj.length === 0) return;
+
+      let maxVal = Math.max(...traj, currentN);
+
+      const padX = 40;
+      const padY = 30;
+      const plotW = w - padX * 2;
+      const plotH = h - padY * 2;
+
+      // Draw baseline for starting n
+      const baselineY = (h - padY) - (currentN / maxVal) * plotH;
+      ctx.strokeStyle = "rgba(244, 63, 94, 0.4)";
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(padX, baselineY);
+      ctx.lineTo(w - padX, baselineY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = "rgba(244, 63, 94, 0.8)";
+      ctx.font = "10px monospace";
+      ctx.fillText(`Initial n_0 = ${currentN}`, padX + 5, baselineY - 6);
+
+      // Draw orbit line
+      ctx.strokeStyle = "var(--cyan)";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+
+      for (let i = 0; i < traj.length; i++) {
+        const x = padX + (i / (traj.length - 1 || 1)) * plotW;
+        const y = (h - padY) - (traj[i] / maxVal) * plotH;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Draw points
+      for (let i = 0; i < traj.length; i++) {
+        const x = padX + (i / (traj.length - 1 || 1)) * plotW;
+        const y = (h - padY) - (traj[i] / maxVal) * plotH;
+
+        ctx.fillStyle = traj[i] < currentN ? "var(--emerald)" : "var(--gold)";
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+  </script>
+</body>
+</html>

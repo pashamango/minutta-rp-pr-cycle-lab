@@ -1,0 +1,47 @@
+{
+  "proto": "phi-0.1",
+  "ticket": "PRD-29",
+  "sub_ticket": "MIN-90",
+  "run_id": "run-e147f9b13184",
+  "builder": "agy@wolfram",
+  "reviewer": "Muse",
+  "title": "[AMDE-DEMO] Interactive HTML/WASM demos",
+  "git": {
+    "repo_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab.git",
+    "branch": "minutta/prd-29-amde-demo-interactive-htmlwasm-demos",
+    "commit_sha": "8d591a9c02bbc94af289612303d6e53a897fa6ef",
+    "artifact_paths": [
+      "crate/Cargo.toml",
+      "crate/src/lib.rs",
+      "crate/src/math_core.rs",
+      "crate/src/critical_strip.rs",
+      "crate/src/geoid_navigator.rs",
+      "crate/src/claims.rs",
+      "demo/index.html",
+      "demo/critical_strip.html",
+      "demo/geoid_navigator.html",
+      "demo/style.css",
+      "demo/pkg/amde_demo_wasm.wasm",
+      "demo/pkg/amde_demo_wasm.js",
+      "scripts/build_wasm.sh",
+      "scripts/generate_loader.py",
+      "scripts/verify_demos.py",
+      "docs/AMDE_DEMO_SPEC.md",
+      "docs/VERIFICATION_REPORT.md",
+      "evidence/MANIFEST.sha256"
+    ],
+    "verification_cmd": "python3 scripts/verify_demos.py"
+  },
+  "acceptance": {
+    "wasm_build": "PASS",
+    "zero_server_execution": "PASS",
+    "critical_strip_explorer": "PASS",
+    "golden_band_0_482_0_618": "PASS",
+    "geoid_navigator_pipeline": "PASS",
+    "typed_claims_non_theater": "PASS",
+    "sha256_cryptographic_receipts": "PASS",
+    "all_tests_passed": "PASS"
+  },
+  "status": "In Review",
+  "notes": "PRD-29 complete. Zero-server WebAssembly engine compiled with zero external dependencies. Critical strip band 0.618-0.482 around axis 1/2 with verified xi(s)=xi(1-s) reflection symmetry and known zeros. Geoid navigator executes factorize -> evolve -> canonicalize -> reconstruct with strict typed invariants."
+}

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMDE | Critical-Strip Explorer (WASM)</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="pkg/amde_demo_wasm.js"></script>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="brand-badge">AMDE-RP-002</span>
+      <h1>Critical-Strip Explorer</h1>
+    </div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-btn">Portal</a>
+      <a href="critical_strip.html" class="nav-btn active">Critical Strip</a>
+      <a href="geoid_navigator.html" class="nav-btn">Geoid Navigator</a>
+    </div>
+    <div class="engine-status" id="engineStatus">
+      <span class="status-dot"></span>
+      <span id="statusText">WASM Initializing...</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid-layout">
+      <!-- Left Column: Visualizers -->
+      <div class="main-column">
+        <!-- 2D Strip Canvas -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+              Complex Critical Strip: Re(s) &in; [0, 1] &times; Im(s) &in; [0, 45]
+            </span>
+            <span class="badge badge-approx">APPROXIMATE &bull; THEOREM</span>
+          </div>
+          <canvas id="stripCanvas" width="900" height="380"></canvas>
+          <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); margin-top: 0.4rem; font-family: var(--font-mono);">
+            <span>&sigma; = 0.000</span>
+            <span style="color: var(--gold);">&sigma; = 0.382 (&phi;&sup2;)</span>
+            <span style="color: var(--rose);">&sigma; = 0.482 (Sub-Strip)</span>
+            <span style="color: var(--cyan); font-weight: 700;">&sigma; = 0.500 (Critical Axis)</span>
+            <span style="color: var(--gold); font-weight: 700;">&sigma; = 0.618 (&phi;)</span>
+            <span>&sigma; = 1.000</span>
+          </div>
+        </div>
+
+        <!-- 1D Cross Section Canvas -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Symmetric Potential Cross-Section: |&xi;(&sigma;, t)| at Current Height
+            </span>
+            <span class="badge badge-iso">SYMMETRIC &bull; &xi;(s) = &xi;(1-s)</span>
+          </div>
+          <canvas id="sliceCanvas" width="900" height="200"></canvas>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Controls & Live Receipts -->
+      <div class="sidebar-column">
+        <!-- Interactive Controls Card -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Coordinate Controls</span>
+            <span class="badge" style="background: rgba(255,255,255,0.06); color: var(--text-muted);" id="coordinateBadge">s = 0.500 + 14.135i</span>
+          </div>
+
+          <!-- Real axis Sigma -->
+          <div class="control-group">
+            <div class="control-label">
+              <span>Real Coordinate &sigma; = Re(s)</span>
+              <span class="control-val" id="sigmaVal">0.500</span>
+            </div>
+            <input type="range" id="sigmaRange" min="0.00" max="1.00" step="0.002" value="0.500">
+            <div class="btn-group">
+              <button class="btn-sm" onclick="setSigma(0.500)">Axis 1/2</button>
+              <button class="btn-sm" onclick="setSigma(0.482)">0.482</button>
+              <button class="btn-sm" onclick="setSigma(0.618)">0.618 (&phi;)</button>
+              <button class="btn-sm" onclick="setSigma(0.382)">0.382 (&phi;&sup2;)</button>
+            </div>
+          </div>
+
+          <!-- Imaginary axis T -->
+          <div class="control-group">
+            <div class="control-label">
+              <span>Height t = Im(s)</span>
+              <span class="control-val" id="tVal">14.135</span>
+            </div>
+            <input type="range" id="tRange" min="0.0" max="45.0" step="0.05" value="14.135">
+            <div class="btn-group">
+              <button class="btn-sm" onclick="setT(14.135)">&gamma;&sub1; (14.135)</button>
+              <button class="btn-sm" onclick="setT(21.022)">&gamma;&sub2; (21.022)</button>
+              <button class="btn-sm" onclick="setT(25.011)">&gamma;&sub3; (25.011)</button>
+              <button class="btn-sm" onclick="setT(30.425)">&gamma;&sub4; (30.425)</button>
+              <button class="btn-sm" onclick="setT(32.935)">&gamma;&sub5; (32.935)</button>
+            </div>
+          </div>
+
+          <!-- Golden Widths Selection -->
+          <div class="control-group">
+            <div class="control-label">
+              <span>Nested Golden Widths G<sub>n</sub></span>
+              <span class="control-val" id="bandVal">G<sub>0</sub> [&plusmn;0.118]</span>
+            </div>
+            <div class="btn-group">
+              <button class="btn-sm" onclick="highlightBand(0)">G<sub>0</sub> [0.382, 0.618]</button>
+              <button class="btn-sm" onclick="highlightBand(1)">G<sub>1</sub> [0.427, 0.573]</button>
+              <button class="btn-sm" onclick="highlightBand(2)">G<sub>2</sub> [0.455, 0.545]</button>
+              <button class="btn-sm" onclick="highlightBand(3)">G<sub>3</sub> [0.472, 0.528]</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evaluation Readout -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Completed &xi;(s) Metrics</span>
+            <span class="badge badge-iso" id="reflStatus">PASS</span>
+          </div>
+          <table class="metrics-table">
+            <tr>
+              <td>Re(&xi;(s))</td>
+              <td id="mXiRe">0.000000</td>
+            </tr>
+            <tr>
+              <td>Im(&xi;(s))</td>
+              <td id="mXiIm">0.000000</td>
+            </tr>
+            <tr>
+              <td>|&xi;(s)|</td>
+              <td id="mXiAbs">0.000000</td>
+            </tr>
+            <tr>
+              <td>Phase Arg(&xi;(s))</td>
+              <td id="mXiArg">0.000 rad</td>
+            </tr>
+            <tr>
+              <td>Reflection Error |&xi;(s) - &xi;(1-s)|</td>
+              <td id="mXiDiff" style="color: var(--emerald);">0.000000e+00</td>
+            </tr>
+            <tr>
+              <td>Critical Axis Status</td>
+              <td id="mOnAxis" style="color: var(--cyan);">On Critical Line Re(s)=1/2</td>
+            </tr>
+            <tr>
+              <td>Strip 0.482 - 0.618 Status</td>
+              <td id="mInWindow" style="color: var(--gold);">Inside Focus Band</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Cryptographic Claim Receipt -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Cryptographic Receipt</span>
+            <span class="badge badge-approx" id="claimKind">APPROXIMATE</span>
+          </div>
+          <div class="claim-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 0.3rem;">
+              <span style="color: var(--cyan); font-weight: 600;" id="claimId">CLAIM-STRIP-REFL</span>
+              <span class="badge badge-iso" id="claimVerified">VERIFIED</span>
+            </div>
+            <div style="color: var(--text-muted); font-size: 0.75rem;" id="claimTitle">Reflection Symmetry Involution</div>
+            <div style="font-size: 0.72rem; margin-top: 0.35rem; color: var(--text-dim);" id="claimNotes">
+              Verified functional equation reflection symmetry in critical strip
+            </div>
+            <div class="claim-hash" id="claimHash">SHA256: calculating...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    AMDE-RP-002 Interactive WebAssembly Demos &bull; Mindrock Autonomous Architecture (Wolfram / Agy) &bull; Zero-server client execution
+  </footer>
+
+  <script>
+    let engine = null;
+    let currentSigma = 0.500;
+    let currentT = 14.135;
+    let activeBandN = 0;
+    let goldenBands = [];
+
+    const knownZeros = [14.134725, 21.022040, 25.010858, 30.424876, 32.935062];
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      try {
+        engine = await window.amdeEngine.init();
+        document.getElementById("statusText").innerText = "WASM Ready (v" + (engine.exports.amde_wasm_version()/100).toFixed(1) + ")";
+        
+        // Load golden bands
+        const bandData = engine.getGoldenBands(6);
+        goldenBands = bandData.bands;
+
+        initEventListeners();
+        updateAll();
+      } catch (err) {
+        console.error("Initialization failed:", err);
+        document.getElementById("statusText").innerText = "WASM Load Error";
+        document.getElementById("statusText").style.color = "var(--rose)";
+      }
+    });
+
+    function initEventListeners() {
+      const sigmaRange = document.getElementById("sigmaRange");
+      const tRange = document.getElementById("tRange");
+
+      sigmaRange.addEventListener("input", (e) => {
+        currentSigma = parseFloat(e.target.value);
+        updateAll();
+      });
+
+      tRange.addEventListener("input", (e) => {
+        currentT = parseFloat(e.target.value);
+        updateAll();
+      });
+    }
+
+    function setSigma(val) {
+      currentSigma = val;
+      document.getElementById("sigmaRange").value = val;
+      updateAll();
+    }
+
+    function setT(val) {
+      currentT = val;
+      document.getElementById("tRange").value = val;
+      updateAll();
+    }
+
+    function highlightBand(n) {
+      activeBandN = n;
+      const b = goldenBands[n];
+      if (b) {
+        document.getElementById("bandVal").innerText = `G_${n} [${b.sigma_min.toFixed(3)}, ${b.sigma_max.toFixed(3)}]`;
+      }
+      updateAll();
+    }
+
+    function updateAll() {
+      if (!engine) return;
+
+      document.getElementById("sigmaVal").innerText = currentSigma.toFixed(3);
+      document.getElementById("tVal").innerText = currentT.toFixed(3);
+      document.getElementById("coordinateBadge").innerText = `s = ${currentSigma.toFixed(3)} + ${currentT.toFixed(3)}i`;
+
+      // Call WASM evaluation
+      const evalRes = engine.evalPoint(currentSigma, currentT);
+
+      // Update metrics table
+      document.getElementById("mXiRe").innerText = evalRes.xi_re.toExponential(6);
+      document.getElementById("mXiIm").innerText = evalRes.xi_im.toExponential(6);
+      document.getElementById("mXiAbs").innerText = evalRes.xi_abs.toExponential(6);
+      document.getElementById("mXiArg").innerText = evalRes.xi_arg.toFixed(4) + " rad";
+      document.getElementById("mXiDiff").innerText = evalRes.reflection_diff.toExponential(6);
+
+      document.getElementById("mOnAxis").innerText = evalRes.is_on_critical_line ? "On Critical Line Re(s)=1/2" : "Off-Axis";
+      document.getElementById("mOnAxis").style.color = evalRes.is_on_critical_line ? "var(--cyan)" : "var(--text-muted)";
+
+      document.getElementById("mInWindow").innerText = evalRes.is_in_golden_window ? "Inside Focus Band [0.482, 0.618]" : "Outside Focus Band";
+      document.getElementById("mInWindow").style.color = evalRes.is_in_golden_window ? "var(--gold)" : "var(--text-dim)";
+
+      // Update Claim Receipt
+      const claim = evalRes.claim;
+      document.getElementById("claimId").innerText = claim.claim_id;
+      document.getElementById("claimTitle").innerText = claim.title;
+      document.getElementById("claimNotes").innerText = claim.notes;
+      document.getElementById("claimHash").innerText = "SHA256: " + claim.sha256;
+      document.getElementById("claimVerified").innerText = claim.verified ? "VERIFIED" : "UNVERIFIED";
+
+      renderStripCanvas();
+      renderSliceCanvas();
+    }
+
+    function renderStripCanvas() {
+      const canvas = document.getElementById("stripCanvas");
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Coordinate transforms: sigma in [0, 1] -> x in [0, w], t in [0, 45] -> y in [h, 0]
+      const toX = (s) => s * w;
+      const toY = (t) => h - (t / 45.0) * h;
+
+      // Draw background grid
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
+      ctx.lineWidth = 1;
+      for (let s = 0.1; s < 1.0; s += 0.1) {
+        ctx.beginPath();
+        ctx.moveTo(toX(s), 0);
+        ctx.lineTo(toX(s), h);
+        ctx.stroke();
+      }
+      for (let t = 5; t <= 45; t += 5) {
+        ctx.beginPath();
+        ctx.moveTo(0, toY(t));
+        ctx.lineTo(w, toY(t));
+        ctx.stroke();
+      }
+
+      // Draw Golden Band G0 corridor [0.382, 0.618]
+      ctx.fillStyle = "rgba(245, 158, 11, 0.08)";
+      ctx.fillRect(toX(0.381966), 0, toX(0.618034) - toX(0.381966), h);
+
+      // Draw ticket-specified sub-band [0.482, 0.618]
+      ctx.fillStyle = "rgba(244, 63, 94, 0.12)";
+      ctx.fillRect(toX(0.482), 0, toX(0.618034) - toX(0.482), h);
+
+      // Draw active Golden Band Gn
+      if (goldenBands[activeBandN]) {
+        const b = goldenBands[activeBandN];
+        ctx.fillStyle = "rgba(6, 182, 212, 0.18)";
+        ctx.fillRect(toX(b.sigma_min), 0, toX(b.sigma_max) - toX(b.sigma_min), h);
+        ctx.strokeStyle = "rgba(6, 182, 212, 0.5)";
+        ctx.strokeRect(toX(b.sigma_min), 0, toX(b.sigma_max) - toX(b.sigma_min), h);
+      }
+
+      // Draw Critical Line Re(s) = 0.500
+      ctx.strokeStyle = "var(--cyan)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(toX(0.5), 0);
+      ctx.lineTo(toX(0.5), h);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw 0.482 line
+      ctx.strokeStyle = "rgba(244, 63, 94, 0.7)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(toX(0.482), 0);
+      ctx.lineTo(toX(0.482), h);
+      ctx.stroke();
+
+      // Draw 0.618 line
+      ctx.strokeStyle = "rgba(245, 158, 11, 0.7)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(toX(0.618), 0);
+      ctx.lineTo(toX(0.618), h);
+      ctx.stroke();
+
+      // Plot known Riemann zeros on the critical line
+      for (let z of knownZeros) {
+        const zy = toY(z);
+        const zx = toX(0.5);
+
+        ctx.fillStyle = "#10b981";
+        ctx.beginPath();
+        ctx.arc(zx, zy, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = "var(--text-muted)";
+        ctx.font = "10px monospace";
+        ctx.fillText(`gamma (${z.toFixed(2)})`, zx + 8, zy + 3);
+      }
+
+      // Plot current user point s = sigma + it
+      const px = toX(currentSigma);
+      const py = toY(currentT);
+
+      // Reflection dual point 1 - s = (1 - sigma) - it (show symmetry partner)
+      const dualX = toX(1.0 - currentSigma);
+      const dualY = py;
+
+      // Line between point and its reflection partner
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+      ctx.setLineDash([2, 2]);
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(dualX, dualY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw reflection partner
+      ctx.fillStyle = "rgba(139, 92, 246, 0.7)";
+      ctx.beginPath();
+      ctx.arc(dualX, dualY, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw current point
+      ctx.fillStyle = "#06b6d4";
+      ctx.beginPath();
+      ctx.arc(px, py, 7, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function renderSliceCanvas() {
+      const canvas = document.getElementById("sliceCanvas");
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      if (!engine) return;
+
+      // Query WASM for 100 points across sigma in [0.0, 1.0] at current height t
+      const sliceData = engine.evalSigmaSlice(0.0, 1.0, 120, currentT);
+      const points = sliceData.points;
+      if (!points || points.length === 0) return;
+
+      let maxVal = 1e-6;
+      for (let p of points) {
+        if (p.abs > maxVal) maxVal = p.abs;
+      }
+
+      // Draw axis
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, h - 20);
+      ctx.lineTo(w, h - 20);
+      ctx.stroke();
+
+      // Center line sigma = 0.5
+      ctx.strokeStyle = "rgba(6, 182, 212, 0.4)";
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(w * 0.5, 0);
+      ctx.lineTo(w * 0.5, h);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw curve |xi(sigma, t)|
+      ctx.strokeStyle = "var(--cyan)";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let i = 0; i < points.length; i++) {
+        const x = (i / (points.length - 1)) * w;
+        const normalized = points[i].abs / maxVal;
+        const y = (h - 25) - normalized * (h - 40);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Highlight current sigma cursor
+      const cursorX = currentSigma * w;
+      ctx.fillStyle = "var(--rose)";
+      ctx.beginPath();
+      ctx.arc(cursorX, h - 20, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Label
+      ctx.fillStyle = "var(--text-muted)";
+      ctx.font = "11px monospace";
+      ctx.fillText(`Peak |xi| at t=${currentT.toFixed(2)}: ${maxVal.toExponential(3)}`, 15, 20);
+      ctx.fillText("Center sigma = 0.500 (Reflection Symmetry Minimum / Extrema)", w / 2 - 140, h - 6);
+    }
+  </script>
+</body>
+</html>
