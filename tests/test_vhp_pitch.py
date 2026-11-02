@@ -139,12 +139,14 @@ class TestVHPPitch(unittest.TestCase):
     def test_receipt_commit_matches_head(self):
         ref_data = json.loads(self.ref_json_path.read_text(encoding="utf-8"))
         receipt_commit = ref_data.get("verification_receipt", {}).get("commit_sha")
-        self.assertIn(receipt_commit, ["HEAD", "origin"])
+        self.assertEqual(receipt_commit, "511565cc3c68e51ad616726579b9f613399038cd")
+        self.assertNotEqual(receipt_commit, "HEAD")
 
         # Also check markdown receipt commit
         content = self.ref_pitch_path.read_text(encoding="utf-8")
         self.assertIn("Commit SHA:", content)
-        self.assertIn("HEAD", content)
+        self.assertIn("511565cc3c68e51ad616726579b9f613399038cd", content)
+        self.assertNotIn("Commit SHA: HEAD", content)
 
     def test_wheel_axioms_cli_check_axioms(self):
         result = subprocess.run(
@@ -153,7 +155,27 @@ class TestVHPPitch(unittest.TestCase):
             text=True
         )
         self.assertEqual(result.returncode, 0, f"check-axioms failed: {result.stdout}\n{result.stderr}")
-        self.assertIn("8/8 Carlström Wheel axioms algebraically verified", result.stdout)
+        self.assertIn("8/8 Carlström wheel properties verified on 7-element representative domain", result.stdout)
+
+    def test_ast_auditor_cli_check_ast(self):
+        result = subprocess.run(
+            [sys.executable, str(self.verifier_script), "check-ast"],
+            capture_output=True,
+            text=True
+        )
+        self.assertEqual(result.returncode, 0, f"check-ast failed: {result.stdout}\n{result.stderr}")
+        self.assertIn("AST Audit passed", result.stdout)
+
+    def test_wheel_axioms_covers_infinity_and_bottom(self):
+        import types
+        from importlib.machinery import SourceFileLoader
+        loader = SourceFileLoader("verify_vhp_pitch", str(self.verifier_script))
+        mod = types.ModuleType(loader.name)
+        loader.exec_module(mod)
+
+        ok, msg, count = mod.verify_wheel_axioms()
+        self.assertTrue(ok)
+        self.assertEqual(count, 1190, f"Expected 1,190 evaluations across 7 samples, got {count}")
 
 if __name__ == "__main__":
     unittest.main()
