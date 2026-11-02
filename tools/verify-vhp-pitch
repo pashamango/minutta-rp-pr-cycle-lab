@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""
+VHP-01 Pitch Verifier & Symbol Auditor
+Usage:
+    tools/verify-vhp-pitch verify [path/to/pitch.md]
+    tools/verify-vhp-pitch count [path/to/pitch.md]
+    tools/verify-vhp-pitch check-all
+"""
+
+import sys
+import os
+import re
+import json
+import hashlib
+from pathlib import Path
+
+MAX_ALLOWED_SYMBOLS = 1500
+
+MANDATORY_SECTIONS = [
+    r"^## 1\.\s+Executive Hook",
+    r"^## 2\.\s+Formal Breakthrough",
+    r"^## 3\.\s+Verification Receipt",
+]
+
+MANDATORY_RECEIPT_FIELDS = [
+    "Repository:",
+    "Commit SHA:",
+    "Verification Command:",
+]
+
+def analyze_pitch(file_path: Path):
+    if not file_path.exists():
+        return False, f"File not found: {file_path}", {}
+
+    content = file_path.read_text(encoding="utf-8")
+    char_count = len(content)
+
+    issues = []
+    if char_count > MAX_ALLOWED_SYMBOLS:
+        issues.append(f"Character count ({char_count}) exceeds limit of {MAX_ALLOWED_SYMBOLS} symbols by {char_count - MAX_ALLOWED_SYMBOLS}.")
+
+    # Check title (# Title: Subtitle)
+    if not re.search(r"^#\s+.+", content, re.MULTILINE):
+        issues.append("Missing top-level pitch title (# Venture: Subtitle).")
+
+    # Check sections
+    for sec_pattern in MANDATORY_SECTIONS:
+        if not re.search(sec_pattern, content, re.MULTILINE):
+            issues.append(f"Missing mandatory section header matching pattern: '{sec_pattern}'")
+
+    # Check receipt fields
+    receipt_section_match = re.search(r"## 3\.\s+Verification Receipt([\s\S]*)$", content)
+    if not receipt_section_match:
+        issues.append("Unable to parse Section 3 (Verification Receipt).")
+    else:
+        receipt_text = receipt_section_match.group(1)
+        for field in MANDATORY_RECEIPT_FIELDS:
+            if field not in receipt_text:
+                issues.append(f"Verification Receipt is missing required coordinate field: '{field}'")
+
+    sha256_hash = hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+    meta = {
+        "file": str(file_path),
+        "char_count": char_count,
+        "max_symbols": MAX_ALLOWED_SYMBOLS,
+        "sha256": sha256_hash,
+        "valid": len(issues) == 0,
+        "issues": issues,
+    }
+    return len(issues) == 0, issues, meta
+
+def cmd_count(file_path: Path):
+    valid, issues, meta = analyze_pitch(file_path)
+    print(f"File: {file_path}")
+    print(f"Characters (Symbols): {meta.get('char_count', 'N/A')} / {MAX_ALLOWED_SYMBOLS}")
+    print(f"SHA-256: {meta.get('sha256', 'N/A')}")
+    if valid:
+        print("Status: ✅ PASS (Within budget)")
+        return 0
+    else:
+        print("Status: ❌ FAIL")
+        for iss in issues:
+            print(f" - {iss}")
+        return 1
+
+def cmd_verify(file_path: Path):
+    valid, issues, meta = analyze_pitch(file_path)
+    print(f"=== VHP-01 Verification: {file_path.name} ===")
+    print(f"Character Count: {meta['char_count']} / {MAX_ALLOWED_SYMBOLS} symbols")
+    print(f"SHA-256: {meta['sha256']}")
+    if valid:
+        print("Result: ✅ PASSED (Structural schema & symbol budget verified)")
+        return 0
+    else:
+        print("Result: ❌ FAILED")
+        for iss in issues:
+            print(f"  • {iss}")
+        return 1
+
+def cmd_check_all(root_dir: Path):
+    print("=== VHP-01 Comprehensive Pitch Verification Suite ===")
+    ref_pitch = root_dir / "pitch" / "vhp-01-reference-pitch.md"
+    tmpl_pitch = root_dir / "pitch" / "vhp-01-pitch-template.md"
+    receipt_file = root_dir / "pitch" / "artifacts" / "pitch_verification_receipt.json"
+    schema_file = root_dir / "pitch" / "artifacts" / "pitch_schema.json"
+    ref_json = root_dir / "pitch" / "artifacts" / "reference_pitch.json"
+
+    targets = [ref_pitch, tmpl_pitch]
+    all_ok = True
+
+    for target in targets:
+        print(f"\nAuditing: {target.relative_to(root_dir)}")
+        ok, issues, meta = analyze_pitch(target)
+        if ok:
+            print(f"  ✅ {meta['char_count']} symbols (<= {MAX_ALLOWED_SYMBOLS}) | SHA-256: {meta['sha256'][:16]}...")
+        else:
+            all_ok = False
+            print(f"  ❌ Failed with {len(issues)} issues:")
+            for iss in issues:
+                print(f"     - {iss}")
+
+    # Validate JSON artifacts
+    print(f"\nAuditing JSON Artifacts:")
+    for jf in [schema_file, receipt_file, ref_json]:
+        if not jf.exists():
+            print(f"  ❌ Missing: {jf.relative_to(root_dir)}")
+            all_ok = False
+        else:
+            try:
+                with open(jf, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                print(f"  ✅ Parsed valid JSON: {jf.relative_to(root_dir)}")
+            except Exception as e:
+                print(f"  ❌ Invalid JSON {jf.relative_to(root_dir)}: {e}")
+                all_ok = False
+
+    # Cross-check receipt SHA with actual file SHA
+    if receipt_file.exists():
+        with open(receipt_file, "r", encoding="utf-8") as f:
+            receipt = json.load(f)
+        ref_expected_sha = receipt.get("target_artifacts", {}).get("reference_pitch", {}).get("sha256")
+        ref_content = ref_pitch.read_text(encoding="utf-8")
+        ref_actual_sha = hashlib.sha256(ref_content.encode("utf-8")).hexdigest()
+        if ref_expected_sha == ref_actual_sha:
+            print(f"  ✅ Receipt SHA-256 matches reference pitch ({ref_actual_sha[:16]}...)")
+        else:
+            print(f"  ❌ Receipt SHA-256 mismatch! Expected {ref_expected_sha}, got {ref_actual_sha}")
+            all_ok = False
+
+    if all_ok:
+        print("\n🎉 ALL VHP-01 CHECKS PASSED.")
+        return 0
+    else:
+        print("\n❌ SOME CHECKS FAILED.")
+        return 1
+
+def main():
+    root_dir = Path(__file__).resolve().parent.parent
+    if len(sys.argv) < 2:
+        return cmd_check_all(root_dir)
+
+    subcommand = sys.argv[1]
+    if subcommand == "check-all":
+        return cmd_check_all(root_dir)
+    elif subcommand == "count":
+        target = Path(sys.argv[2]) if len(sys.argv) > 2 else root_dir / "pitch" / "vhp-01-reference-pitch.md"
+        return cmd_count(target)
+    elif subcommand == "verify":
+        target = Path(sys.argv[2]) if len(sys.argv) > 2 else root_dir / "pitch" / "vhp-01-reference-pitch.md"
+        return cmd_verify(target)
+    else:
+        target = Path(subcommand)
+        if target.exists():
+            return cmd_verify(target)
+        print(f"Unknown subcommand or file: {subcommand}")
+        return 1
+
+if __name__ == "__main__":
+    sys.exit(main())

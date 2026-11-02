@@ -1,0 +1,30 @@
+{
+  "receipt_id": "rcpt-vhp01-wheelcore-20261102",
+  "ticket": "MIN-59",
+  "project": "VHP-001 — Template Venture Product (Venture Hackathon Package)",
+  "standard": "VHP-01-PITCH-v1.0",
+  "target_artifacts": {
+    "reference_pitch": {
+      "path": "pitch/vhp-01-reference-pitch.md",
+      "sha256": "b5edc72df5c3f642e47ce8dacf69c35d36ccf493040fd5e9207c53e2f96d8ada",
+      "symbol_count": 1360,
+      "symbol_limit": 1500,
+      "compliant": true
+    },
+    "template": {
+      "path": "pitch/vhp-01-pitch-template.md",
+      "sha256": "0afa754a4caa5f0226f5caa6c6bbb03c9232a17da90187ed235c56d295d9ca9a",
+      "symbol_count": 1218,
+      "symbol_limit": 1500,
+      "compliant": true
+    }
+  },
+  "sections_verified": [
+    "Executive Hook",
+    "Formal Breakthrough",
+    "Verification Receipt"
+  ],
+  "verification_command": "python3 tools/verify-vhp-pitch verify pitch/vhp-01-reference-pitch.md",
+  "audit_passed": true,
+  "timestamp": "2026-11-02T21:18:00Z"
+}

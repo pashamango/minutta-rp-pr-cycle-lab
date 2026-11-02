@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VHPPitchSchema",
+  "type": "object",
+  "required": [
+    "venture_name",
+    "subtitle",
+    "executive_hook",
+    "formal_breakthrough",
+    "verification_receipt",
+    "character_count",
+    "max_allowed_symbols",
+    "status"
+  ],
+  "properties": {
+    "venture_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subtitle": {
+      "type": "string",
+      "minLength": 1
+    },
+    "executive_hook": {
+      "type": "string",
+      "minLength": 50,
+      "maxLength": 800
+    },
+    "formal_breakthrough": {
+      "type": "string",
+      "minLength": 50,
+      "maxLength": 1000
+    },
+    "verification_receipt": {
+      "type": "object",
+      "required": [
+        "proof_engine",
+        "axiom_audit",
+        "repository",
+        "commit_sha",
+        "verification_command"
+      ],
+      "properties": {
+        "proof_engine": { "type": "string" },
+        "axiom_audit": { "type": "string" },
+        "repository": { "type": "string" },
+        "commit_sha": { "type": "string" },
+        "verification_command": { "type": "string" }
+      }
+    },
+    "character_count": {
+      "type": "integer",
+      "maximum": 1500
+    },
+    "max_allowed_symbols": {
+      "type": "integer",
+      "const": 1500
+    },
+    "status": {
+      "type": "string",
+      "enum": ["VALID", "EXCEEDED_LIMIT", "MALFORMED"]
+    }
+  }
+}
