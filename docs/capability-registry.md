@@ -1,4 +1,4 @@
-# DP-00 capability registry
+# DP-07 provider capability adapter registry
 
 This registry is a safe, fixture-backed inventory for the Darwin runtime. It
 describes interfaces and policy without asserting that a credential exists.
@@ -18,6 +18,17 @@ connector. A ChatGPT connector being visible in a conversation is not evidence
 that its OAuth grant, API key, scheduler, or transport can be mounted on
 Darwin. Cookies are never scraped, quotas are never bypassed, and no external
 account is enrolled by this fixture.
+
+## Provider adapter contract
+
+Provider adapters are declarative until a documented vendor API, least-privilege
+OAuth scope, and durable authorization path are all present. Each adapter entry
+must carry a permission probe, source identity, identity-bound cursor, resource
+boundary, rate-budget observation contract, and a source-local revocation test.
+`READ_BLOCKED` is an authorization/provenance result, not an empty result: the
+runtime must not turn an inaccessible source into `0` activity. Sales has no
+generic activity endpoint here; it requires a named connected CRM/API or an
+explicitly instrumented interaction receipt.
 
 ## Schema and validation
 

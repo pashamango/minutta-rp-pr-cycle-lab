@@ -25,7 +25,10 @@ def main():
         fail("capability IDs must be non-empty and unique")
     now = datetime.now(timezone.utc)
     for entry in entries:
-        missing = REQUIRED - entry.keys()
+        required = REQUIRED
+        if entry.get("kind") == "provider_adapter":
+            required = REQUIRED - {"canonical_api", "credentials_owner", "scopes", "pagination", "rate_limits"}
+        missing = required - entry.keys()
         if missing:
             fail(f'{entry["id"]}: missing {sorted(missing)}')
         if entry["access_state"] not in ALLOWED:
@@ -40,6 +43,15 @@ def main():
             fail(f'{entry["id"]}: verification_method is required')
         if SECRET.search(json.dumps(entry, sort_keys=True)):
             fail(f'{entry["id"]}: possible secret material')
+        if entry.get("kind") == "provider_adapter":
+            adapter_required = {"vendor", "documented_api", "permission_probe", "required_oauth_scopes", "durable_auth", "source_identity", "cursor_contract", "resource_contract", "rate_budget_contract", "revocation_test"}
+            missing_adapter = adapter_required - entry.keys()
+            if missing_adapter:
+                fail(f'{entry["id"]}: missing adapter contract fields {sorted(missing_adapter)}')
+            if not any(token in entry["revocation_test"].lower() for token in ("revoc", "revoke", "revok")):
+                fail(f'{entry["id"]}: source-local revocation test is required')
+            if entry["id"] == "adapter.sales" and "none" not in entry["documented_api"].lower():
+                fail("adapter.sales: generic Sales endpoint must not be assumed")
     print(f"PASS: validated {len(entries)} capability entries; no secret material detected")
 
 if __name__ == "__main__":
