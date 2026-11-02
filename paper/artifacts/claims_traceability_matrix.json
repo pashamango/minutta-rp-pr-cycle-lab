@@ -1,0 +1,86 @@
+{
+  "version": "1.0",
+  "project": "VHP-001",
+  "ticket": "MIN-60",
+  "paper_reference": "paper/vhp-02-reference-paper.tex",
+  "claims": [
+    {
+      "claim_id": "CLM-THM-01",
+      "paper_label": "thm:recip-invol",
+      "claim_type": "CONDITIONAL_THEOREM",
+      "title": "Involutive Totality of Reciprocals",
+      "statement": "forall x : W, /(/x) = x",
+      "required_axioms": ["AXM-W05"],
+      "verification_artifact": "paper/artifacts/axiom_ledger.json",
+      "verification_symbol": "Wheel.recip_invol",
+      "status": "VERIFIED",
+      "verification_cmd": "python3 tools/verify-vhp-paper verify"
+    },
+    {
+      "claim_id": "CLM-THM-02",
+      "paper_label": "thm:distrib-regularization",
+      "claim_type": "CONDITIONAL_THEOREM",
+      "title": "Regularized Distributivity",
+      "statement": "forall x y z : W, (x + y)*z + 0*z = x*z + y*z",
+      "required_axioms": ["AXM-W01", "AXM-W03", "AXM-W07"],
+      "verification_artifact": "paper/artifacts/axiom_ledger.json",
+      "verification_symbol": "Wheel.distrib_reg",
+      "status": "VERIFIED",
+      "verification_cmd": "python3 tools/verify-vhp-paper verify"
+    },
+    {
+      "claim_id": "CLM-CM-01",
+      "paper_label": "cm:zero-annihilation",
+      "claim_type": "COUNTERMODEL",
+      "title": "Zero Annihilation Falsified",
+      "statement": "not (forall x : W, 0 * x = 0)",
+      "required_axioms": ["AXM-W03"],
+      "verification_artifact": "paper/artifacts/countermodels.json",
+      "verification_symbol": "CM-01",
+      "status": "FALSIFIED",
+      "verification_cmd": "python3 tools/verify-vhp-paper verify"
+    },
+    {
+      "claim_id": "CLM-CM-02",
+      "paper_label": "cm:additive-inverse",
+      "claim_type": "COUNTERMODEL",
+      "title": "Additive Inverse Falsified",
+      "statement": "not (forall x : W, x - x = 0)",
+      "required_axioms": ["AXM-W08"],
+      "verification_artifact": "paper/artifacts/countermodels.json",
+      "verification_symbol": "CM-02",
+      "status": "FALSIFIED",
+      "verification_cmd": "python3 tools/verify-vhp-paper verify"
+    },
+    {
+      "claim_id": "CLM-CM-03",
+      "paper_label": "cm:unrestricted-distrib",
+      "claim_type": "COUNTERMODEL",
+      "title": "Unrestricted Distributivity Falsified",
+      "statement": "not (forall x y z : W, (x + y)*z = x*z + y*z)",
+      "required_axioms": ["AXM-W07"],
+      "verification_artifact": "paper/artifacts/countermodels.json",
+      "verification_symbol": "CM-03",
+      "status": "FALSIFIED",
+      "verification_cmd": "python3 tools/verify-vhp-paper verify"
+    },
+    {
+      "claim_id": "CLM-CM-04",
+      "paper_label": "cm:multiplicative-inverse",
+      "claim_type": "COUNTERMODEL",
+      "title": "Universal Multiplicative Inverse Falsified",
+      "statement": "not (forall x : W, x * (/x) = 1)",
+      "required_axioms": ["AXM-W05"],
+      "verification_artifact": "paper/artifacts/countermodels.json",
+      "verification_symbol": "CM-04",
+      "status": "FALSIFIED",
+      "verification_cmd": "python3 tools/verify-vhp-paper verify"
+    }
+  ],
+  "verification_policy": {
+    "zero_trust": true,
+    "require_remote_git": true,
+    "disallow_untracked_claims": true,
+    "require_reproducible_witness": true
+  }
+}

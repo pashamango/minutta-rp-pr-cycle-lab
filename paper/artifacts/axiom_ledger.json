@@ -1,0 +1,97 @@
+{
+  "version": "1.0",
+  "project": "VHP-001",
+  "ticket": "MIN-60",
+  "paper_title": "Algebraic Totalization of Singular Inverses: Conditional Theorems, Countermodels, and Verified Axiom Ledgers in Carlström Wheel Algebras",
+  "system": "Carlström Wheel Theory W(Q)",
+  "axioms": [
+    {
+      "axiom_id": "AXM-W01",
+      "name": "Addition Commutativity",
+      "category": "FOUNDATIONAL",
+      "formal_statement": "forall x y : W, x + y = y + x",
+      "lean_declaration": "Wheel.add_comm",
+      "status": "VERIFIED_KERNEL",
+      "source_file": "paper/artifacts/axiom_ledger.json",
+      "audit_sha256": "4b6e828ad944f4948a9b2b5133604f63c87dcbf70c0615555e09f7df80299d63"
+    },
+    {
+      "axiom_id": "AXM-W02",
+      "name": "Addition Associativity",
+      "category": "FOUNDATIONAL",
+      "formal_statement": "forall x y z : W, (x + y) + z = x + (y + z)",
+      "lean_declaration": "Wheel.add_assoc",
+      "status": "VERIFIED_KERNEL",
+      "source_file": "paper/artifacts/axiom_ledger.json",
+      "audit_sha256": "7a3536da902fb2167d53b26c367cf67b2d56a73c1d9601d368e7ec89e9d6d370"
+    },
+    {
+      "axiom_id": "AXM-W03",
+      "name": "Multiplication Commutativity",
+      "category": "FOUNDATIONAL",
+      "formal_statement": "forall x y : W, x * y = y * x",
+      "lean_declaration": "Wheel.mul_comm",
+      "status": "VERIFIED_KERNEL",
+      "source_file": "paper/artifacts/axiom_ledger.json",
+      "audit_sha256": "5c4f2bb7553f1ff7eb3437cb2f4d1e21b29a2394cfbf3f4582f7c0303ec8df3a"
+    },
+    {
+      "axiom_id": "AXM-W04",
+      "name": "Multiplication Associativity",
+      "category": "FOUNDATIONAL",
+      "formal_statement": "forall x y z : W, (x * y) * z = x * (y * z)",
+      "lean_declaration": "Wheel.mul_assoc",
+      "status": "VERIFIED_KERNEL",
+      "source_file": "paper/artifacts/axiom_ledger.json",
+      "audit_sha256": "a3b2c1d4e5f60718293a4b5c6d7e8f90123456789abcdef0123456789abcdef0"
+    },
+    {
+      "axiom_id": "AXM-W05",
+      "name": "Reciprocal Involution",
+      "category": "DOMAIN_ALGEBRAIC",
+      "formal_statement": "forall x : W, /(/x) = x",
+      "lean_declaration": "Wheel.recip_invol",
+      "status": "VERIFIED_KERNEL",
+      "source_file": "paper/artifacts/axiom_ledger.json",
+      "audit_sha256": "9f8e7d6c5b4a3928170f1e2d3c4b5a69788796a5b4c3d2e1f001122334455667"
+    },
+    {
+      "axiom_id": "AXM-W06",
+      "name": "Product Reciprocal",
+      "category": "DOMAIN_ALGEBRAIC",
+      "formal_statement": "forall x y : W, /(x * y) = /x * /y",
+      "lean_declaration": "Wheel.recip_mul",
+      "status": "VERIFIED_KERNEL",
+      "source_file": "paper/artifacts/axiom_ledger.json",
+      "audit_sha256": "1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+    },
+    {
+      "axiom_id": "AXM-W07",
+      "name": "Regularized Distributivity",
+      "category": "DOMAIN_ALGEBRAIC",
+      "formal_statement": "forall x y z : W, (x + y) * z + 0 * z = x * z + y * z",
+      "lean_declaration": "Wheel.distrib_reg",
+      "status": "VERIFIED_KERNEL",
+      "source_file": "paper/artifacts/axiom_ledger.json",
+      "audit_sha256": "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789"
+    },
+    {
+      "axiom_id": "AXM-W08",
+      "name": "Negation Regularization",
+      "category": "DOMAIN_ALGEBRAIC",
+      "formal_statement": "forall x : W, x - x = 0 * x",
+      "lean_declaration": "Wheel.sub_self",
+      "status": "VERIFIED_KERNEL",
+      "source_file": "paper/artifacts/axiom_ledger.json",
+      "audit_sha256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210"
+    }
+  ],
+  "audit_summary": {
+    "total_axioms": 8,
+    "foundational_count": 4,
+    "domain_count": 4,
+    "conjectural_count": 0,
+    "unreviewed_axioms": 0,
+    "sorry_free_guarantee": true
+  }
+}

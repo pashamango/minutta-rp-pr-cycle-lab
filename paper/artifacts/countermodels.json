@@ -1,0 +1,73 @@
+{
+  "version": "1.0",
+  "project": "VHP-001",
+  "ticket": "MIN-60",
+  "paper_title": "Algebraic Totalization of Singular Inverses: Conditional Theorems, Countermodels, and Verified Axiom Ledgers in Carlström Wheel Algebras",
+  "countermodels": [
+    {
+      "countermodel_id": "CM-01",
+      "target_property": "Zero Annihilation: forall x : W, 0 * x = 0",
+      "verdict": "FALSIFIED",
+      "witness": {
+        "x": "infinity (1/0)",
+        "fraction_representation": [1, 0]
+      },
+      "evaluation": {
+        "lhs": "0 * infinity = (0, 1) * (1, 0) = (0*1, 1*0) = (0, 0) = bottom",
+        "rhs": "0 = (0, 1)",
+        "inequality": "bottom != 0"
+      },
+      "falsification_proof": "In fraction pairs, (0, 0) is not projectively equivalent to (0, 1) because for any u, v in Q, u*0 = v*0 (0=0), but u*0 = v*1 requires v=0, collapsing the non-trivial class.",
+      "test_assertion": "wheel_mul((0, 1), (1, 0)) == (0, 0) != (0, 1)"
+    },
+    {
+      "countermodel_id": "CM-02",
+      "target_property": "Classical Additive Inverse: forall x : W, x - x = 0",
+      "verdict": "FALSIFIED",
+      "witness": {
+        "x": "infinity (1/0)",
+        "fraction_representation": [1, 0]
+      },
+      "evaluation": {
+        "lhs": "infinity - infinity = (1, 0) + (-1, 0) = (1*0 + (-1)*0, 0*0) = (0, 0) = bottom",
+        "rhs": "0 = (0, 1)",
+        "inequality": "bottom != 0"
+      },
+      "falsification_proof": "Subtraction of singular values produces nullity (0, 0), which does not equal 0. Note that 0 * infinity = bottom, validating wheel law x - x = 0*x.",
+      "test_assertion": "wheel_sub((1, 0), (1, 0)) == (0, 0) != (0, 1)"
+    },
+    {
+      "countermodel_id": "CM-03",
+      "target_property": "Classical Unrestricted Distributivity: forall x y z : W, (x + y)*z = x*z + y*z",
+      "verdict": "FALSIFIED",
+      "witness": {
+        "x": "1 = (1, 1)",
+        "y": "1 = (1, 1)",
+        "z": "infinity = (1, 0)"
+      },
+      "evaluation": {
+        "lhs": "(1 + 1) * infinity = 2 * infinity = (2, 1) * (1, 0) = (2, 0) ~ (1, 0) = infinity",
+        "rhs": "1 * infinity + 1 * infinity = infinity + infinity = (1, 0) + (1, 0) = (0, 0) = bottom",
+        "inequality": "infinity != bottom"
+      },
+      "falsification_proof": "LHS evaluates to projective infinity (1, 0), whereas RHS evaluates to algebraic nullity (0, 0). The regularized law (x+y)z + 0z = xz + yz resolves this by adding 0*infinity = bottom to the LHS, making both sides bottom.",
+      "test_assertion": "wheel_mul(wheel_add((1, 1), (1, 1)), (1, 0)) != wheel_add(wheel_mul((1, 1), (1, 0)), wheel_mul((1, 1), (1, 0)))"
+    },
+    {
+      "countermodel_id": "CM-04",
+      "target_property": "Universal Multiplicative Inverse: forall x : W, x * (/x) = 1",
+      "verdict": "FALSIFIED",
+      "witness": {
+        "x": "0 = (0, 1)",
+        "fraction_representation": [0, 1]
+      },
+      "evaluation": {
+        "lhs": "0 * (/0) = 0 * infinity = (0, 1) * (1, 0) = (0, 0) = bottom",
+        "rhs": "1 = (1, 1)",
+        "inequality": "bottom != 1"
+      },
+      "falsification_proof": "Reciprocal of zero is projective infinity, but their product is bottom, which is not the multiplicative unit 1.",
+      "test_assertion": "wheel_mul((0, 1), wheel_recip((0, 1))) == (0, 0) != (1, 1)"
+    }
+  ]
+}

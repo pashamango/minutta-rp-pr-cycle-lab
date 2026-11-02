@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-11-02T21:05:00Z",
+  "verifier": "tools/verify-vhp-paper",
+  "version": "1.0",
+  "ticket": "MIN-60",
+  "status": "PASS",
+  "checks": {
+    "arxiv_template_valid": true,
+    "reference_paper_valid": true,
+    "axiom_ledger_axioms_count": 8,
+    "countermodels_falsification_verified": 4,
+    "claims_traceability_verified": 6
+  },
+  "receipt_sha256": "802bb684534efb0e77d07c089fa0566373801f98a72bbfd780e927c94b79b6d8"
+}

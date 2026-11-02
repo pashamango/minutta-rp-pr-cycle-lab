@@ -1,0 +1,309 @@
+% ==============================================================================
+% VHP-02 — Scientific Paper Template (arXiv Style)
+% Venture Hackathon Package (VHP-001) / Mindrock Research
+% Canonical Architecture: Conditional Theorems, Countermodels & Axiom Ledger
+% ==============================================================================
+\documentclass[11pt,a4paper]{article}
+
+% --- Core Typography & Geometry ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,amsfonts}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{cite}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage[capitalise,noabbrev]{cleveref}
+
+% --- Hyperlink Setup ---
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!70!black,
+    citecolor=green!50!black,
+    urlcolor=blue!80!black
+}
+
+% --- Theorem Environments ---
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{conditionaltheorem}[theorem]{Conditional Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{countermodel}[theorem]{Countermodel}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+% --- Boxed Claim Environments ---
+\tcbuselibrary{skins,breakable}
+\newtcolorbox{claimbox}[2][]{
+    enhanced,
+    colback=gray!5,
+    colframe=blue!40!black,
+    fonttitle=\bfseries,
+    title={#2},
+    arc=1mm,
+    boxrule=0.5mm,
+    breakable,
+    #1
+}
+
+\newtcolorbox{counterbox}[2][]{
+    enhanced,
+    colback=red!5,
+    colframe=red!60!black,
+    fonttitle=\bfseries,
+    title={#2},
+    arc=1mm,
+    boxrule=0.5mm,
+    breakable,
+    #1
+}
+
+% --- Notation Macros ---
+\newcommand{\lean}[1]{\texttt{#1}}
+\newcommand{\artifact}[1]{\texttt{#1}}
+\newcommand{\sha}[1]{\texttt{#1}}
+\newcommand{\cmd}[1]{\texttt{#1}}
+
+% --- Title & Metadata ---
+\title{\textbf{Title of the Paper: Subtitle Indicating Formal Scope}\\[0.5ex]
+\large \textsc{VHP-02 arXiv-Style Formal Paper Template}}
+
+\author{
+    \textbf{Author One}\thanks{Equal contribution. Mindrock Autonomous Network. Email: \texttt{author1@mindrock.capital}}
+    \and
+    \textbf{Author Two}\thanks{Equal contribution. Research Lab. Email: \texttt{author2@mindrock.capital}}
+    \and
+    \textbf{Pavel Cherkashin}\thanks{Principal Sponsor and Architecture Authority. Mindrock Capital. Email: \texttt{pavel@mindrock.capital}}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+State the exact core result in 150--250 words. The abstract must clearly separate:
+(1) what is formally proved and kernel-checked;
+(2) what is conditional upon explicit hypotheses;
+(3) what classical properties are affirmatively falsified with concrete countermodels; and
+(4) where the exact verification artifacts and reproducible replay commands are located.
+Every scientific claim asserted in this paper is indexed in the machine-readable traceability matrix.
+\end{abstract}
+
+\paragraph{Keywords:} Formal Verification, Conditional Theorems, Countermodels, Axiom Ledger, Lean 4, Reproducibility.
+\paragraph{MSC (2020):} Primary 08A05; Secondary 68V15, 03B35.
+\paragraph{ACM CCS:} Theory of computation $\to$ Logic and verification; Formal languages.
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+
+% ==============================================================================
+% 1. INTRODUCTION
+% ==============================================================================
+\section{Introduction}
+\label{sec:intro}
+
+Provide the motivation, the historical tension between informal proofs and formal rigor, and the necessity of separating unconditional deductions from conditional statements.
+
+\subsection{Contributions}
+\begin{enumerate}
+    \item \textbf{Axiom Ledger (\cref{sec:axiom-ledger}):} An explicit, bounded catalog of foundational axioms and domain constraints.
+    \item \textbf{Conditional Theorems (\cref{sec:conditional-theorems}):} Formal results whose truth is explicitly parameterized by listed premises.
+    \item \textbf{Countermodels \& Falsification (\cref{sec:countermodels}):} Explicit counterexamples demonstrating that naive classical extensions fail.
+    \item \textbf{Traceability Matrix (\cref{sec:traceability}):} A bidirectional mapping from every textual claim to its formal artifact, hash receipt, and replay command.
+\end{enumerate}
+
+% ==============================================================================
+% 2. FORMAL DEFINITIONS & AXIOM LEDGER
+% ==============================================================================
+\section{Formal Definitions and Axiom Ledger}
+\label{sec:axiom-ledger}
+
+State all algebraic structures and primitives. The Axiom Ledger categorizes every assumption into:
+\begin{itemize}
+    \item \textbf{Foundational Axioms:} Trusted axioms of the underlying logical framework (e.g., Lean 4 kernel: propositional extensionality, quotient soundness, classical choice).
+    \item \textbf{Domain Axioms:} Defining postulates for the mathematical theory under study.
+    \item \textbf{Conjectural Postulates:} Explicit conditional hypotheses that remain unproved.
+\end{itemize}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Axiom Ledger Summary}
+\label{tab:axiom-ledger}
+\begin{tabularx}{\textwidth}{llllX}
+\toprule
+\textbf{Axiom ID} & \textbf{Category} & \textbf{Name} & \textbf{Kernel Status} & \textbf{Formal Statement} \\
+\midrule
+AXM-01 & Foundational & Equality Reflexivity & Lean Kernel & $\forall x, x = x$ \\
+AXM-02 & Domain & Involution of Reciprocal & Proved / Admitted & $\forall x, /(/x) = x$ \\
+AXM-03 & Domain & Regularized Distributivity & Proved & $(x+y)z + 0z = xz + yz$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{definition}[Core Structure]
+\label{def:structure}
+Let $(W, +, \cdot, /, 0, 1)$ be a structure equipped with binary operations addition $(+)$ and multiplication $(\cdot)$, a unary reciprocal $(/)$, and distinguished constants $0$ and $1$.
+\end{definition}
+
+% ==============================================================================
+% 3. CONDITIONAL THEOREMS
+% ==============================================================================
+\section{Conditional Theorems}
+\label{sec:conditional-theorems}
+
+A theorem is strictly defined as \textit{conditional} when its conclusion holds only in the presence of specified hypotheses. Each theorem statement in this section explicitly names its required subset of the Axiom Ledger.
+
+\begin{claimbox}{Conditional Theorem \ref{thm:sample-conditional}: Title of Theorem}
+\begin{conditionaltheorem}[Dependent on Axioms AXM-01, AXM-02]
+\label{thm:sample-conditional}
+Let $W$ satisfy Axioms AXM-01 and AXM-02. Then for all non-singular elements $x, y \in W$, property $\mathcal{P}(x, y)$ holds.
+\end{conditionaltheorem}
+\end{claimbox}
+
+\begin{proof}
+Proof steps referencing declarations in the formal library. Each deduction step is verified by the proof assistant kernel.
+\end{proof}
+
+\begin{proposition}[Invariant Regularization]
+\label{prop:regularization}
+If hypothesis $\mathcal{H}_1$ is satisfied, then operator $\mathcal{T}$ regularizes singularities without collapsing the non-trivial equivalence classes.
+\end{proposition}
+
+% ==============================================================================
+% 4. COUNTERMODELS & BOUNDARY FALSIFICATION
+% ==============================================================================
+\section{Countermodels and Boundary Falsification}
+\label{sec:countermodels}
+
+To prevent false claims of generality, this section catalogues explicit boundary witnesses where classical laws fail. Discovering and recording countermodels is a primary scientific contribution.
+
+\begin{counterbox}{Countermodel \ref{cm:sample-counter}: Refutation of Classical Property}
+\begin{countermodel}[Falsification of Unrestricted Property $\mathcal{Q}$]
+\label{cm:sample-counter}
+The property $\forall x \in W, x - x = 0$ is \textbf{false} in the general structure.
+\begin{itemize}
+    \item \textbf{Witness:} Let $x = \infty$ (where $\infty = /0$).
+    \item \textbf{Evaluation:} $\infty - \infty = \infty + (-\infty) = \bot \neq 0$.
+    \item \textbf{Conclusion:} Classical additive annihilation fails at singularities.
+\end{itemize}
+\end{countermodel}
+\end{counterbox}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Countermodel Falsification Ledger}
+\label{tab:countermodels}
+\begin{tabularx}{\textwidth}{llXX}
+\toprule
+\textbf{Countermodel ID} & \textbf{Target Classical Law} & \textbf{Status} & \textbf{Explicit Witness \& Refutation} \\
+\midrule
+CM-01 & Additive Inverse ($x-x=0$) & FALSIFIED & $x=\infty \implies \infty-\infty = \bot \neq 0$ \\
+CM-02 & Zero Annihilation ($0 \cdot x = 0$) & FALSIFIED & $x=\infty \implies 0 \cdot \infty = \bot \neq 0$ \\
+CM-03 & Classical Distributivity & FALSIFIED & $x=1, y=1, z=\infty \implies (1+1)\infty \neq 1\infty + 1\infty$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ==============================================================================
+% 5. VERIFICATION ARTIFACT TRACEABILITY MATRIX
+% ==============================================================================
+\section{Verification Artifact Traceability Matrix}
+\label{sec:traceability}
+
+In adherence to the Mindrock Handoff Gate Protocol (MIN-236 / AGENTS.md), every claim asserted in this text must be mechanically traceable to an immutable code artifact.
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\caption{Claims Traceability Matrix}
+\label{tab:traceability}
+\begin{tabularx}{\textwidth}{llllX}
+\toprule
+\textbf{Claim / Theorem} & \textbf{Artifact Path} & \textbf{Declaration / Symbol} & \textbf{Audit Status} & \textbf{Verification Command} \\
+\midrule
+\cref{thm:sample-conditional} & \artifact{src/Core/Wheel.lean} & \lean{Wheel.conditional\_thm} & Kernel Checked & \cmd{lake build && lean --run audit.lean} \\
+\cref{prop:regularization} & \artifact{src/Algebra/Reg.lean} & \lean{Wheel.regularize\_invol} & Zero-Sorry Gate & \cmd{python3 -m unittest tests/test\_reg.py} \\
+\cref{cm:sample-counter} & \artifact{tests/Countermodels.rs} & \cmd{test\_countermodel\_01} & Replay Passed & \cmd{cargo test --test countermodels} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ==============================================================================
+% 6. COMPUTATIONAL VERIFICATION & KERNEL AUDIT
+% ==============================================================================
+\section{Computational Verification and Kernel Audit}
+\label{sec:verification}
+
+Describe the formal proof engine environment:
+\begin{itemize}
+    \item \textbf{Proof Engine:} Lean 4 pinned toolchain (e.g. \texttt{leanprover/lean4:v4.14.0}) or Rust formal check suite.
+    \item \textbf{Axiom Audit:} Execution of \texttt{\#print axioms} confirming zero unreviewed axioms (\texttt{sorry}, \texttt{admit}, or unsafe primitives).
+    \item \textbf{Deterministic Build:} Pinned lockfile ensuring bitwise identical execution across independent runs.
+\end{itemize}
+
+% ==============================================================================
+% 7. LIMITATIONS AND OPEN QUESTIONS
+% ==============================================================================
+\section{Limitations and Open Questions}
+\label{sec:limitations}
+
+State with transparency what has \textbf{not} been established:
+\begin{enumerate}
+    \item Boundary limitations of the algebraic model.
+    \item Unsettled conjectures not covered by the current kernel checks.
+    \item Computational complexity bounds of arbitrary equality checks.
+\end{enumerate}
+
+% ==============================================================================
+% 8. REPRODUCIBILITY & INDEPENDENT REPLAY
+% ==============================================================================
+\section{Reproducibility and Independent Replay}
+\label{sec:reproducibility}
+
+An independent verifier can replicate all proofs, tests, and countermodels with the following zero-trust checkout command:
+
+\begin{lstlisting}[language=bash,basicstyle=\ttfamily\small,breaklines=true,frame=single]
+# Clone from canonical remote repository
+git clone --branch <branch-name> <canonical-repo-url> verify-box
+cd verify-box
+git checkout <commit-sha>
+
+# Verify integrity and replay verification suite
+python3 tools/verify-vhp-paper verify
+\end{lstlisting}
+
+\bibliographystyle{plain}
+\begin{thebibliography}{99}
+\bibitem{carlstrom2004}
+J.~Carlstr{\"o}m.
+\newblock Wheels -- on division by zero.
+\newblock {\em Mathematical Structures in Computer Science}, 14(3):403--436, 2004.
+
+\bibitem{demoura2021}
+L.~de~Moura and S.~Ullrich.
+\newblock The {L}ean 4 theorem prover and programming language.
+\newblock In {\em Automated Deduction -- CADE 28}, pages 625--635. Springer, 2021.
+\end{thebibliography}
+
+\end{document}
