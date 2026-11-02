@@ -1,0 +1,15 @@
+{
+  "schema": "vhp-manifest/v1",
+  "manifest_id": "vhp-min66-sync-bridge",
+  "revision": 1,
+  "state": "awaiting_approval",
+  "source": {
+    "linear": {"issue_id": "MIN-66", "issue_url": "https://linear.app/mindrock/issue/MIN-66"},
+    "drive": {"file_id": "drive-file-id-redacted", "mime_type": "application/json", "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+    "github": {"repo": "pashamango/minutta-rp-pr-cycle-lab", "ref": "minutta/min-66-vhp-08-gemini-drive-linear-github-sync-bridge", "commit_sha": "0000000000000000000000000000000000000000", "tree_sha": "0000000000000000000000000000000000000000"}
+  },
+  "artifacts": [{"path": "docs/VHP_08_SYNC_BRIDGE_SPEC.md", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "kind": "documentation"}],
+  "verification": {"command": "python3 -m unittest discover -s tests -p 'test_vhp_manifest.py'", "clean_checkout": true},
+  "approval": {"required": true, "merge_allowed": false, "approved_by": null},
+  "submission": {"idempotency_key": "min66-v1-example-20261102", "target": "github_pull_request", "mode": "create_or_update", "pull_request_number": null}
+}
