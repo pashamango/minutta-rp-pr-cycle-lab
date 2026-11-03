@@ -14,7 +14,7 @@ Demo-ready WheelCore presentation package delivered: a self-contained proof-cons
 
 - repo: `https://github.com/pashamango/minutta-rp-pr-cycle-lab.git`
 - branch: `minutta/min-63-vhp-05-mockups-proof-cards-deck`
-- commit: `PENDING_PUSH`
+- commit: `0277cfb93684c0793fcecf92365c4dfd3a24b358` (superseded by the final receipt commit below)
 - paths:
   - `docs/VHP_05_MOCKUPS_PROOF_CARDS_DECK.md`
   - `mockups/vhp-05-proof-console.html`
