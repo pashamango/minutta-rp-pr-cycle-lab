@@ -1,7 +1,7 @@
 # MIN-24 — Next Epoch conjecture and counterexample agenda
 
 Status: `CANDIDATE / NOT EXECUTION-AUTHORIZED`  
-Run: `run-f0f1bf881619`
+Run: `run-95e199047000`
 Scope: hypothesis generation from the emergent-attractor core; no claim about the Riemann Hypothesis.
 
 ## Outcome

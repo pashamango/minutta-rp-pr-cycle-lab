@@ -1,6 +1,6 @@
 {
   "ticket": "MIN-24",
-  "run_id": "run-f0f1bf881619",
+  "run_id": "run-95e199047000",
   "status": "CANDIDATE / NOT EXECUTION-AUTHORIZED",
   "proposals": [
     {"id":"P1","rank":1,"title":"Positive-kernel attractor contraction","badge":"CONJECTURE","theorem_badges":["THEOREM-CONDITIONAL: cone preservation","THEOREM-CONDITIONAL: Dobrushin contraction"],"cheap_test":"Enumerate 3x3 rational row-stochastic matrices, denominator <= 8; compare 30-step simplex trajectories with certified delta.","negative_examples":["identity","permutation matrix","reducible block diagonal"],"dependencies":["finite operator","positive cone lemma","certified unweighted l1 norm (or explicit weighted variant)","support/primitivity certificate"]},
