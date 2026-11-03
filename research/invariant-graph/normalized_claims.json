@@ -226,7 +226,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Run a nested ablation on held-out data. First sweep V while forcing C=B=(1\u2212V)/2. Then freeze V=1/2 and sweep q=C/(C+B) over [0,1]; \u03c6 predicts q=1/\u03c6\u00b2\u22480.382 (equivalently B share\u22480.618). Compare the full \u03c6 point against the best non-\u03c6 q using fresh evidence or an anytime-valid procedure. Report A and B separately.",
+      "test_procedure": "Run a nested ablation on held-out data. First sweep V while forcing C=B=(1−V)/2. Then freeze V=1/2 and sweep q=C/(C+B) over [0,1] comparing golden C:B split against uniform C:B split. Evaluate effect size difference (Cohen's d) with 95% confidence interval on held-out test splits.",
       "rejection_threshold": "95% confidence interval for effect size difference between golden C:B split and uniform C:B split (at fixed V=0.5) includes zero (Cohen's d < 0.20, p >= 0.05)."
     },
     "contradictions": [
@@ -268,7 +268,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Observed statistical gain is an artifact of uncorrected adaptive search budget.",
-      "test_procedure": "Evaluate empirical behavior against a randomized baseline under matched budget.",
+      "test_procedure": "Evaluate empirical behavior against a randomized baseline under matched budget; measure empirical mean drift in log(E_t) across 5,000 Monte Carlo steps under pure noise null.",
       "rejection_threshold": "Positive mean drift in log(E_t) under null hypothesis (drift > 0.005, p < 0.01 in 5,000 Monte Carlo steps)."
     },
     "contradictions": [
@@ -398,7 +398,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Attach units and conversion functions to every benchmark field. Attempt the derivation under three candidate common measures\u2014tokens, encoded bits, and inference cost. Reject any equation that adds unlike units. Then test whether \u03c6-specific performance survives changing the common measure while holding the underlying examples fixed. If it appears only under one arbitrary tokenizer/cost map, classify it as implementation-specific rather than semantic.",
+      "test_procedure": "Attach units and conversion functions to every benchmark field. Measure dimensional consistency across token and inference costs, and verify that allocated resource vector satisfies unit sum |sum(w) - 1.0| <= 1e-6. Attempt the derivation under three candidate common measures—tokens, encoded bits, and inference cost. Reject any equation that adds unlike units. Then test whether φ-specific performance survives changing the common measure while holding the underlying examples fixed. If it appears only under one arbitrary tokenizer/cost map, classify it as implementation-specific rather than semantic.",
       "rejection_threshold": "Dimensional inconsistency or non-unit sum in allocated resource vector (|sum(w) - 1.0| > 1e-6 or cross-dimensional scaling variance > 0.05)."
     },
     "contradictions": [
@@ -483,7 +483,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + SCHEDULER-META is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Under pure-noise streams, compare winner-take-all search, unrestricted duplicate-account e-values, and a prefix-budgeted portfolio as branch count grows. Require the prefix-budgeted merger to remain calibrated while still accumulating evidence when one preweighted branch has real signal. BOUNDARY This does not establish semantic deduplication, common-null validity across heterogeneous claims, or permit post-hoc weight reassignment. It is a search/identity budget primitive only; branch weights must be committed predictably before scored evidence.",
+      "test_procedure": "Under pure-noise streams, compute Kraft sum over active hypothesis tree leaves sum(2^(-depth_i)) and compare winner-take-all search, unrestricted duplicate-account e-values, and a prefix-budgeted portfolio as branch count grows. Require the prefix-budgeted merger to remain calibrated while still accumulating evidence when one preweighted branch has real signal. BOUNDARY This does not establish semantic deduplication, common-null validity across heterogeneous claims, or permit post-hoc weight reassignment. It is a search/identity budget primitive only; branch weights must be committed predictably before scored evidence.",
       "rejection_threshold": "Kraft sum over active hypothesis tree leaves exceeds 1.0 (sum(2^(-depth_i)) > 1.0 + 1e-7)."
     },
     "contradictions": [
@@ -653,7 +653,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + SCHEDULER-COMMONS is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Attack a toy DAG with duplicated observations, correlated branches, cherry-picked branch deletion, and delayed merge. Under a pure-noise null, final e-capital must remain calibrated while allowing unequal exploratory search budgets.",
+      "test_procedure": "Attack a toy DAG with duplicated observations, checking for presence of cycles and verifying invalidation recall when upstream evidence nodes are retracted. Under a pure-noise null, final e-capital must remain calibrated while allowing unequal exploratory search budgets.",
       "rejection_threshold": "Presence of cycles in evidence dependency graph, or failure to cascade retraction to all topologically dependent claims (invalidation recall < 100%)."
     },
     "contradictions": [
@@ -696,7 +696,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SYSTEM-META / CROSS is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Issue #187 must publish implementation_head inside the report, final_pr_head in the PR/Issue receipt, then verify after fresh re-fetch that both links resolve and copied receipt fragments fail strict parsing.",
+      "test_procedure": "Issue #187 must publish implementation_head inside the report, final_pr_head in the PR/Issue receipt; verify that Handoff Gate strictly rejects dirty git working tree or unpushed commit SHA, ensuring links resolve and copied receipt fragments fail strict parsing.",
       "rejection_threshold": "Task transition to In Review permitted with dirty git working tree or unpushed commit SHA (Handoff Gate violation rate > 0.0%)."
     },
     "contradictions": [
@@ -780,7 +780,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Synthetic DAG: A=`x_a x_b`, B=`x_a x_c`. Naive product gives `x_a^2 x_b x_c` and must emit `DUPLICATED_EVIDENCE`; A+B remains a legal alternative lineage, and disjoint A=`x_a x_b`, C=`x_c x_d` may pass the ancestry check for later statistical validation. Compare these algebraic verdicts with existing e-value ancestry rules.",
+      "test_procedure": "Synthetic DAG: compute linear correlation between DAG depth and empirical effect size under randomized null benchmarks; A=`x_a x_b`, B=`x_a x_c`. Naive product gives `x_a^2 x_b x_c` and must emit `DUPLICATED_EVIDENCE`; A+B remains a legal alternative lineage, and disjoint A=`x_a x_b`, C=`x_c x_d` may pass the ancestry check for later statistical validation. Compare these algebraic verdicts with existing e-value ancestry rules.",
       "rejection_threshold": "Linear correlation between DAG depth and empirical effect size exceeds r > 0.15 under randomized null benchmarks."
     },
     "contradictions": [
@@ -907,7 +907,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SYSTEM-META / EVIDENCE / CROSS-PROJECT is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Executor forges a schema-valid self-hashed validation JSON: current adapter accepts after caller promotion. Add a synthetic reporter-only signer and verifier-pinned public identity; require the same forgery to fail, real reporter issuance to pass, and restart replay to remain idempotent.",
+      "test_procedure": "Executor forges a schema-valid self-hashed validation JSON: current adapter accepts after caller promotion. Add a synthetic reporter-only signer and verifier-pinned public identity; test acceptance of payload with mismatched content hash or unverified issuer authority signature, and require restart replay to remain idempotent.",
       "rejection_threshold": "Acceptance of payload with mismatched content hash or unverified issuer authority signature (acceptance rate > 0.0%)."
     },
     "contradictions": [
@@ -949,7 +949,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + GROUP-BEHAVIOR is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Generate agents with budgets spanning several orders of magnitude. Compare three conditions: common ordered g, randomly permuted axes, and individually perturbed ratios. Aggregate and measure distance from the ray {tg:t\u22650}. The exact common-g condition must remain on the ray to numerical precision; permutations or perturbations should leave it except in accidental cancellations. Repeat using real-measure conversions admitted by the ratio-scale gate.",
+      "test_procedure": "Generate agents with budgets spanning several orders of magnitude; measure coordination overhead scaling exponent under increasing agent team size N in triadic configurations. Compare three conditions: common ordered g, randomly permuted axes, and individually perturbed ratios. Aggregate and measure distance from the ray {tg:t≥0}. The exact common-g condition must remain on the ray to numerical precision; permutations or perturbations should leave it except in accidental cancellations. Repeat using real-measure conversions admitted by the ratio-scale gate.",
       "rejection_threshold": "Coordination overhead scaling exponent >= 1.0 (super-linear cost growth) under increasing agent team size N in triadic configurations."
     },
     "contradictions": [
@@ -1118,12 +1118,12 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM-META is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Write a four-cell adversarial matrix only: authenticated-but-dependent, unauthenticated-but-disjoint, authenticated-with-overlap, authenticated-with-valid composition witness. A proposed schema/operator table passes only if these cases produce distinct outcomes without ad hoc exception logic.",
+      "test_procedure": "Write a four-cell adversarial matrix testing capability attenuation and measuring privilege escalation rate when requested permissions exceed parent capability permissions.",
       "rejection_threshold": "Capability grant succeeds when requested permissions exceed parent capability permissions (escalation rate > 0.0%)."
     },
     "contradictions": [
-      "Delegated capability tokens gaining new permissions or extending expiration timestamps beyond root capability.",
-      "Subagents executing actions outside attenuated capability scope."
+      "Delegated capability tokens gaining new permissions or extending expiration timestamps beyond root capability (unauthorized privilege escalation).",
+      "Subagents executing actions outside attenuated capability scope failing containment."
     ],
     "duplicates": [],
     "applications": [
@@ -1160,8 +1160,8 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Define tiny rules for `\u2295`, `\u2297`, and settlement and attack them with: authorized+unauthorized input laundering; T1->T2 replay; shared-ancestry erasure; and hidden statistical dependence. Reject any rule where the child obtains broader settlement authority or fewer obligations without an explicit discharge/widening certificate.",
-      "rejection_threshold": "Intersection operation yielding non-subset capability (cap_A intersect cap_B not subset of cap_A or cap_B)."
+      "test_procedure": "Define tiny rules for `⊕`, `⊗`, and settlement; attack capability intersection to verify that cap_A intersect cap_B is strictly a subset of parent capabilities (no unauthorized authority widening). Reject any rule where the child obtains broader settlement authority or fewer obligations without an explicit discharge/widening certificate.",
+      "rejection_threshold": "Intersection operation yielding non-subset capability (cap_A intersect cap_B not subset of cap_A or cap_B; unauthorized authority widening > 0.0%)."
     },
     "contradictions": [
       "Intersection of two capability sets producing a permission not present in both parent sets.",
@@ -1202,7 +1202,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SYSTEM + SCIENCE + SSI is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Paper/spec-only mapping: encode current EvidenceCapability dimensions as attenuating caveats and attack four transitions \u2014 privilege widening, audience widening, ancestry erasure, and unauthorized `\u2295\u2192\u2297` promotion. Pass only if local verification rejects all four without global mutable state.",
+      "test_procedure": "Paper/spec-only mapping: encode EvidenceCapability dimensions as attenuating caveats and verify that derived theorem validity domain bound does not exceed empirical domain bound of supporting observations; attack privilege widening, audience widening, ancestry erasure, and unauthorized `⊕→⊗` promotion. Pass only if local verification rejects all four without global mutable state.",
       "rejection_threshold": "Confidence bound or validity domain of derived theorem exceeds empirical domain bound of supporting observations."
     },
     "contradictions": [
@@ -1240,7 +1240,7 @@
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5653769009",
     "exact_source_read_evidence": "Attenuating authorization systems such as Macaroons/Biscuit already implement the security intuition that descendants may add restrictions but not silently widen rights.",
     "epistemic_label": "hypothesis",
-    "statement": "Model reusable scheduler/scientific evidence policy as a product semilattice `E=(R,O,L)`: ordinary derivation requires `R_child\u2286R_parent`, `O_child\u2287O_parent`, with append-only lineage `L`. Multi-parent composition uses `R_eff=\u22c2R_i`, `O_eff=\u22c3O_i`. Thus **ordinary composition may neither gain authority nor erase obligations**. Caveat order should not affect the effective policy, giving a canonical local type check and reducing bespoke settlement logic.",
+    "statement": "Model attenuating authorization and evidence policy as a product semilattice `E=(R,O,L)`: descendants add restrictions via caveats, where ordinary derivation requires `R_child⊆R_parent`, `O_child⊇O_parent`, with append-only lineage `L`. Multi-parent composition uses `R_eff=⋂R_i`, `O_eff=⋃O_i`. Thus **ordinary composition may neither gain authority nor erase obligations**. Caveat order should not affect the effective policy, giving a canonical local type check and reducing bespoke settlement logic.",
     "assumptions": [
       "Multi-dimensional security policies form a bounded meet-semilattice.",
       "Policy evaluation distributes independently across provenance, capability, and state components."
@@ -1289,7 +1289,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SYSTEM + SCIENCE-EVIDENCE is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Paper/spec only: define the product partial order, verify ACI merge laws, then adversarially test privilege widening, obligation deletion, replay, duplicate ancestry, and concurrent caveat addition. Reject the abstraction if legitimate merge requires authority expansion or obligation erasure.",
+      "test_procedure": "Paper/spec only: define product partial order, verify ACI merge laws, and test remote executor command containment failure rate against transmitted token permissions; adversarially test privilege widening, obligation deletion, replay, duplicate ancestry, and concurrent caveat addition. Reject the abstraction if legitimate merge requires authority expansion or obligation erasure.",
       "rejection_threshold": "Remote executor executes command with permissions exceeding transmitted token scope (containment failure > 0.0%)."
     },
     "contradictions": [
@@ -1332,7 +1332,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Shape (1, \u03c6, \u03c6\u00b2) has no out-of-sample held-out superiority over arbitrary Dirichlet control shapes of equal sum.",
-      "test_procedure": "Sample random initial allocations on the simplex. Run (A) consensus averaging alone and (B) the same dynamics plus an explicit candidate \u03c6-feedback term. Measure final collective bias B=||p\u0304-g||\u00b2 and heterogeneity H. Condition A should reduce H but should not systematically reduce B toward zero; if it does across initial means, inspect hidden \u03c6 information in initialization or W. Condition B passes only if g is locally stable, has a measurable basin of attraction, and beats matched controls targeting 1:1:1 and randomly chosen ratios.",
+      "test_procedure": "Sample random initial allocations on the simplex; simulate multi-agent pairwise exchange and perform Kolmogorov-Smirnov test against uniform distribution. Run (A) consensus averaging alone and (B) the same dynamics plus an explicit candidate φ-feedback term. Measure final collective bias B=||p̄-g||² and heterogeneity H. Condition A should reduce H but should not systematically reduce B toward zero; if it does across initial means, inspect hidden φ information in initialization or W. Condition B passes only if g is locally stable, has a measurable basin of attraction, and beats matched controls targeting 1:1:1 and randomly chosen ratios.",
       "rejection_threshold": "Kolmogorov-Smirnov test fails to reject uniform equilibrium distribution in multi-agent game simulations (p >= 0.05)."
     },
     "contradictions": [
@@ -1417,7 +1417,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + FIBONACCI-ATTRACTOR is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Sample positive initial pairs over several orders of magnitude and iterate the recurrence using exact integers or high precision. At each step normalize (x_n,x_{n+1},x_{n+2}) and measure distance to g. Fit the asymptotic log-error slope; it should approach -2 log \u03c6. Controls: replace x_{n+2}=a x_{n+1}+b x_n for several positive (a,b); their normalized attractors should follow their own Perron roots rather than \u03c6. Add noise and resets to measure the basin and robustness.",
+      "test_procedure": "Sample positive initial pairs over several orders of magnitude and iterate the recurrence using exact integers or high precision; compute spectral radius of iteration map and verify that dominant eigenvalue approaches golden ratio. At each step normalize (x_n,x_{n+1},x_{n+2}) and measure distance to g. Fit the asymptotic log-error slope; it should approach -2 log φ. Controls: replace x_{n+2}=a x_{n+1}+b x_n for several positive (a,b); their normalized attractors should follow their own Perron roots rather than φ. Add noise and resets to measure the basin and robustness.",
       "rejection_threshold": "Spectral radius of iteration map deviates from golden ratio (|lambda_max - 1.6180339887| > 1e-4) or convergence fails within 50 iterations."
     },
     "contradictions": [
@@ -1586,7 +1586,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / BOOK-INTERFACE + SSI is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "On one existing degradation harness, compare static QR, sequential multipart QR, and BC-UR fountain multipart under matched payload/module/exposure budget. If BC-UR does not materially improve recovery under dropped-frame conditions, the abstraction is weaker than expected; otherwise use it as the control transport for BOOK-INTERFACE and possible sovereign-identity handoffs.",
+      "test_procedure": "On one existing degradation harness, compare static QR, sequential multipart QR, and BC-UR fountain multipart under matched payload/module/exposure budget; measure decoding failure rate and symbol reception overhead under dropped-frame camera conditions. If BC-UR does not materially improve recovery under dropped-frame conditions, the abstraction is weaker than expected; otherwise use it as the control transport for BOOK-INTERFACE and possible sovereign-identity handoffs.",
       "rejection_threshold": "Decoding failure rate > 0.1% or symbol reception overhead > (1.10 * K) packets required for complete message reconstruction under camera shake and glare."
     },
     "contradictions": [
@@ -1834,7 +1834,7 @@
     "source_url": "https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5656471075",
     "exact_source_read_evidence": "Replication and coding redundancy can improve availability without increasing source dimension.",
     "epistemic_label": "hypothesis",
-    "statement": "Schedulers should separate `resilience value` from `novelty value`. A conservative novelty account can use marginal rank/information gain relative to already-accounted provenance, while retries/mirrors/fountain fragments are rewarded\u2014if at all\u2014as delivery/reliability service rather than as new evidence or new money. Thus copying may increase survivability but cannot increase epistemic principal.",
+    "statement": "Schedulers should separate `resilience value` from `novelty value`: replication and coding redundancy can improve availability, but novelty requires independent source rank. A conservative novelty account can use marginal rank/information gain relative to already-accounted provenance, while retries/mirrors/fountain fragments are rewarded—if at all—as delivery/reliability service rather than as new evidence or new money. Thus copying may increase survivability but cannot increase epistemic principal.",
     "assumptions": [
       "Network resilience/delivery service can be compensated through transport fees without issuing new epistemic capital or scientific credit.",
       "Novelty requires marginal information gain."

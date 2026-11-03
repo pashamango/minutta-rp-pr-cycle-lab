@@ -3,6 +3,7 @@ import unittest
 import json
 import os
 import hashlib
+import re
 from collections import Counter, defaultdict, deque
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -74,67 +75,128 @@ class TestInvariantGraph(unittest.TestCase):
             self.assertNotEqual(rej, "Empirical rejection at p < 0.01 / Bayes Factor > 20 / e-wealth > 100 without post-hoc selection.",
                                 f"Generic uniform rejection threshold in {cid}")
 
-        # 4. Semantic Fixture Concordance: programmatic verification of claim-specific relevance
-        SEMANTIC_FIXTURES = {
-            'CLAIM-001': ['simplex', 'dirichlet', 'permutation'],
-            'CLAIM-002': ['search budget', 'selection'],
-            'CLAIM-003': ['process', 'exit', 'wrapper', 'kernel'],
-            'CLAIM-004': ['e-process', 'capital', 'conserved'],
-            'CLAIM-005': ['context', 'behavior', 'value'],
-            'CLAIM-006': ['future', '50%'],
-            'CLAIM-007': ['log', 'wealth'],
-            'CLAIM-008': ['evidence bits', 'accounting'],
-            'CLAIM-009': ['credential', 'principal', 'runtime'],
-            'CLAIM-010': ['resource', 'allocation', 'measure'],
-            'CLAIM-011': ['portfolio', 'simplex'],
-            'CLAIM-012': ['kraft', 'prefix', 'tree'],
-            'CLAIM-013': ['ratio', 'scale', 'measurement'],
-            'CLAIM-014': ['branch', 'split', 'capital'],
-            'CLAIM-015': ['shared memory', 'cryptographic'],
-            'CLAIM-016': ['dag', 'merge'],
-            'CLAIM-017': ['git', 'commit'],
-            'CLAIM-018': ['linear', 'resource'],
-            'CLAIM-019': ['ancestry', 'algebra', 'strength'],
-            'CLAIM-020': ['shadow', 'provenance'],
-            'CLAIM-021': ['consumable', 'reusable'],
-            'CLAIM-022': ['digest', 'issuer'],
-            'CLAIM-023': ['composition', 'group'],
-            'CLAIM-024': ['convex', 'linear', 'stability'],
-            'CLAIM-025': ['bias', 'group'],
-            'CLAIM-026': ['mixture', 'disjoint'],
-            'CLAIM-027': ['capability', 'delegation', 'scope'],
-            'CLAIM-028': ['attenuation', 'lattice'],
-            'CLAIM-029': ['scope', 'derivation'],
-            'CLAIM-030': ['semilattice', 'policy'],
-            'CLAIM-031': ['token', 'permission'],
-            'CLAIM-032': ['equilibrium', 'interaction'],
-            'CLAIM-033': ['monotonic', 'mailbox'],
-            'CLAIM-034': ['attractor', 'rebalancing'],
-            'CLAIM-035': ['supersession', 'revocation'],
-            'CLAIM-036': ['cause', 'purpose'],
-            'CLAIM-037': ['utility', 'difficulty'],
-            'CLAIM-038': ['fountain', 'qr'],
-            'CLAIM-039': ['absurd', 'hypothesis'],
-            'CLAIM-040': ['redundancy', 'availability'],
-            'CLAIM-041': ['brier', 'forecast'],
-            'CLAIM-042': ['rank', 'matrix'],
-            'CLAIM-043': ['complexity', 'decomposition'],
-            'CLAIM-044': ['resilience', 'novelty'],
-            'CLAIM-045': ['orthogonal', 'target']
+        # 4. Field-Specific Fixture Concordance: rigorous verification of domain relevance,
+        # verbatim evidence grounding, counter-mechanisms, measurable procedure variables, and threshold concordance.
+        FIELD_SPECIFIC_FIXTURES = {
+            'CLAIM-001': {'ev_st': 'φ', 'ass': 'simplex', 'cont': 'in-sample', 'tp': 'normalize', 'rt': 'held-out', 'app': 'triadic'},
+            'CLAIM-002': {'ev_st': 'adaptive', 'ass': 'variants', 'cont': 'architectures', 'tp': 'selection', 'rt': 'statistically', 'app': 'evidence-contract'},
+            'CLAIM-003': {'ev_st': 'status', 'ass': 'exposes', 'cont': 'transport', 'tp': 'synthetic', 'rt': 'discordance', 'app': 'cross-host'},
+            'CLAIM-004': {'ev_st': 'search', 'ass': 'evidence', 'cont': 'parallel', 'tp': 'scheduler', 'rt': 'expected', 'app': 'conserved'},
+            'CLAIM-005': {'ev_st': 'ordered', 'ass': 'cognitive', 'cont': 'reversed', 'tp': 'pre-register', 'rt': 'forward', 'app': 'phase-ordered'},
+            'CLAIM-006': {'ev_st': '1:φ:φ²', 'ass': 'capacity', 'cont': 'measured', 'tp': 'ablation', 'rt': 'confidence', 'app': 'ablation'},
+            'CLAIM-007': {'ev_st': 'valid', 'ass': 'log-transformed', 'cont': 'selective', 'tp': 'evaluate', 'rt': 'positive', 'app': 'additive'},
+            'CLAIM-008': {'ev_st': 'evidence', 'ass': 'evidence', 'cont': 'conflating', 'tp': 'simulate', 'rt': 'growth', 'app': 'information-theoretic'},
+            'CLAIM-009': {'ev_st': 'organizational', 'ass': 'identity', 'cont': 'exchanging', 'tp': 'validate', 'rt': 'privilege', 'app': 'three-identity'},
+            'CLAIM-010': {'ev_st': 'weights', 'ass': 'resource', 'cont': 'applying', 'tp': 'conversion', 'rt': 'dimensional', 'app': 'distribution'},
+            'CLAIM-011': {'ev_st': 'richest', 'ass': 'ensemble', 'cont': 'dynamically', 'tp': 'evidence', 'rt': 'portfolio', 'app': 'admissible'},
+            'CLAIM-012': {'ev_st': 'weight', 'ass': 'hypothesis', 'cont': 'hypothesis', 'tp': 'pure-noise', 'rt': 'active', 'app': 'tree-structured'},
+            'CLAIM-013': {'ev_st': 'ratio', 'ass': 'evaluation', 'cont': 'attempting', 'tp': 'proposed', 'rt': 'non-invariance', 'app': 'measurement'},
+            'CLAIM-014': {'ev_st': 'mixture', 'ass': 'evidence', 'cont': 'spawning', 'tp': 'simulate', 'rt': 'branch', 'app': 'subagent'},
+            'CLAIM-015': {'ev_st': 'report', 'ass': 'subject', 'cont': 'consuming', 'tp': 'existing', 'rt': 'unsigned', 'app': 'zero-trust'},
+            'CLAIM-016': {'ev_st': 'valid', 'ass': 'evidence', 'cont': 'evidence', 'tp': 'duplicated', 'rt': 'presence', 'app': 'git-like'},
+            'CLAIM-017': {'ev_st': 'report', 'ass': 'content-addressable', 'cont': 'claiming', 'tp': 'publish', 'rt': 'transition', 'app': 'handoff'},
+            'CLAIM-018': {'ev_st': 'conserved', 'ass': 'empirical', 'cont': 're-submitting', 'tp': 'synthetic', 'rt': 're-use', 'app': 'systems'},
+            'CLAIM-019': {'ev_st': 'provenance', 'ass': 'lineage', 'cont': 'assigning', 'tp': 'synthetic', 'rt': 'linear', 'app': 'provenance-strength'},
+            'CLAIM-020': {'ev_st': 'provenance', 'ass': 'auditing', 'cont': 'operations', 'tp': 'synthetic', 'rt': 'non-zero', 'app': 'zero-side-effect'},
+            'CLAIM-021': {'ev_st': 'evidence', 'ass': 'empirical', 'cont': 'treating', 'tp': 'evidence', 'rt': 'multi-use', 'app': 'resource'},
+            'CLAIM-022': {'ev_st': 'consumer', 'ass': 'cryptographic', 'cont': 'verifying', 'tp': 'executor', 'rt': 'acceptance', 'app': 'two-coordinate'},
+            'CLAIM-023': {'ev_st': 'golden', 'ass': 'multi-agent', 'cont': 'ensembles', 'tp': 'generate', 'rt': 'coordination', 'app': 'multi-agent'},
+            'CLAIM-024': {'ev_st': 'golden', 'ass': 'combinations', 'cont': 'aggregated', 'tp': 'construct', 'rt': 'variation', 'app': 'decentralized'},
+            'CLAIM-025': {'ev_st': 'golden', 'ass': 'characterizing', 'cont': 'claiming', 'tp': 'synthetic', 'rt': 'misclassification', 'app': 'two-parameter'},
+            'CLAIM-026': {'ev_st': 'provenance', 'ass': 'combining', 'cont': 'multiplying', 'tp': 'synthetic', 'rt': 'empirical', 'app': 'dependence-aware'},
+            'CLAIM-027': {'ev_st': 'evidence', 'ass': 'security', 'cont': 'delegated', 'tp': 'four-cell', 'rt': 'capability', 'app': 'object-capability'},
+            'CLAIM-028': {'ev_st': 'evidence', 'ass': 'capability', 'cont': 'intersection', 'tp': 'settlement', 'rt': 'intersection', 'app': 'capability'},
+            'CLAIM-029': {'ev_st': 'authority', 'ass': 'downstream', 'cont': 'derived', 'tp': 'paper/spec-only', 'rt': 'confidence', 'app': 'epistemic'},
+            'CLAIM-030': {'ev_st': 'authorization', 'ass': 'multi-dimensional', 'cont': 'mutation', 'tp': 'caveats', 'rt': 'join/meet', 'app': 'algebraic'},
+            'CLAIM-031': {'ev_st': 'crdt', 'ass': 'cross-host', 'cont': 'discarding', 'tp': 'paper/spec', 'rt': 'remote', 'app': 'cross-host'},
+            'CLAIM-032': {'ev_st': 'averaging', 'ass': 'emergence', 'cont': 'simulated', 'tp': 'initial', 'rt': 'kolmogorov-smirnov', 'app': 'dynamical'},
+            'CLAIM-033': {'ev_st': 'monotone', 'ass': 'mailbox', 'cont': 'out-of-order', 'tp': 'paper/spec-only', 'rt': 'rollback', 'app': 'decentralized'},
+            'CLAIM-034': {'ev_st': 'recurrence', 'ass': 'iterative', 'cont': 'resource', 'tp': 'positive', 'rt': 'spectral', 'app': 'dynamical'},
+            'CLAIM-035': {'ev_st': 'monotone', 'ass': 'distributed', 'cont': 'superseded', 'tp': 'spec-only', 'rt': 'superseded', 'app': 'decentralized'},
+            'CLAIM-036': {'ev_st': 'causal', 'ass': 'mechanism', 'cont': 'substituting', 'tp': 'claim-units', 'rt': 'mutual', 'app': 'goal-directed'},
+            'CLAIM-037': {'ev_st': 'task', 'ass': 'complexity', 'cont': 'difficulty', 'tp': 'matched', 'rt': 'ranking', 'app': 'prioritization'},
+            'CLAIM-038': {'ev_st': 'bc-ur', 'ass': 'air-gapped', 'cont': 'sequential', 'tp': 'existing', 'rt': 'decoding', 'app': 'air-gapped'},
+            'CLAIM-039': {'ev_st': 'observer-relative', 'ass': 'radical', 'cont': 'allocating', 'tp': 'blinded', 'rt': 'priority', 'app': 'high-risk'},
+            'CLAIM-040': {'ev_st': 'fountain', 'ass': 'redundancy', 'cont': 'multi-agent', 'tp': 'observation', 'rt': 'marginal', 'app': 'anti-inflationary'},
+            'CLAIM-041': {'ev_st': 'brier', 'ass': 'governance', 'cont': 'value-preference', 'tp': 'identical', 'rt': 'calibration', 'app': 'epistemic'},
+            'CLAIM-042': {'ev_st': 'value', 'ass': 'storage', 'cont': 'combinations', 'tp': 'provenance', 'rt': 'mathematical', 'app': 'linear-algebraic'},
+            'CLAIM-043': {'ev_st': 'static', 'ass': 'problem', 'cont': 'claiming', 'tp': 'deadline', 'rt': 'policy', 'app': 'hierarchical'},
+            'CLAIM-044': {'ev_st': 'redundancy', 'ass': 'network', 'cont': 'scientific', 'tp': 'evidence', 'rt': 'novelty', 'app': 'two-tier'},
+            'CLAIM-045': {'ev_st': 'source', 'ass': 'complete', 'cont': 'minting', 'tp': 'duplicates', 'rt': 'credited', 'app': 'three-dimensional'},
         }
 
-        for c in self.claims:
-            cid = c['claim_id']
-            full_text = ' '.join(
-                c['assumptions'] +
-                c['contradictions'] +
-                [c['null_test']['null_hypothesis'], c['null_test']['test_procedure'], c['null_test']['rejection_threshold']] +
-                c['applications']
-            ).lower()
+        REFUTATIONAL_MARKERS = [
+            'fail', 'collapse', 'in-sample', 'overfit', 'gaming', 'unbounded', 'violation',
+            'unauthorized', 'forgery', 'drift', 'divergence', 'leakage', 'invalid', 'bias',
+            'drop', 'spurious', 'loss', 'degrade', 'disparity', 'outperform', 'distortion',
+            'counter', 'flaw', 'rejection', 'accepting', 'accepts', 'accepted', 'stale', 'unearned',
+            'escalation', 'chaotic', 'break', 'misdiagnosis', 'misclassif', 'blind', 'conflat',
+            'without', 'unconstrained', 'unmetered', 'substitut', 'ignor', 'discard', 'arbitrary',
+            'merely', 'overrid', 'non-independent', 'unpartition', 'unrestricted', 're-encod',
+            'poison', 'unpushed', 'uncommitted', 'unsound', 'escape', 'lack', 'zero marginal',
+            'no significant difference', 'pure noise', 'mutat', 'alter', 'residue', 'inability',
+            'contract', 'trivial'
+        ]
 
-            req = SEMANTIC_FIXTURES.get(cid, [])
-            for concept in req:
-                self.assertIn(concept, full_text, f"Claim {cid} fails semantic fixture: missing concept '{concept}' in tailored fields")
+        PROCEDURE_METRICS = [
+            't-test', 'p-value', 'percentile', 'monte carlo', 'rank', 'norm', 'exit', 'hash', 'signal',
+            'weight', 'e-value', 'brier', 'trace', 'depth', 'metric', 'divergence', 'error', 'mean',
+            'difference', 'ratio', 'drift', 'score', 'rate', 'delta', 'bound', 'threshold', 'spectral',
+            'dimension', 'entropy', 'cost', 'count', 'budget', 'evidence', 'distribution', 'sample',
+            'variance', 'covariance', 'permutation', 'simulation', 'frequency', 'probability', 'bits',
+            'capacity', 'loss', 'step', 'interval', 'schema', 'matrix', 'predicate', 'resolution',
+            'parsing', 'aci', 'partial order', 'terminal', 'outcome', 'reject', 'authority', 'cell',
+            'sweep', 'dag', 'tree', 'measure', 'ablation', 'held-out', 'kraft', 'null'
+        ]
+
+        THRESHOLD_BOUNDS = [
+            '<', '>', '=', '>=', '<=', '!=', 'p <', 'p >=', 'delta', 'drift', 'rank', 'percentile',
+            'discordance', 'growth', 'accepted', 'fails', 'exceeds', 'outside', 'bound', 'zero',
+            'inconsistency', 'rate', 'divergence', 'drop', 'elevation', 'widening', 'decay',
+            'not subset', 'covers zero', 'includes zero', 'violating', 'accepted', 'positive'
+        ]
+
+        claims_by_id = {c['claim_id']: c for c in self.claims}
+        for cid, fix in FIELD_SPECIFIC_FIXTURES.items():
+            c = claims_by_id[cid]
+            ev = c['exact_source_read_evidence'].lower()
+            st = c['statement'].lower()
+            ass = ' '.join(c['assumptions']).lower()
+            cont = ' '.join(c['contradictions']).lower()
+            tp = c['null_test']['test_procedure'].lower()
+            rt = c['null_test']['rejection_threshold'].lower()
+            app = ' '.join(c['applications']).lower()
+
+            # 1. Statement and verbatim evidence must share direct domain grounding
+            self.assertIn(fix['ev_st'], ev, f"{cid} verbatim evidence missing domain anchor '{fix['ev_st']}'")
+            self.assertIn(fix['ev_st'], st, f"{cid} statement missing domain anchor '{fix['ev_st']}'")
+
+            # 2. Assumptions must contain required domain concept
+            self.assertIn(fix['ass'], ass, f"{cid} assumptions missing required domain concept '{fix['ass']}'")
+
+            # 3. Contradictions must contain required concept AND explicit refutational marker
+            self.assertIn(fix['cont'], cont, f"{cid} contradictions missing domain counter-mechanism '{fix['cont']}'")
+            self.assertTrue(any(m in cont for m in REFUTATIONAL_MARKERS),
+                            f"{cid} contradictions lack explicit refutational markers")
+
+            # 4. Test procedure must contain required concept AND declare measurable metrics/variables
+            self.assertIn(fix['tp'], tp, f"{cid} test_procedure missing operational step '{fix['tp']}'")
+            self.assertTrue(any(m in tp for m in PROCEDURE_METRICS),
+                            f"{cid} test_procedure lacks measurable operational metrics")
+
+            # 5. Rejection threshold must contain required concept AND quantitative decision bounds
+            self.assertIn(fix['rt'], rt, f"{cid} rejection_threshold missing decision concept '{fix['rt']}'")
+            self.assertTrue(any(b in rt for b in THRESHOLD_BOUNDS),
+                            f"{cid} rejection_threshold lacks quantitative decision bounds")
+
+            # 6. Procedure-Threshold Concordance: variables tested in procedure must correspond to threshold tokens
+            rt_tokens = set(re.findall(r'[a-zA-Z]{4,}', rt)) - {'from', 'with', 'that', 'this', 'have', 'more', 'over', 'than', 'only', 'under', 'between'}
+            tp_tokens = set(re.findall(r'[a-zA-Z]{4,}', tp))
+            self.assertTrue(bool(rt_tokens.intersection(tp_tokens)),
+                            f"{cid} procedure-threshold concordance failed: no shared variable between procedure and threshold")
+
+            # 7. Applications must contain domain concept
+            self.assertIn(fix['app'], app, f"{cid} applications missing domain concept '{fix['app']}'")
 
     def test_direct_object_read_exact_evidence(self):
         """Verify exact_source_read_evidence is an exact, verbatim character-by-character substring of GitHub direct object."""
@@ -262,7 +324,7 @@ class TestInvariantGraph(unittest.TestCase):
         expected_ids = {'CANONICAL-01', 'CANONICAL-02', 'CANONICAL-03', 'CANONICAL-04', 'CANONICAL-05', 'CANONICAL-06'}
         self.assertEqual(eval_ids, expected_ids)
 
-        # 2. Score Band Compliance Verification (Resolving Defect MIN-18-QA-01)
+        # 2. Bidirectional Mutually Exclusive Rubric Compliance Verification (Resolving QA Rework Defects 1 & 2)
         for e in all_evals:
             cid = e['canonical_invariant_id']
             c = e['component_scores']
@@ -284,26 +346,78 @@ class TestInvariantGraph(unittest.TestCase):
                     b_max = float(band_str.replace('below_', ''))
                     self.assertTrue(score < b_max, f"{cid} on {axis} score {score} not below {b_max}")
 
-                # Criterion compliance rules from IDEIR-v1
-                just_text = justifications[axis].lower()
-                if axis == 'C2_anti_sybil_and_grounding':
-                    if score >= 8.5:
-                        self.assertTrue(any(term in just_text for term in ['cryptographic', 'kernel', 'anti-sybil', 'simplex']),
-                                        f"{cid} C2 score >= 8.5 requires cryptographic, kernel, or simplex anti-sybil binding")
-                    else:
-                        self.assertTrue(any(term in just_text for term in ['heuristic', 'permutation', 'semantic']),
-                                        f"{cid} C2 score < 8.5 documents heuristic/permutation matching")
-                elif axis == 'C3_cross_domain_generality':
-                    if score >= 9.0:
-                        self.assertTrue(any(term in just_text for term in ['universal', 'multi-agent', 'scientific', 'settlement']),
-                                        f"{cid} C3 score >= 9.0 requires universal cross-domain coverage")
-                    else:
-                        self.assertTrue(any(term in just_text for term in ['domain-specific', 'specialized', 'runtime', 'limited transfer']),
-                                        f"{cid} C3 score < 9.0 documents domain specialization or limited transfer")
-                elif axis == 'C4_test_cost_efficiency':
-                    if score >= 9.5:
-                        self.assertTrue(any(term in just_text for term in ['< 3.5s', '< 2.0s', '< 1.5s', '< 1.0s', 'ultra-low-cost']),
-                                        f"{cid} C4 score >= 9.5 requires test time < 3.5s")
+            # Bidirectional C1 (Rigor & Falsifiability)
+            score_c1 = c['C1_rigor_and_falsifiability']
+            band_c1 = bands['C1_rigor_and_falsifiability']
+            j_c1 = justifications['C1_rigor_and_falsifiability'].lower()
+            if 9.0 <= score_c1 <= 10.0:
+                self.assertEqual(band_c1, "9.0-10.0")
+                self.assertTrue(any(t in j_c1 for t in ['closed-form', 'e-process', 'martingale', 'rank']))
+                self.assertFalse(any(t in j_c1 for t in ['qualitative structural partition', 'taxonomy lacking exact']))
+            elif 7.5 <= score_c1 <= 8.9:
+                self.assertEqual(band_c1, "7.5-8.9")
+                self.assertTrue(any(t in j_c1 for t in ['semi-formal', 'operational', 'protocol', 'state-machine']))
+                self.assertFalse(any(t in j_c1 for t in ['closed-form e-process', 'closed-form linear-algebraic']))
+            elif 6.0 <= score_c1 <= 7.4:
+                self.assertEqual(band_c1, "6.0-7.4")
+                self.assertTrue(any(t in j_c1 for t in ['qualitative', 'taxonomy', 'structural partition', 'lacks exact']))
+            # Converse C1
+            if any(t in j_c1 for t in ['qualitative', 'taxonomy', 'lacks exact mathematical test statistic']):
+                self.assertTrue(score_c1 <= 7.4 and band_c1 == "6.0-7.4",
+                                f"{cid} C1 converse failure: qualitative taxonomy must receive band 6.0-7.4 and score <= 7.4, got {score_c1}")
+            if any(t in j_c1 for t in ['closed-form e-process', 'closed-form linear-algebraic']):
+                self.assertTrue(score_c1 >= 9.0 and band_c1 == "9.0-10.0",
+                                f"{cid} C1 converse failure: closed-form proof must receive band 9.0-10.0, got {score_c1}")
+
+            # Bidirectional C2 (Anti-Sybil & Grounding)
+            score_c2 = c['C2_anti_sybil_and_grounding']
+            band_c2 = bands['C2_anti_sybil_and_grounding']
+            j_c2 = justifications['C2_anti_sybil_and_grounding'].lower()
+            if 9.5 <= score_c2 <= 10.0:
+                self.assertEqual(band_c2, "9.5-10.0")
+                self.assertTrue(any(t in j_c2 for t in ['provable anti-sybil', 'simplex conservation', 'replication cloning']))
+            elif 8.5 <= score_c2 <= 9.4:
+                self.assertEqual(band_c2, "8.5-9.4")
+                self.assertTrue(any(t in j_c2 for t in ['cryptographic', 'kernel', 'process tables', 'capability']))
+            elif 7.0 <= score_c2 <= 8.4:
+                self.assertEqual(band_c2, "7.0-8.4")
+                self.assertTrue(any(t in j_c2 for t in ['heuristic', 'semantic', 'vulnerable']))
+            # Converse C2
+            if any(t in j_c2 for t in ['heuristic', 'vulnerable to high-dimensional', 'subjective redefinition']):
+                self.assertTrue(score_c2 <= 8.4 and band_c2 == "7.0-8.4")
+            if any(t in j_c2 for t in ['provable anti-sybil', 'mathematically provable anti-sybil']):
+                self.assertTrue(score_c2 >= 9.5 and band_c2 == "9.5-10.0")
+
+            # Bidirectional C3 (Cross-Domain Generality)
+            score_c3 = c['C3_cross_domain_generality']
+            band_c3 = bands['C3_cross_domain_generality']
+            j_c3 = justifications['C3_cross_domain_generality'].lower()
+            if 9.0 <= score_c3 <= 10.0:
+                self.assertEqual(band_c3, "9.0-10.0")
+                self.assertTrue(any(t in j_c3 for t in ['universal', 'multi-agent', 'scientific', 'settlement']))
+            elif 8.0 <= score_c3 <= 8.9:
+                self.assertEqual(band_c3, "8.0-8.9")
+                self.assertTrue(any(t in j_c3 for t in ['broadly applicable', 'distributed execution', 'multi-host', 'specialized to runtime']))
+            elif 7.0 <= score_c3 <= 7.9:
+                self.assertEqual(band_c3, "7.0-7.9")
+                self.assertTrue(any(t in j_c3 for t in ['domain-specific', 'limited transfer', 'prompt']))
+            # Converse C3
+            if any(t in j_c3 for t in ['domain-specific to prompt', 'domain-specific to task taxonomy']):
+                self.assertTrue(score_c3 <= 7.9 and band_c3 == "7.0-7.9")
+            if any(t in j_c3 for t in ['universal across multi-agent consensus']):
+                self.assertTrue(score_c3 >= 9.0 and band_c3 == "9.0-10.0")
+
+            # Bidirectional C4 (Test Cost Efficiency)
+            score_c4 = c['C4_test_cost_efficiency']
+            band_c4 = bands['C4_test_cost_efficiency']
+            j_c4 = justifications['C4_test_cost_efficiency'].lower()
+            if 9.5 <= score_c4 <= 10.0:
+                self.assertEqual(band_c4, "9.5-10.0")
+                self.assertTrue(any(t in j_c4 for t in ['< 3.5s', '< 2.0s', '< 1.5s', '< 1.0s', 'ultra-low-cost']))
+            # Converse C4: Any test cheaper than 3.5s must be in 9.5-10.0
+            if any(t in j_c4 for t in ['< 3.5s', '< 2.0s', '< 1.5s', '< 1.0s']):
+                self.assertTrue(score_c4 >= 9.5 and band_c4 == "9.5-10.0",
+                                f"{cid} C4 converse failure: test < 3.5s must receive band 9.5-10.0 and score >= 9.5, got {score_c4}")
 
         # 3. Dynamic Calculation and Sorting
         calculated_scores = []
@@ -347,6 +461,33 @@ class TestInvariantGraph(unittest.TestCase):
             self.assertIn("falsification_procedure", s)
             self.assertIn("pass_fail_criteria", s)
             self.assertIn("cheapest_test", s)
+
+        # 5. Executable Bounded Decision Criteria Verification for FALSIF-SPEC-001 (Resolving QA Rework Defect 3)
+        s1 = next(s for s in specs if s['spec_id'] == 'FALSIF-SPEC-001')
+        self.assertIn("Doob's optional stopping theorem", s1['formulation'],
+                      "FALSIF-SPEC-001 formulation must specify Doob's optional stopping theorem")
+        self.assertIn("bounded horizon T_max", s1['formulation'],
+                      "FALSIF-SPEC-001 formulation must specify supermartingale property on bounded horizon")
+        self.assertIn("T_max = 500", s1['null_hypothesis'])
+        self.assertIn("m = 100", s1['null_hypothesis'])
+
+        proc_text = ' '.join(s1['falsification_procedure'])
+        self.assertIn("SeedSequence(20261102)", proc_text, "FALSIF-SPEC-001 must declare deterministic seed policy")
+        self.assertIn("T_max = 500", proc_text, "FALSIF-SPEC-001 procedure must specify bounded horizon T_max = 500")
+        self.assertIn("N = 5,000", proc_text, "FALSIF-SPEC-001 procedure must specify finite sample trajectory N = 5,000")
+        self.assertIn("stopping time family", proc_text.lower(), "FALSIF-SPEC-001 procedure must specify stopping time family T")
+        self.assertIn("UCB_0.999", proc_text, "FALSIF-SPEC-001 procedure must specify Studentized upper confidence bound UCB_0.999")
+        self.assertIn("alpha = 10^-3", proc_text, "FALSIF-SPEC-001 procedure must specify alpha = 10^-3")
+
+        pass_text = s1['pass_fail_criteria']['pass_condition']
+        fail_text = s1['pass_fail_criteria']['fail_condition']
+        self.assertIn("epsilon_MC", pass_text, "Pass condition must account for Monte Carlo error tolerance")
+        self.assertIn("<= 0.05", pass_text, "Pass condition must bound Monte Carlo error tolerance <= 0.05")
+        self.assertIn("Ville", pass_text, "Pass condition must evaluate Ville's maximal inequality bound")
+        self.assertIn("1e-12", pass_text, "Pass condition must verify machine-precision Sybil neutrality")
+        self.assertIn("LCB_0.999", fail_text, "Fail condition must declare unambiguous rejection via lower confidence bound")
+        self.assertIn("> 1.0", fail_text, "Fail condition must trigger when LCB_0.999 > 1.0")
+        self.assertIn("< 3.5 seconds", s1['cheapest_test'], "Cheapest test must be verifiable in < 3.5 seconds on CPU")
 
     def test_excluded_data_documented_and_verified(self):
         """Verify excluded data contains at least 20 records and all match direct objects."""

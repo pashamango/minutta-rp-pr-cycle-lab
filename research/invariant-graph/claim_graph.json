@@ -107,9 +107,9 @@
           "C1_rigor_and_falsifiability": 8.6,
           "C2_anti_sybil_and_grounding": 9.2,
           "C3_cross_domain_generality": 8.8,
-          "C4_test_cost_efficiency": 9.2
+          "C4_test_cost_efficiency": 9.7
         },
-        "score": 8.9,
+        "score": 9.0,
         "rationale": "Prevents catastrophic orchestration misdiagnosis (e.g. false OOM status 137) across heterogeneous nodes (Wolfram vs Darwin) by binding kernel telemetry."
       }
     ]

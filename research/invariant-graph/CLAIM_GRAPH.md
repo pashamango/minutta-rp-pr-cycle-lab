@@ -55,14 +55,14 @@ graph TD
 
     subgraph Cluster2["Cluster-2: Golden Trinity & Ratio Dynamics (16 claims)"]
         C03["CANONICAL-03<br/>Golden Trinity Dirichlet Simplex<br/>(Anchor: CLAIM-001, Rank 5: 8.5)"]
-        C04["CANONICAL-04<br/>Teleological Semantics Cause-Telos<br/>(Anchor: CLAIM-036, Rank 6: 7.9)"]
+        C04["CANONICAL-04<br/>Teleological Semantics Cause-Telos<br/>(Anchor: CLAIM-036, Rank 6: 7.7)"]
         C04 -->|generalizes| C03
         C03 -.->|supports| C01
     end
 
     subgraph Cluster3["Cluster-3: Distributed Membrane & Isolation (19 claims)"]
         C02["CANONICAL-02<br/>Target-Conditioned Redundancy vs Value<br/>(Anchor: CLAIM-040, Rank 2: 9.3)"]
-        C05["CANONICAL-05<br/>Durable Dispatch-Boundary Process-Binding<br/>(Anchor: CLAIM-003, Rank 3: 8.9)"]
+        C05["CANONICAL-05<br/>Durable Dispatch-Boundary Process-Binding<br/>(Anchor: CLAIM-003, Rank 3: 9.0)"]
         C06["CANONICAL-06<br/>Zero-Trust Cryptographic Membrane<br/>(Anchor: CLAIM-018, Rank 4: 8.9)"]
         C02 -->|refines| C01
         C06 -.->|supports| C05

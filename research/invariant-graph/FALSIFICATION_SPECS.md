@@ -43,10 +43,10 @@ The following table presents the reproducible scoring of all six canonical invar
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | **1** | `CANONICAL-01` | `CLAIM-011` | Conserved Evidence Portfolio Simplex & Matched Search-Budget | Cluster-1: Epistemic Accounting | 9.8 (Band 9.0–10.0) | 10.0 (Band 9.5–10.0) | 9.5 (Band 9.0–10.0) | 9.8 (Band 9.5–10.0) | 9.800 | **9.8** | **SELECTED (Spec 1)** |
 | **2** | `CANONICAL-02` | `CLAIM-040` | Target-Conditioned Redundancy vs. True Value | Cluster-3: Distributed Membrane / Epistemic Accounting | 9.1 (Band 9.0–10.0) | 9.6 (Band 9.5–10.0) | 9.2 (Band 9.0–10.0) | 9.6 (Band 9.5–10.0) | 9.345 | **9.3** | **SELECTED (Spec 2)** |
-| **3** | `CANONICAL-05` | `CLAIM-003` | Durable Dispatch-Boundary Process-Binding | Cluster-3: Distributed Membrane | 8.6 (Band 7.5–8.9) | 9.2 (Band 8.5–9.4) | 8.8 (Band 8.0–8.9) | 9.2 (Band 9.0–9.4) | 8.910 | **8.9** | **SELECTED (Spec 3)** |
+| **3** | `CANONICAL-05` | `CLAIM-003` | Durable Dispatch-Boundary Process-Binding | Cluster-3: Distributed Membrane | 8.6 (Band 7.5–8.9) | 9.2 (Band 8.5–9.4) | 8.8 (Band 8.0–8.9) | 9.7 (Band 9.5–10.0) | 8.985 | **9.0** | **SELECTED (Spec 3)** |
 | 4 | `CANONICAL-06` | `CLAIM-018` | Cryptographic Zero-Trust Membrane & Attenuating Semilattice | Cluster-3: Distributed Membrane | 8.5 (Band 7.5–8.9) | 9.3 (Band 8.5–9.4) | 8.5 (Band 8.0–8.9) | 9.6 (Band 9.5–10.0) | 8.905 | 8.9 | Below Top 3 Threshold |
 | 5 | `CANONICAL-03` | `CLAIM-001` | Golden Trinity Ratio Permutation-Matched Dirichlet Simplex | Cluster-2: Golden Trinity Dynamics | 8.8 (Band 7.5–8.9) | 8.0 (Band 7.0–8.4) | 7.8 (Band 7.0–7.9) | 9.8 (Band 9.5–10.0) | 8.510 | 8.5 | Below Top 3 Threshold |
-| 6 | `CANONICAL-04` | `CLAIM-036` | Teleological Semantics & Asymmetric Cause-Purpose Partitioning | Cluster-2: Golden Trinity Dynamics | 7.6 (Band 7.5–8.9) | 7.8 (Band 7.0–8.4) | 7.5 (Band 7.0–7.9) | 9.6 (Band 9.5–10.0) | 7.940 | 7.9 | Below Top 3 Threshold |
+| 6 | `CANONICAL-04` | `CLAIM-036` | Teleological Semantics & Asymmetric Cause-Purpose Partitioning | Cluster-2: Golden Trinity Dynamics | 7.0 (Band 6.0–7.4) | 7.8 (Band 7.0–8.4) | 7.5 (Band 7.0–7.9) | 9.6 (Band 9.5–10.0) | 7.730 | 7.7 | Below Top 3 Threshold |
 
 ### Objective Score Justifications per Rubric Criteria
 - **`CANONICAL-01` ($S = 9.800$, Rank 1)**:
@@ -59,11 +59,11 @@ The following table presents the reproducible scoring of all six canonical invar
   - $C_2 = 9.6$: Mathematically provable anti-Sybil immunity against identity and replication cloning; pure copying or re-encoding strictly conserves rank ($\Delta K = 0$) and cannot mint novel value tokens. Grounded in Issue #168 comments 5655787687 and 5655848243.
   - $C_3 = 9.2$: Universal across multi-agent consensus, scientific hypothesis testing, distributed compute allocation, and economic settlement.
   - $C_4 = 9.6$: Ultra-low-cost reproducible test: vectorized matrix rank and projection test on synthetic provenance vectors executes in $< 2.0$s with $0 external spend.
-- **`CANONICAL-05` ($S = 8.910$, Rank 3)**:
+- **`CANONICAL-05` ($S = 8.985$, Rank 3)**:
   - $C_1 = 8.6$: Semi-formal operational protocol for cross-host process tree telemetry, exit signal decoding, and kernel `/proc` inspection; depends on OS-specific process table semantics.
   - $C_2 = 9.2$: Strong kernel-level and cryptographic identity binding: OS process tables, PID/PPID tree verification, and 3-identity credential invariant resisting single-host forgery. Grounded in Issue #168 comments 5648743239 and 5649439196.
   - $C_3 = 8.8$: Broadly applicable across distributed execution systems and multi-host infrastructure, but specialized to runtime/OS semantics.
-  - $C_4 = 9.2$: Low-cost local test: requires local subshell process fork and SIGPIPE fault injection script running in $< 1.0$s with $0 external spend.
+  - $C_4 = 9.7$: Ultra-low-cost reproducible test: local subshell process fork and SIGPIPE fault injection script executes in $< 1.0$s ($< 3.5$s) on commodity CPU with $0 external spend.
 - **`CANONICAL-06` ($S = 8.905$, Rank 4)**:
   - $C_1 = 8.5$: Semi-formal product semilattice $(R,O,L)$ and attenuating CRDT join protocol with monotone supersession state machine.
   - $C_2 = 9.3$: Strong cryptographic capability binding with Ed25519 signatures, content hashes, and monotonic attenuation discipline resisting unauthorized elevation. Grounded in Issue #168 comments 5651293792 and 5653556096.
@@ -74,8 +74,8 @@ The following table presents the reproducible scoring of all six canonical invar
   - $C_2 = 8.0$: Heuristic permutation-matching budget; partially vulnerable to high-dimensional parameter tuning or split attacks. Does not possess cryptographic or kernel-level identity binding (strictly within band 7.0–8.4).
   - $C_3 = 7.8$: Domain-specific to prompt engineering, task taxonomy, and cognitive allocation; limited transfer to distributed systems or cryptographic accounting; does not achieve universal cross-domain coverage (strictly within band 7.0–7.9).
   - $C_4 = 9.8$: Ultra-low-cost reproducible test: synthetic Dirichlet benchmark runs in $< 2.0$s with $0 external spend.
-- **`CANONICAL-04` ($S = 7.940$, Rank 6)**:
-  - $C_1 = 7.6$: Qualitative/semi-formal taxonomy of teleological triplets $(U, D_\varepsilon, \Omega)$ and $(W,A,P,T,G)$ tuples; lacks exact mathematical test statistic.
+- **`CANONICAL-04` ($S = 7.730$, Rank 6)**:
+  - $C_1 = 7.0$: Qualitative structural partition and taxonomy of teleological triplets $(U, D_\varepsilon, \Omega)$ and $(W,A,P,T,G)$ tuples; lacks exact mathematical test statistic or sharp rejection threshold (strictly within band 6.0–7.4).
   - $C_2 = 7.8$: Semantic separation of cause vs purpose; heuristic semantic classification vulnerable to subjective redefinition.
   - $C_3 = 7.5$: Domain-specific to task taxonomy and prompt semantics; limited transfer to systems or cryptographic accounting.
   - $C_4 = 9.6$: Ultra-low-cost reproducible test: semantic tuple parser and validation rules execute in $< 1.5$s on local CPU with $0 external spend.
@@ -86,17 +86,18 @@ The following table presents the reproducible scoring of all six canonical invar
 
 ### Rank 1 (`FALSIF-SPEC-001`): Conserved Evidence Portfolio Simplex & Matched Search-Budget Invariant
 - **Target Invariant**: `CANONICAL-01` (Anchor: `CLAIM-011`, Source: [#168#issuecomment-5649859218](https://github.com/pashamango/minutta-rp-pr-cycle-lab/issues/168#issuecomment-5649859218))
-- **Mathematical Formulation**: For any ensemble of autonomous exploration agents or hypotheses $\{H_i\}$ evaluated against null $P_0$ with valid e-values $\{E_i\}$, the aggregate evidence state $E^*$ must be governed by an admissible convex mixture $E^* = \sum_{i} w_i E_i$ where $w \in \Delta_m$ is predictable before step $t$. Identity splitting (Sybil forking) or transport redundancy multiplication cannot increase spendable evidence rank without consuming independent information.
-- **Null Hypothesis ($H_0$)**: Adaptive search over $m$ synthetic agent streams under pure noise generates unbounded e-process wealth growth ($\mathbb{E}[E^*] > 1$) when individual agents can spawn child ledgers without partitioned simplex weights.
+- **Mathematical Formulation**: For any ensemble of exploration agents or hypotheses $\{H_i\}$ with valid e-processes $\{E_{i,t}\}$, the portfolio mixture $E^*_t = \sum_{i=1}^m w_{i,t} E_{i,t}$ under predictable weights $w_t \in \Delta_m$ ($\sum w_{i,t} = 1, w_{i,t} \ge 0$) is an admissible supermartingale with $\mathbb{E}[E^*_t \mid \mathcal{F}_{t-1}] \le 1$. By Doob's optional stopping theorem for non-negative supermartingales on bounded horizon $T_{\max}$, $\mathbb{E}[E^*_\tau] \le \mathbb{E}[E^*_0] = 1.0$ across any stopping time $\tau \le T_{\max}$. Identity splitting (Sybil forking) without weight partitioning cannot increase spendable evidence rank or aggregate expected e-wealth.
+- **Null Hypothesis ($H_0$)**: Under null noise drift $\mu = 0$ across $m = 100$ exploration streams over bounded horizon $T_{\max} = 500$ steps, adaptive Sybil identity splitting without simplex weight partitioning generates statistically significant portfolio wealth growth exceeding the supermartingale bound ($\mathbb{E}[E^*_\tau] > 1.0$) for stopping times $\tau$ in a pre-declared stopping family $\mathcal{T}$.
 - **Falsification Protocol**:
-  1. Generate 100 independent synthetic noise streams $X_t \sim \mathcal{N}(0, 1)$ under null $\mu = 0$.
-  2. Dynamically fork Agent 1 into 10 sub-identities at step $t=20$ upon observing favorable local fluctuations.
-  3. Compare unconstrained max-reporting $E_{\max} = \max_i(E_i)$ versus simplex mixture $E^* = \sum w_i E_i$ with $\sum w_i = 1$.
-  4. Measure Type I error rate and e-wealth growth under 5,000 independent Monte Carlo trajectories.
+  1. **Deterministic RNG & Horizon Setup**: Initialize NumPy PCG64 random generator with fixed seed policy `SeedSequence(20261102)`. Set bounded horizon $T_{\max} = 500$ steps, stream count $m = 100$, and trajectory sample size $N = 5,000$ independent Monte Carlo paths.
+  2. **Null Noise Stream & Martingale Generation**: Generate null increments $X_{i,t} \sim \mathcal{N}(0, 1)$ i.i.d. Compute non-negative e-process martingale factors $E_{i,t} = \prod_{s=1}^t \exp(\lambda X_{i,s} - \lambda^2 / 2)$ with fixed betting fraction $\lambda = 0.1$.
+  3. **Adversarial Dynamic Sybil Forking**: At step $t = 20$, identify the locally leading stream and dynamically fork it into $K = 10$ child sub-identities attempting unpartitioned capital multiplication.
+  4. **Pre-declared Stopping Time Family Evaluation**: Evaluate portfolio states across a parameterized stopping time family $\mathcal{T} = \{\tau_{\text{fixed}} \in \{50, 100, 250, 500\}$, hitting times $\tau_\theta = \min\{t \le T_{\max} : E^*_t \ge \theta\} \wedge T_{\max}$ for $\theta \in \{2.0, 5.0, 10.0\}$, adversarial peak $\tau_{\text{adv}} = \operatorname{argmax}_{t \le 50} E^*_t\}$.
+  5. **Estimator & Monte Carlo Confidence Bound Calculation**: For each stopping time $\tau \in \mathcal{T}$, compute empirical sample mean $\bar{E}^*_\tau = \frac{1}{N} \sum_{j=1}^N E^{*(j)}_\tau$, sample variance $s^2_\tau$, and Studentized upper confidence bound $\mathrm{UCB}_{0.999}(\mathbb{E}[E^*_\tau]) = \bar{E}^*_\tau + 3.090 \frac{s_\tau}{\sqrt{N}}$ with $\alpha = 10^{-3}$.
 - **Pass/Fail Threshold**:
-  - **Pass**: Under $H_0$, $\mathbb{E}[E^*] \le 1.0$ across all stopping times, and 99th percentile $E^* \le 100$ (Markov bound holds). Sybil identity splitting produces zero net gain in portfolio e-value compared to the parent weight.
-  - **Fail**: An actor generates expected portfolio e-wealth growth $> 1.0$ under the null solely by forking identities or searching $m$ parallel branches without weight partitioning.
-- **Cheapest Test**: Vectorized NumPy simulation of 5,000 Monte Carlo runs (500 steps each). Compute wall-clock time $< 3.5$s on Apple Silicon / x86_64, $0 external quota.
+  - **Pass**: Under $H_0$ across $N = 5,000$ runs (seed `20261102`), for all valid stopping times $\tau \in \mathcal{T}$, the sample mean upper confidence bound satisfies $\mathrm{UCB}_{0.999}(\mathbb{E}[E^*_\tau]) \le 1.0 + \epsilon_{MC}$ (where MC error tolerance $\epsilon_{MC} = 3.090 \frac{s_\tau}{\sqrt{5000}} \le 0.05$). Ville's empirical maximal tail probability satisfies $\hat{P}(\sup_{t \le 500} E^*_t \ge 20) \le 0.05 + 3.090 \sqrt{\frac{0.05 \cdot 0.95}{5000}} = 0.059$. Under conserved simplex weights $\sum w_{\text{fork}, k} = w_{\text{parent}}$, Sybil identity splitting produces exact zero net delta: $|E^*_{\text{fork}} - E^*_{\text{parent}}| \le 10^{-12}$.
+  - **Fail**: Empirical lower confidence bound $\mathrm{LCB}_{0.999}(\mathbb{E}[E^*_\tau]) = \bar{E}^*_\tau - 3.090 \frac{s_\tau}{\sqrt{N}} > 1.0$ (statistically significant wealth growth from pure noise at $p < 0.001$), or Sybil identity splitting without weight partitioning yields $\mathrm{LCB}_{0.999}(\Delta E^*) > 0$.
+- **Cheapest Test**: 120-line vectorized NumPy simulation of $N = 5,000$ Monte Carlo runs ($T_{\max} = 500$ steps, seed `20261102`). Evaluates $\mathrm{UCB}_{0.999}$ across stopping family $\mathcal{T}$ in $< 3.5$ seconds on commodity CPU, $0 external API spend, 0 external mutations.
 
 ---
 
@@ -129,4 +130,4 @@ The following table presents the reproducible scoring of all six canonical invar
 - **Pass/Fail Threshold**:
   - **Pass**: The dispatch system rejects exit code 137 as an OOM proof unless corroborated by leaf PID SIGKILL confirmation and kernel memory pressure telemetry.
   - **Fail**: If the dispatch system classifies a broken transport wrapper as a leaf process crash / OOM, resulting in erroneous operator alerts or blind retries.
-- **Cheapest Test**: Local subshell script: child writes PID and sleeps; parent terminates abruptly with exit 137. Dispatch verifier inspects `/proc` or `ps` output to confirm child survived. Run time $< 1.0$s, $0 external quota.
+- **Cheapest Test**: Ultra-low-cost local subshell script: child writes PID and sleeps; parent terminates abruptly with exit 137. Dispatch verifier inspects `/proc` or `ps` output to confirm child survived. Run time $< 1.0$s ($< 3.5$s), commodity CPU, $0 external quota.

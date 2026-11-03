@@ -32,7 +32,7 @@ This repository directory contains the formal deliverables for Linear ticket **M
    - Objective score band compliance verified for all 6 canonical invariants:
      - **Rank 1 (9.8):** `CANONICAL-01` (Anchor: `CLAIM-011`) — Conserved Evidence Portfolio Simplex & Matched Search-Budget Invariant.
      - **Rank 2 (9.3):** `CANONICAL-02` (Anchor: `CLAIM-040`) — Target-Conditioned Redundancy vs. True Value Invariant.
-     - **Rank 3 (8.9):** `CANONICAL-05` (Anchor: `CLAIM-003`) — Durable Dispatch-Boundary Process-Binding Invariant.
+     - **Rank 3 (9.0):** `CANONICAL-05` (Anchor: `CLAIM-003`) — Durable Dispatch-Boundary Process-Binding Invariant.
 5. **Documented Excluded Data**:
    - 20 sampled automated run receipts (`GITHUB_RUN_RECEIPT/v1`), empty NO-OP cycles, and heartbeat telemetry cataloged with exact source IDs and exclusion rationale.
 6. **Direct-Object-Read Verification Suite**:
