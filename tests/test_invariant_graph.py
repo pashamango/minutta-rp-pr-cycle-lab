@@ -4,6 +4,7 @@ import json
 import os
 import hashlib
 import re
+import math
 from collections import Counter, defaultdict, deque
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -948,77 +949,109 @@ class TestInvariantGraph(unittest.TestCase):
         self.assertIn("Priority 2: PASS", crit_dict['deterministic_priority_order'])
         self.assertIn("Priority 3: INCONCLUSIVE", crit_dict['deterministic_priority_order'])
 
-        # Verify Family-Wise Error Rate (FWER) Bonferroni Correction & Pointwise Guarantees
+        # Verify Family-Wise Error Rate (FWER) Bonferroni Correction & Multiplicity Family M = 19
         self.assertIn("Bonferroni", crit_dict['statistical_guarantee_scope'])
         self.assertIn("pointwise", crit_dict['statistical_guarantee_scope'].lower())
         self.assertEqual(crit_dict['parameters']['stopping_family_size_K'], 9)
+        self.assertEqual(crit_dict['parameters']['multiplicity_family_size_M'], 19)
         self.assertEqual(crit_dict['parameters']['fwer_alpha'], 0.001)
-        self.assertEqual(crit_dict['parameters']['critical_value_t_fwer_bonferroni'], 3.864)
+        self.assertAlmostEqual(crit_dict['parameters']['alpha_adjusted_bonferroni'], 0.001 / 19, places=7)
+        self.assertEqual(crit_dict['parameters']['critical_value_t_fwer_bonferroni'], 4.044)
+        self.assertEqual(crit_dict['parameters']['critical_value_t_pointwise'], 3.090)
+        self.assertEqual(crit_dict['parameters']['ville_threshold_p_hat_max'], 0.0625)
 
-        # Verify Mutually Exclusive Pass & Fail Partitions
-        self.assertIn("LCB_0.999(E[E*_tau]) <= 1.0", pass_text, "Pass condition must require LCB <= 1.0 to eliminate overlap with Fail")
-        self.assertIn("LCB_0.999(E[Delta E*_tau]) <= 0.0", pass_text, "Pass condition must require LCB(Delta) <= 0.0 to eliminate overlap with Fail")
-        self.assertIn("P_hat_LCB", pass_text, "Pass condition must evaluate tail LCB <= 0.05 to eliminate overlap with Fail")
+        # Verify Mutually Exclusive Pass & Fail Partitions under Operative FWER Bounds
+        self.assertIn("LCB_FWER(E[E*_tau]) <= 1.0", pass_text, "Pass condition must require LCB_FWER <= 1.0 to eliminate overlap with Fail")
+        self.assertIn("LCB_FWER(E[Delta E*_tau]) <= 0.0", pass_text, "Pass condition must require LCB_FWER(Delta) <= 0.0 to eliminate overlap with Fail")
+        self.assertIn("P_hat_LCB_FWER", pass_text, "Pass condition must evaluate tail LCB <= 0.05 to eliminate overlap with Fail")
         self.assertIn("epsilon_tol", pass_text, "Pass condition must evaluate tolerance budget epsilon_tol")
         self.assertIn("<= 1.0 + epsilon_tol", pass_text, "Pass condition must bound portfolio wealth UCB <= 1.0 + epsilon_tol")
         self.assertIn("SE_max = 0.015", pass_text, "Pass condition must enforce maximum standard error constraint")
         self.assertIn("1e-12", pass_text, "Pass condition must verify machine-precision Sybil neutrality")
-        self.assertIn("LCB_0.999", fail_text, "Fail condition must declare unambiguous rejection via lower confidence bound")
-        self.assertIn("> 1.0", fail_text, "Fail condition must trigger when LCB_0.999 > 1.0")
+        self.assertIn("0.0625", pass_text, "Pass condition must verify FWER-adjusted maximal tail threshold 0.0625")
+        self.assertIn("LCB_FWER", fail_text, "Fail condition must declare unambiguous rejection via lower confidence bound")
+        self.assertIn("> 1.0", fail_text, "Fail condition must trigger when LCB_FWER > 1.0")
         self.assertIn("Delta E*", fail_text, "Fail condition must evaluate paired Sybil excess Delta E*")
+        self.assertIn("4.044", fail_text, "Fail condition must compute operative boundaries with t_FWER = 4.044")
         self.assertIn("retry_budget", str(crit_dict['parameters']), "Parameters must define retry budget")
         self.assertIn("B_max = 2 extensions", inconcl_text, "Inconclusive rule must specify finite retry budget B_max = 2")
         self.assertIn("INCONCLUSIVE_RETRY_BUDGET_EXHAUSTED", inconcl_text, "Inconclusive rule must define definitive termination status")
         self.assertIn("< 3.5 seconds", s1['cheapest_test'], "Cheapest test must be verifiable in < 3.5 seconds on CPU")
 
-        # Programmatic Ternary Classifier Evaluation on QA Auditor Counterexamples:
-        def evaluate_ternary_classifier(portfolio_lcb, portfolio_ucb, portfolio_se,
-                                        sybil_lcb, sybil_ucb, sybil_se,
-                                        tail_p_hat, tail_lcb,
+        # Programmatic Ternary Classifier Evaluation: constructs decision boundaries directly from estimates & SEs
+        def evaluate_ternary_classifier(portfolio_mean, portfolio_se,
+                                        sybil_mean, sybil_se,
+                                        tail_p_hat, n_samples=5000,
+                                        t_crit=4.044,
                                         epsilon_tol=0.02, se_max=0.015):
-            # Priority 1: FAIL check
+            # Operative decision boundaries are constructed directly from estimates, standard errors, and critical value
+            portfolio_lcb = portfolio_mean - t_crit * portfolio_se
+            portfolio_ucb = portfolio_mean + t_crit * portfolio_se
+            sybil_lcb = sybil_mean - t_crit * sybil_se
+            sybil_ucb = sybil_mean + t_crit * sybil_se
+
+            tail_se = math.sqrt(tail_p_hat * (1.0 - tail_p_hat) / n_samples)
+            tail_lcb = tail_p_hat - t_crit * tail_se
+            tail_null_se = math.sqrt(0.05 * 0.95 / n_samples)
+            tail_pass_threshold = 0.05 + t_crit * tail_null_se
+
+            # Priority 1: FAIL check (triggers if ANY lower confidence bound exceeds null threshold)
             if portfolio_lcb > 1.0 or sybil_lcb > 0.0 or tail_lcb > 0.05:
                 return "FAIL"
-            # Priority 2: PASS check
+            # Priority 2: PASS check (requires ALL bounds within null threshold + tolerance)
             if (portfolio_lcb <= 1.0 and portfolio_ucb <= 1.0 + epsilon_tol and portfolio_se <= se_max and
                 sybil_lcb <= 0.0 and sybil_ucb <= epsilon_tol and sybil_se <= se_max and
-                tail_lcb <= 0.05 and tail_p_hat <= 0.0595):
+                tail_lcb <= 0.05 and tail_p_hat <= tail_pass_threshold):
                 return "PASS"
             # Priority 3: INCONCLUSIVE check
             return "INCONCLUSIVE"
 
-        # Counterexample 1: Portfolio wealth interval [1.005, 1.015] (where UCB <= 1.02 but LCB > 1.0)
+        # Counterexample 1: Portfolio wealth estimate where LCB_FWER > 1.0 (mean=1.025, SE=0.005 -> LCB = 1.00478 > 1.0)
         # Must evaluate unambiguously to FAIL, never PASS
-        res_ce1 = evaluate_ternary_classifier(portfolio_lcb=1.005, portfolio_ucb=1.015, portfolio_se=0.005,
-                                              sybil_lcb=-0.001, sybil_ucb=0.001, sybil_se=0.001,
-                                              tail_p_hat=0.048, tail_lcb=0.040)
-        self.assertEqual(res_ce1, "FAIL", "Portfolio wealth [1.005, 1.015] with LCB > 1.0 must classify as FAIL")
+        res_ce1 = evaluate_ternary_classifier(portfolio_mean=1.025, portfolio_se=0.005,
+                                              sybil_mean=0.0, sybil_se=0.001,
+                                              tail_p_hat=0.048)
+        self.assertEqual(res_ce1, "FAIL", "Portfolio wealth with LCB_FWER > 1.0 must classify as FAIL")
 
-        # Counterexample 2: Sybil excess interval [0.005, 0.015] (where UCB <= 0.02 but LCB > 0)
+        # Counterexample 2: Sybil excess estimate where LCB_FWER > 0.0 (mean=0.012, SE=0.002 -> LCB = 0.00391 > 0.0)
         # Must evaluate unambiguously to FAIL, never PASS
-        res_ce2 = evaluate_ternary_classifier(portfolio_lcb=0.985, portfolio_ucb=1.015, portfolio_se=0.005,
-                                              sybil_lcb=0.005, sybil_ucb=0.015, sybil_se=0.002,
-                                              tail_p_hat=0.048, tail_lcb=0.040)
-        self.assertEqual(res_ce2, "FAIL", "Sybil excess [0.005, 0.015] with LCB > 0.0 must classify as FAIL")
+        res_ce2 = evaluate_ternary_classifier(portfolio_mean=0.995, portfolio_se=0.003,
+                                              sybil_mean=0.012, sybil_se=0.002,
+                                              tail_p_hat=0.048)
+        self.assertEqual(res_ce2, "FAIL", "Sybil excess with LCB_FWER > 0.0 must classify as FAIL")
 
-        # Counterexample 3: Maximal tail with P_hat_LCB > 0.05 (even if P_hat <= 0.0595)
+        # Counterexample 3: Maximal tail with P_hat_LCB_FWER > 0.05 (P_hat=0.065 -> LCB = 0.0509 > 0.05)
         # Must evaluate unambiguously to FAIL, never PASS
-        res_ce3 = evaluate_ternary_classifier(portfolio_lcb=0.985, portfolio_ucb=1.015, portfolio_se=0.005,
-                                              sybil_lcb=-0.001, sybil_ucb=0.001, sybil_se=0.001,
-                                              tail_p_hat=0.055, tail_lcb=0.051)
-        self.assertEqual(res_ce3, "FAIL", "Maximal tail with P_hat_LCB > 0.05 must classify as FAIL")
+        res_ce3 = evaluate_ternary_classifier(portfolio_mean=0.995, portfolio_se=0.003,
+                                              sybil_mean=0.0, sybil_se=0.001,
+                                              tail_p_hat=0.065)
+        self.assertEqual(res_ce3, "FAIL", "Maximal tail with P_hat_LCB_FWER > 0.05 must classify as FAIL")
 
         # Compliant Invariant Run: LCB <= 1.0, UCB <= 1.02, LCB(Delta) <= 0, UCB(Delta) <= 0.02, tail compliant
-        res_pass = evaluate_ternary_classifier(portfolio_lcb=0.985, portfolio_ucb=1.015, portfolio_se=0.005,
-                                               sybil_lcb=-0.001, sybil_ucb=0.001, sybil_se=0.001,
-                                               tail_p_hat=0.048, tail_lcb=0.040)
+        res_pass = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.003,
+                                               sybil_mean=0.0, sybil_se=0.001,
+                                               tail_p_hat=0.048)
         self.assertEqual(res_pass, "PASS", "Compliant supermartingale run must classify as PASS")
 
-        # Sampling Gap: LCB <= 1.0, but UCB > 1.02 (or SE > SE_max)
-        res_inconcl = evaluate_ternary_classifier(portfolio_lcb=0.970, portfolio_ucb=1.035, portfolio_se=0.010,
-                                                  sybil_lcb=-0.001, sybil_ucb=0.001, sybil_se=0.001,
-                                                  tail_p_hat=0.048, tail_lcb=0.040)
+        # Sampling Gap: LCB <= 1.0, but UCB_FWER > 1.02 (mean=1.000, SE=0.008 -> UCB = 1.0323 > 1.02)
+        res_inconcl = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.008,
+                                                  sybil_mean=0.0, sybil_se=0.001,
+                                                  tail_p_hat=0.048)
         self.assertEqual(res_inconcl, "INCONCLUSIVE", "Wide confidence interval spanning threshold must classify as INCONCLUSIVE")
+
+        # Active FWER Critical Value Sensitivity Test:
+        # With mean=1.000, SE=0.0055:
+        # Under unadjusted pointwise t=3.090: UCB = 1.000 + 3.090 * 0.0055 = 1.016995 <= 1.020 (PASS)
+        # Under Bonferroni FWER t=4.044: UCB = 1.000 + 4.044 * 0.0055 = 1.022242 > 1.020 (INCONCLUSIVE)
+        # Proves programmatically that t_FWER = 4.044 is actively operative in preventing false acceptance
+        res_pointwise_pass = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.0055,
+                                                         sybil_mean=0.0, sybil_se=0.001,
+                                                         tail_p_hat=0.048, t_crit=3.090)
+        res_fwer_inconcl = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.0055,
+                                                       sybil_mean=0.0, sybil_se=0.001,
+                                                       tail_p_hat=0.048, t_crit=4.044)
+        self.assertEqual(res_pointwise_pass, "PASS", "Unadjusted pointwise bound would accept marginally wide interval")
+        self.assertEqual(res_fwer_inconcl, "INCONCLUSIVE", "Operative Bonferroni FWER bound must classify marginally wide interval as INCONCLUSIVE")
 
     def test_excluded_data_documented_and_verified(self):
         """Verify excluded data contains at least 20 records and all match direct objects."""
