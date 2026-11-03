@@ -961,6 +961,11 @@ class TestInvariantGraph(unittest.TestCase):
         self.assertEqual(crit_dict['parameters']['critical_value_t_fwer_bonferroni'], 4.294)
         self.assertEqual(crit_dict['parameters']['critical_value_t_pointwise'], 3.090)
         self.assertEqual(crit_dict['parameters']['ville_threshold_p_hat_max'], 0.0632)
+        self.assertEqual(crit_dict['parameters']['stopping_rule_ids'], [
+            "tau_fixed_50", "tau_fixed_100", "tau_fixed_250", "tau_fixed_500",
+            "tau_theta_1.5", "tau_theta_2.0", "tau_theta_5.0", "tau_theta_10.0",
+            "tau_drawdown"
+        ])
 
         # Verify Mutually Exclusive Pass & Fail Partitions under Operative FWER Bounds
         self.assertIn("LCB_FWER(E[E*_tau]) <= 1.0", pass_text, "Pass condition must require LCB_FWER <= 1.0 to eliminate overlap with Fail")
@@ -980,140 +985,489 @@ class TestInvariantGraph(unittest.TestCase):
         self.assertIn("INCONCLUSIVE_RETRY_BUDGET_EXHAUSTED", inconcl_text, "Inconclusive rule must define definitive termination status")
         self.assertIn("< 3.5 seconds", s1['cheapest_test'], "Cheapest test must be verifiable in < 3.5 seconds on CPU")
 
-        # Programmatic Single-Look Ternary Classifier: constructs decision boundaries directly from estimates & SEs
-        def evaluate_ternary_look(portfolio_mean, portfolio_se,
-                                  sybil_mean, sybil_se,
-                                  tail_p_hat, n_samples=5000,
+        # Canonical stopping rule IDs and group-sequential sample schedule
+        CANONICAL_STOPPING_RULES = [
+            "tau_fixed_50",
+            "tau_fixed_100",
+            "tau_fixed_250",
+            "tau_fixed_500",
+            "tau_theta_1.5",
+            "tau_theta_2.0",
+            "tau_theta_5.0",
+            "tau_theta_10.0",
+            "tau_drawdown"
+        ]
+        EXPECTED_SAMPLE_SCHEDULE = [5000, 10000, 20000]
+
+        def validate_and_extract_endpoints(endpoints_input, category_name):
+            """
+            Validates that endpoints_input contains exactly all 9 canonical stopping rules with no duplicates,
+            no missing rules, no unknown rules, and valid numeric mean and se > 0.
+            Returns dict of {rule_id: {'mean': float, 'se': float}}.
+            """
+            extracted = {}
+            if isinstance(endpoints_input, list):
+                seen_rules = []
+                for idx, entry in enumerate(endpoints_input):
+                    if not isinstance(entry, dict) or 'rule_id' not in entry:
+                        raise ValueError(f"Incomplete look: {category_name} list item at index {idx} must be a dict with 'rule_id'")
+                    rid = entry['rule_id']
+                    if rid in seen_rules:
+                        raise ValueError(f"Duplicated stopping-rule ID in {category_name}: '{rid}'")
+                    seen_rules.append(rid)
+                    extracted[rid] = entry
+            elif isinstance(endpoints_input, dict):
+                extracted = endpoints_input
+            else:
+                raise ValueError(f"Incomplete look: {category_name} must be a dict or list of endpoints")
+
+            present_rules = set(extracted.keys())
+            missing_rules = set(CANONICAL_STOPPING_RULES) - present_rules
+            if missing_rules:
+                raise ValueError(f"Incomplete look: missing {category_name} endpoints for stopping rules: {sorted(missing_rules)}")
+
+            unknown_rules = present_rules - set(CANONICAL_STOPPING_RULES)
+            if unknown_rules:
+                raise ValueError(f"Unknown stopping-rule ID in {category_name}: {sorted(unknown_rules)}")
+
+            validated = {}
+            for rid in CANONICAL_STOPPING_RULES:
+                item = extracted[rid]
+                if not isinstance(item, dict) or 'mean' not in item or 'se' not in item:
+                    raise ValueError(f"Incomplete look: endpoint '{rid}' in {category_name} missing 'mean' or 'se'")
+                mean_val = float(item['mean'])
+                se_val = float(item['se'])
+                if not math.isfinite(mean_val) or not math.isfinite(se_val) or se_val <= 0.0:
+                    raise ValueError(f"Invalid endpoint values for '{rid}' in {category_name}: mean={mean_val}, se={se_val}")
+                validated[rid] = {'mean': mean_val, 'se': se_val}
+
+            return validated
+
+        # Programmatic Single-Look Ternary Classifier: evaluates complete multiplicity family of 19 endpoints per look
+        def evaluate_ternary_look(look_data,
                                   t_crit=4.294,
-                                  epsilon_tol=0.02, se_max=0.015):
-            portfolio_lcb = portfolio_mean - t_crit * portfolio_se
-            portfolio_ucb = portfolio_mean + t_crit * portfolio_se
-            sybil_lcb = sybil_mean - t_crit * sybil_se
-            sybil_ucb = sybil_mean + t_crit * sybil_se
+                                  epsilon_tol=0.02,
+                                  se_max=0.015,
+                                  expected_sample_size=None):
+            if not isinstance(look_data, dict):
+                raise ValueError("Incomplete look: look_data must be a dict")
+
+            # Sample size validation
+            if 'n_samples' not in look_data and 'sample_size' not in look_data:
+                raise ValueError("Incomplete look: missing sample size ('n_samples' or 'sample_size')")
+            n_samples = int(look_data.get('n_samples', look_data.get('sample_size')))
+            if n_samples <= 0:
+                raise ValueError(f"Invalid sample size: n_samples={n_samples} must be positive")
+
+            if expected_sample_size is not None and n_samples != expected_sample_size:
+                raise ValueError(f"Invalid sample schedule: expected n_samples={expected_sample_size}, got {n_samples}")
+
+            # 9 Portfolio Endpoints validation & extraction
+            if 'portfolio_endpoints' not in look_data:
+                raise ValueError("Incomplete look: missing 'portfolio_endpoints'")
+            portfolio_endpoints = validate_and_extract_endpoints(look_data['portfolio_endpoints'], "portfolio_endpoints")
+
+            # 9 Sybil Endpoints validation & extraction
+            if 'sybil_endpoints' not in look_data:
+                raise ValueError("Incomplete look: missing 'sybil_endpoints'")
+            sybil_endpoints = validate_and_extract_endpoints(look_data['sybil_endpoints'], "sybil_endpoints")
+
+            # 1 Maximal Tail Endpoint validation & extraction
+            if 'maximal_tail' in look_data:
+                tail_entry = look_data['maximal_tail']
+                if isinstance(tail_entry, dict) and 'p_hat' in tail_entry:
+                    tail_p_hat = float(tail_entry['p_hat'])
+                elif isinstance(tail_entry, dict) and 'tail_p_hat' in tail_entry:
+                    tail_p_hat = float(tail_entry['tail_p_hat'])
+                elif isinstance(tail_entry, (int, float)):
+                    tail_p_hat = float(tail_entry)
+                else:
+                    raise ValueError("Incomplete look: 'maximal_tail' must contain 'p_hat'")
+            elif 'tail_p_hat' in look_data:
+                tail_p_hat = float(look_data['tail_p_hat'])
+            else:
+                raise ValueError("Incomplete look: missing maximal tail endpoint ('maximal_tail' or 'tail_p_hat')")
+
+            if not math.isfinite(tail_p_hat) or not (0.0 <= tail_p_hat <= 1.0):
+                raise ValueError(f"Invalid maximal tail probability: tail_p_hat={tail_p_hat} must be in [0.0, 1.0]")
+
+            # Compute FWER bounds for all 19 endpoints
+            portfolio_bounds = {}
+            portfolio_failed = []
+            portfolio_passed = []
+            portfolio_inconclusive = []
+
+            for rid in CANONICAL_STOPPING_RULES:
+                p_mean = portfolio_endpoints[rid]['mean']
+                p_se = portfolio_endpoints[rid]['se']
+                p_lcb = p_mean - t_crit * p_se
+                p_ucb = p_mean + t_crit * p_se
+                portfolio_bounds[rid] = {
+                    'mean': p_mean, 'se': p_se, 'lcb': p_lcb, 'ucb': p_ucb,
+                    'is_fail': p_lcb > 1.0,
+                    'is_pass': (p_lcb <= 1.0 and p_ucb <= 1.0 + epsilon_tol and p_se <= se_max)
+                }
+                if portfolio_bounds[rid]['is_fail']:
+                    portfolio_failed.append(rid)
+                elif portfolio_bounds[rid]['is_pass']:
+                    portfolio_passed.append(rid)
+                else:
+                    portfolio_inconclusive.append(rid)
+
+            sybil_bounds = {}
+            sybil_failed = []
+            sybil_passed = []
+            sybil_inconclusive = []
+
+            for rid in CANONICAL_STOPPING_RULES:
+                s_mean = sybil_endpoints[rid]['mean']
+                s_se = sybil_endpoints[rid]['se']
+                s_lcb = s_mean - t_crit * s_se
+                s_ucb = s_mean + t_crit * s_se
+                sybil_bounds[rid] = {
+                    'mean': s_mean, 'se': s_se, 'lcb': s_lcb, 'ucb': s_ucb,
+                    'is_fail': s_lcb > 0.0,
+                    'is_pass': (s_lcb <= 0.0 and s_ucb <= epsilon_tol and s_se <= se_max)
+                }
+                if sybil_bounds[rid]['is_fail']:
+                    sybil_failed.append(rid)
+                elif sybil_bounds[rid]['is_pass']:
+                    sybil_passed.append(rid)
+                else:
+                    sybil_inconclusive.append(rid)
 
             tail_se = math.sqrt(tail_p_hat * (1.0 - tail_p_hat) / n_samples)
             tail_lcb = tail_p_hat - t_crit * tail_se
             tail_null_se = math.sqrt(0.05 * 0.95 / n_samples)
             tail_pass_threshold = 0.05 + t_crit * tail_null_se
+            tail_failed = (tail_lcb > 0.05)
+            tail_passed = (tail_lcb <= 0.05 and tail_p_hat <= tail_pass_threshold)
 
-            # Priority 1: FAIL check (triggers if ANY lower confidence bound exceeds null threshold)
-            if portfolio_lcb > 1.0 or sybil_lcb > 0.0 or tail_lcb > 0.05:
-                return "FAIL", {
-                    "portfolio_lcb": portfolio_lcb, "portfolio_ucb": portfolio_ucb,
-                    "sybil_lcb": sybil_lcb, "sybil_ucb": sybil_ucb,
-                    "tail_lcb": tail_lcb, "tail_pass_threshold": tail_pass_threshold,
-                    "n_samples": n_samples
-                }
-            # Priority 2: PASS check (requires ALL bounds within null threshold + tolerance)
-            if (portfolio_lcb <= 1.0 and portfolio_ucb <= 1.0 + epsilon_tol and portfolio_se <= se_max and
-                sybil_lcb <= 0.0 and sybil_ucb <= epsilon_tol and sybil_se <= se_max and
-                tail_lcb <= 0.05 and tail_p_hat <= tail_pass_threshold):
-                return "PASS", {
-                    "portfolio_lcb": portfolio_lcb, "portfolio_ucb": portfolio_ucb,
-                    "sybil_lcb": sybil_lcb, "sybil_ucb": sybil_ucb,
-                    "tail_lcb": tail_lcb, "tail_pass_threshold": tail_pass_threshold,
-                    "n_samples": n_samples
-                }
-            # Priority 3: INCONCLUSIVE check
-            return "INCONCLUSIVE", {
-                "portfolio_lcb": portfolio_lcb, "portfolio_ucb": portfolio_ucb,
-                "sybil_lcb": sybil_lcb, "sybil_ucb": sybil_ucb,
-                "tail_lcb": tail_lcb, "tail_pass_threshold": tail_pass_threshold,
-                "n_samples": n_samples
+            all_failed = [f"portfolio:{r}" for r in portfolio_failed] + [f"sybil:{r}" for r in sybil_failed] + (["maximal_tail"] if tail_failed else [])
+            all_inconclusive = [f"portfolio:{r}" for r in portfolio_inconclusive] + [f"sybil:{r}" for r in sybil_inconclusive] + ([] if (tail_failed or tail_passed) else ["maximal_tail"])
+
+            details = {
+                "n_samples": n_samples,
+                "portfolio_bounds": portfolio_bounds,
+                "sybil_bounds": sybil_bounds,
+                "tail_bounds": {
+                    "p_hat": tail_p_hat,
+                    "tail_se": tail_se,
+                    "tail_lcb": tail_lcb,
+                    "tail_pass_threshold": tail_pass_threshold,
+                    "is_fail": tail_failed,
+                    "is_pass": tail_passed
+                },
+                "failed_endpoints": all_failed,
+                "inconclusive_endpoints": all_inconclusive,
+                "passed_portfolio_count": len(portfolio_passed),
+                "passed_sybil_count": len(sybil_passed),
+                "tail_passed": tail_passed
             }
 
+            # Global Decision Logic:
+            # Priority 1: FAIL check (ANY rule)
+            if len(all_failed) > 0:
+                return "FAIL", details
+
+            # Priority 2: PASS check (ALL rule across all 19 endpoints)
+            if (len(portfolio_passed) == 9 and len(sybil_passed) == 9 and tail_passed):
+                return "PASS", details
+
+            # Priority 3: INCONCLUSIVE
+            return "INCONCLUSIVE", details
+
         # Programmatic Full Group-Sequential Retry Classifier: executes the full cycle initial look -> retry 1 -> retry 2
-        def evaluate_sequential_retry_classifier(stages_data, t_crit=4.294,
-                                                 epsilon_tol=0.02, se_max=0.015,
-                                                 max_extensions=2):
+        def evaluate_sequential_retry_classifier(stages_data,
+                                                 t_crit=4.294,
+                                                 epsilon_tol=0.02,
+                                                 se_max=0.015,
+                                                 max_extensions=2,
+                                                 expected_schedule=None):
+            if not isinstance(stages_data, list) or len(stages_data) == 0:
+                raise ValueError("Incomplete sequential execution: stages_data must be a non-empty list of looks")
+
+            schedule = expected_schedule if expected_schedule is not None else EXPECTED_SAMPLE_SCHEDULE
+            max_looks = min(len(schedule), 1 + max_extensions)
+
             history = []
-            max_looks = 1 + max_extensions
-            for k, data in enumerate(stages_data, start=1):
-                if k > max_looks:
+            for stage_idx, look in enumerate(stages_data, start=1):
+                if stage_idx > max_looks:
                     break
-                n_samples = data.get('n_samples', 5000 * (2 ** (k - 1)))
+                expected_n = schedule[stage_idx - 1]
+                look_n = int(look.get('n_samples', look.get('sample_size', 0))) if isinstance(look, dict) else None
+                if look_n != expected_n:
+                    raise ValueError(f"Invalid sample schedule for stage {stage_idx}: expected n_samples={expected_n}, got {look_n}")
                 verdict, details = evaluate_ternary_look(
-                    portfolio_mean=data['portfolio_mean'],
-                    portfolio_se=data['portfolio_se'],
-                    sybil_mean=data['sybil_mean'],
-                    sybil_se=data['sybil_se'],
-                    tail_p_hat=data['tail_p_hat'],
-                    n_samples=n_samples,
+                    look_data=look,
                     t_crit=t_crit,
                     epsilon_tol=epsilon_tol,
-                    se_max=se_max
+                    se_max=se_max,
+                    expected_sample_size=expected_n
                 )
-                history.append({"stage": k, "n_samples": n_samples, "verdict": verdict, "details": details})
+                history.append({
+                    "stage": stage_idx,
+                    "n_samples": expected_n,
+                    "verdict": verdict,
+                    "details": details
+                })
                 if verdict in ("FAIL", "PASS"):
-                    return verdict, k, history
-            return "INCONCLUSIVE_RETRY_BUDGET_EXHAUSTED", len(history), history
+                    return verdict, stage_idx, history
+
+            if len(history) >= max_looks and history[-1]['verdict'] == "INCONCLUSIVE":
+                return "INCONCLUSIVE_RETRY_BUDGET_EXHAUSTED", len(history), history
+
+            return history[-1]['verdict'], len(history), history
+
+        # Helper to construct complete 19-endpoint look dictionaries
+        def make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003),
+            sybil_default=(0.0, 0.001),
+            tail_p_hat=0.048,
+            n_samples=5000,
+            portfolio_overrides=None,
+            sybil_overrides=None,
+            stopping_rules=None
+        ):
+            rules = stopping_rules if stopping_rules is not None else CANONICAL_STOPPING_RULES
+            portfolio_endpoints = {}
+            for r in rules:
+                m, se = (portfolio_overrides.get(r, portfolio_default) if portfolio_overrides else portfolio_default)
+                portfolio_endpoints[r] = {"mean": m, "se": se}
+            sybil_endpoints = {}
+            for r in rules:
+                m, se = (sybil_overrides.get(r, sybil_default) if sybil_overrides else sybil_default)
+                sybil_endpoints[r] = {"mean": m, "se": se}
+            return {
+                "n_samples": n_samples,
+                "portfolio_endpoints": portfolio_endpoints,
+                "sybil_endpoints": sybil_endpoints,
+                "maximal_tail": {"p_hat": tail_p_hat}
+            }
 
         # Backward compatibility alias
-        def evaluate_ternary_classifier(portfolio_mean, portfolio_se,
-                                        sybil_mean, sybil_se,
-                                        tail_p_hat, n_samples=5000,
+        def evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.003,
+                                        sybil_mean=0.0, sybil_se=0.001,
+                                        tail_p_hat=0.048, n_samples=5000,
                                         t_crit=4.294,
                                         epsilon_tol=0.02, se_max=0.015):
-            verdict, _ = evaluate_ternary_look(portfolio_mean, portfolio_se,
-                                               sybil_mean, sybil_se,
-                                               tail_p_hat, n_samples,
-                                               t_crit, epsilon_tol, se_max)
+            look = make_19_endpoint_look(
+                portfolio_default=(portfolio_mean, portfolio_se),
+                sybil_default=(sybil_mean, sybil_se),
+                tail_p_hat=tail_p_hat,
+                n_samples=n_samples
+            )
+            verdict, _ = evaluate_ternary_look(look, t_crit=t_crit, epsilon_tol=epsilon_tol, se_max=se_max)
             return verdict
 
-        # Counterexample 1: Portfolio wealth estimate where LCB_FWER > 1.0 (mean=1.025, SE=0.005 -> LCB = 1.0035 > 1.0)
-        # Must evaluate unambiguously to FAIL, never PASS
-        res_ce1 = evaluate_ternary_classifier(portfolio_mean=1.025, portfolio_se=0.005,
-                                              sybil_mean=0.0, sybil_se=0.001,
-                                              tail_p_hat=0.048)
-        self.assertEqual(res_ce1, "FAIL", "Portfolio wealth with LCB_FWER > 1.0 must classify as FAIL")
+        # Verification of Rejection of Incomplete Looks, Duplicate Stopping Rules, and Invalid Sample Schedule
+        # 1. Missing portfolio endpoints dict
+        with self.assertRaises(ValueError) as cm:
+            evaluate_ternary_look({"n_samples": 5000, "sybil_endpoints": {}, "maximal_tail": {"p_hat": 0.048}})
+        self.assertIn("missing 'portfolio_endpoints'", str(cm.exception))
 
-        # Counterexample 2: Sybil excess estimate where LCB_FWER > 0.0 (mean=0.012, SE=0.002 -> LCB = 0.00341 > 0.0)
-        # Must evaluate unambiguously to FAIL, never PASS
-        res_ce2 = evaluate_ternary_classifier(portfolio_mean=0.995, portfolio_se=0.003,
-                                              sybil_mean=0.012, sybil_se=0.002,
-                                              tail_p_hat=0.048)
-        self.assertEqual(res_ce2, "FAIL", "Sybil excess with LCB_FWER > 0.0 must classify as FAIL")
+        # 2. Incomplete portfolio endpoints (only 8 rules, missing tau_drawdown)
+        incomplete_portfolio = {r: {"mean": 1.0, "se": 0.003} for r in CANONICAL_STOPPING_RULES if r != "tau_drawdown"}
+        full_sybil = {r: {"mean": 0.0, "se": 0.001} for r in CANONICAL_STOPPING_RULES}
+        with self.assertRaises(ValueError) as cm:
+            evaluate_ternary_look({
+                "n_samples": 5000,
+                "portfolio_endpoints": incomplete_portfolio,
+                "sybil_endpoints": full_sybil,
+                "maximal_tail": {"p_hat": 0.048}
+            })
+        self.assertIn("tau_drawdown", str(cm.exception))
 
-        # Counterexample 3: Maximal tail with P_hat_LCB_FWER > 0.05 (P_hat=0.068 -> LCB = 0.0527 > 0.05)
-        # Must evaluate unambiguously to FAIL, never PASS
-        res_ce3 = evaluate_ternary_classifier(portfolio_mean=0.995, portfolio_se=0.003,
-                                              sybil_mean=0.0, sybil_se=0.001,
-                                              tail_p_hat=0.068)
-        self.assertEqual(res_ce3, "FAIL", "Maximal tail with P_hat_LCB_FWER > 0.05 must classify as FAIL")
+        # 3. Incomplete Sybil endpoints (only 8 rules, missing tau_fixed_50)
+        incomplete_sybil = {r: {"mean": 0.0, "se": 0.001} for r in CANONICAL_STOPPING_RULES if r != "tau_fixed_50"}
+        full_portfolio = {r: {"mean": 1.0, "se": 0.003} for r in CANONICAL_STOPPING_RULES}
+        with self.assertRaises(ValueError) as cm:
+            evaluate_ternary_look({
+                "n_samples": 5000,
+                "portfolio_endpoints": full_portfolio,
+                "sybil_endpoints": incomplete_sybil,
+                "maximal_tail": {"p_hat": 0.048}
+            })
+        self.assertIn("tau_fixed_50", str(cm.exception))
 
-        # Compliant Single-Look Run: LCB <= 1.0, UCB <= 1.02, LCB(Delta) <= 0, UCB(Delta) <= 0.02, tail compliant
-        res_pass = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.003,
-                                               sybil_mean=0.0, sybil_se=0.001,
-                                               tail_p_hat=0.048)
-        self.assertEqual(res_pass, "PASS", "Compliant supermartingale run must classify as PASS")
+        # 4. Missing maximal tail endpoint
+        with self.assertRaises(ValueError) as cm:
+            evaluate_ternary_look({
+                "n_samples": 5000,
+                "portfolio_endpoints": full_portfolio,
+                "sybil_endpoints": full_sybil
+            })
+        self.assertIn("missing maximal tail endpoint", str(cm.exception))
 
-        # Sampling Gap: LCB <= 1.0, but UCB_FWER > 1.02 (mean=1.000, SE=0.008 -> UCB = 1.0344 > 1.02)
-        res_inconcl = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.008,
-                                                  sybil_mean=0.0, sybil_se=0.001,
-                                                  tail_p_hat=0.048)
-        self.assertEqual(res_inconcl, "INCONCLUSIVE", "Wide confidence interval spanning threshold must classify as INCONCLUSIVE")
+        # 5. Duplicated stopping rule ID in list input
+        dup_portfolio_list = [{"rule_id": r, "mean": 1.0, "se": 0.003} for r in CANONICAL_STOPPING_RULES] + [
+            {"rule_id": "tau_fixed_500", "mean": 1.0, "se": 0.003}
+        ]
+        with self.assertRaises(ValueError) as cm:
+            evaluate_ternary_look({
+                "n_samples": 5000,
+                "portfolio_endpoints": dup_portfolio_list,
+                "sybil_endpoints": full_sybil,
+                "maximal_tail": {"p_hat": 0.048}
+            })
+        self.assertIn("Duplicated stopping-rule ID", str(cm.exception))
 
-        # Full Sequential Cycle Tests:
+        # 6. Unknown stopping rule ID in input
+        unknown_portfolio = dict(full_portfolio)
+        unknown_portfolio["tau_nonexistent_rule"] = {"mean": 1.0, "se": 0.003}
+        with self.assertRaises(ValueError) as cm:
+            evaluate_ternary_look({
+                "n_samples": 5000,
+                "portfolio_endpoints": unknown_portfolio,
+                "sybil_endpoints": full_sybil,
+                "maximal_tail": {"p_hat": 0.048}
+            })
+        self.assertIn("Unknown stopping-rule ID", str(cm.exception))
+
+        # 7. Invalid sample schedule: stage 1 provided with N = 10000 (expected 5000)
+        look_wrong_sched = make_19_endpoint_look(n_samples=10000)
+        with self.assertRaises(ValueError) as cm:
+            evaluate_sequential_retry_classifier([look_wrong_sched])
+        self.assertIn("Invalid sample schedule", str(cm.exception))
+
+        # 8. Invalid sample schedule: stage 2 provided with N = 5000 or N = 15000 (expected 10000)
+        look_stg1 = make_19_endpoint_look(portfolio_default=(1.000, 0.006), n_samples=5000)
+        look_stg2_wrong = make_19_endpoint_look(portfolio_default=(1.000, 0.004), n_samples=15000)
+        with self.assertRaises(ValueError) as cm:
+            evaluate_sequential_retry_classifier([look_stg1, look_stg2_wrong])
+        self.assertIn("Invalid sample schedule for stage 2", str(cm.exception))
+
+        # Multiplicity Family Tests: Single non-primary stopping-time endpoint causing FAIL (Priority 1 ANY rule)
+        # 1. Non-primary portfolio endpoint tau_theta_5.0 triggers FAIL (mean=1.025, SE=0.005 -> LCB=1.0035 > 1.0),
+        # while all other 8 portfolio endpoints, all 9 Sybil endpoints, and maximal tail pass
+        look_fail_nonprimary_port = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003),
+            sybil_default=(0.0, 0.001),
+            tail_p_hat=0.048,
+            portfolio_overrides={"tau_theta_5.0": (1.025, 0.005)}
+        )
+        verdict_f1, det_f1 = evaluate_ternary_look(look_fail_nonprimary_port)
+        self.assertEqual(verdict_f1, "FAIL", "Single non-primary portfolio stopping time exceeding supermartingale bound must trigger global FAIL")
+        self.assertEqual(det_f1['failed_endpoints'], ["portfolio:tau_theta_5.0"])
+        self.assertEqual(det_f1['passed_portfolio_count'], 8)
+        self.assertEqual(det_f1['passed_sybil_count'], 9)
+
+        # 2. Non-primary portfolio endpoint tau_drawdown triggers FAIL (mean=1.030, SE=0.004 -> LCB=1.0128 > 1.0)
+        look_fail_drawdown = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003),
+            sybil_default=(0.0, 0.001),
+            tail_p_hat=0.048,
+            portfolio_overrides={"tau_drawdown": (1.030, 0.004)}
+        )
+        verdict_f2, det_f2 = evaluate_ternary_look(look_fail_drawdown)
+        self.assertEqual(verdict_f2, "FAIL")
+        self.assertEqual(det_f2['failed_endpoints'], ["portfolio:tau_drawdown"])
+
+        # 3. Non-primary Sybil endpoint tau_theta_2.0 triggers FAIL (mean=0.015, SE=0.002 -> LCB=0.0064 > 0.0),
+        # while all other 18 endpoints pass
+        look_fail_nonprimary_sybil = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003),
+            sybil_default=(0.0, 0.001),
+            tail_p_hat=0.048,
+            sybil_overrides={"tau_theta_2.0": (0.015, 0.002)}
+        )
+        verdict_f3, det_f3 = evaluate_ternary_look(look_fail_nonprimary_sybil)
+        self.assertEqual(verdict_f3, "FAIL", "Single non-primary Sybil stopping time with positive excess must trigger global FAIL")
+        self.assertEqual(det_f3['failed_endpoints'], ["sybil:tau_theta_2.0"])
+        self.assertEqual(det_f3['passed_sybil_count'], 8)
+        self.assertEqual(det_f3['passed_portfolio_count'], 9)
+
+        # 4. Maximal tail endpoint triggers FAIL (P_hat=0.068 -> LCB=0.0527 > 0.05), while all 18 stopping rules pass
+        look_fail_tail = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003),
+            sybil_default=(0.0, 0.001),
+            tail_p_hat=0.068
+        )
+        verdict_f4, det_f4 = evaluate_ternary_look(look_fail_tail)
+        self.assertEqual(verdict_f4, "FAIL", "Maximal tail exceeding Ville bound must trigger global FAIL")
+        self.assertEqual(det_f4['failed_endpoints'], ["maximal_tail"])
+
+        # Multiplicity Family Tests: Single non-primary stopping-time endpoint causing INCONCLUSIVE (preventing PASS)
+        # 1. Non-primary portfolio endpoint tau_drawdown is marginally wide (mean=1.000, SE=0.008 -> UCB=1.0344 > 1.020),
+        # while all other 18 endpoints pass: must prevent PASS and yield INCONCLUSIVE
+        look_inconcl_drawdown = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003),
+            sybil_default=(0.0, 0.001),
+            tail_p_hat=0.048,
+            portfolio_overrides={"tau_drawdown": (1.000, 0.008)}
+        )
+        verdict_i1, det_i1 = evaluate_ternary_look(look_inconcl_drawdown)
+        self.assertEqual(verdict_i1, "INCONCLUSIVE", "Single non-primary portfolio stopping time with wide interval must prevent PASS")
+        self.assertNotEqual(verdict_i1, "PASS")
+        self.assertEqual(det_i1['inconclusive_endpoints'], ["portfolio:tau_drawdown"])
+
+        # 2. Non-primary Sybil endpoint tau_theta_10.0 is marginally wide (mean=0.000, SE=0.006 -> UCB=0.0258 > 0.020),
+        # while all other 18 endpoints pass: must prevent PASS and yield INCONCLUSIVE
+        look_inconcl_sybil = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003),
+            sybil_default=(0.0, 0.001),
+            tail_p_hat=0.048,
+            sybil_overrides={"tau_theta_10.0": (0.000, 0.006)}
+        )
+        verdict_i2, det_i2 = evaluate_ternary_look(look_inconcl_sybil)
+        self.assertEqual(verdict_i2, "INCONCLUSIVE", "Single non-primary Sybil stopping time with wide interval must prevent PASS")
+        self.assertNotEqual(verdict_i2, "PASS")
+        self.assertEqual(det_i2['inconclusive_endpoints'], ["sybil:tau_theta_10.0"])
+
+        # 3. Non-primary portfolio endpoint tau_fixed_100 exceeds SE_max (mean=1.000, SE=0.018 > 0.015)
+        look_inconcl_se = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003),
+            sybil_default=(0.0, 0.001),
+            tail_p_hat=0.048,
+            portfolio_overrides={"tau_fixed_100": (1.000, 0.018)}
+        )
+        verdict_i3, det_i3 = evaluate_ternary_look(look_inconcl_se)
+        self.assertEqual(verdict_i3, "INCONCLUSIVE", "Single non-primary stopping time exceeding SE_max must prevent PASS")
+        self.assertNotEqual(verdict_i3, "PASS")
+
+        # Fully Compliant Single-Look Run: ALL 19 endpoints satisfy PASS conditions
+        look_all_pass = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003),
+            sybil_default=(0.0, 0.001),
+            tail_p_hat=0.048
+        )
+        verdict_p, det_p = evaluate_ternary_look(look_all_pass)
+        self.assertEqual(verdict_p, "PASS", "Look with all 19 endpoints fully compliant must classify as PASS")
+        self.assertEqual(det_p['passed_portfolio_count'], 9)
+        self.assertEqual(det_p['passed_sybil_count'], 9)
+        self.assertTrue(det_p['tail_passed'])
+
+        # Group-Sequential Full Retry Cycle Tests with Complete 19-Endpoint Multiplicity Looks
         # 1. Full Sequential PASS at Stage 1 (Initial Look, N=5000)
         seq_pass1_verdict, seq_pass1_stage, seq_pass1_hist = evaluate_sequential_retry_classifier([
-            {"portfolio_mean": 1.000, "portfolio_se": 0.003, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000}
+            make_19_endpoint_look(portfolio_default=(1.000, 0.003), sybil_default=(0.0, 0.001), tail_p_hat=0.048, n_samples=5000)
         ])
         self.assertEqual(seq_pass1_verdict, "PASS")
         self.assertEqual(seq_pass1_stage, 1)
 
-        # 2. Full Sequential FAIL at Stage 1 (Definitive failure stops immediately without retry)
+        # 2. Full Sequential FAIL at Stage 1 on non-primary endpoint (Definitive failure stops immediately without retry)
         seq_fail1_verdict, seq_fail1_stage, seq_fail1_hist = evaluate_sequential_retry_classifier([
-            {"portfolio_mean": 1.025, "portfolio_se": 0.005, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000}
+            make_19_endpoint_look(portfolio_default=(1.000, 0.003), sybil_default=(0.0, 0.001), tail_p_hat=0.048,
+                                  n_samples=5000, portfolio_overrides={"tau_theta_5.0": (1.025, 0.005)})
         ])
         self.assertEqual(seq_fail1_verdict, "FAIL")
         self.assertEqual(seq_fail1_stage, 1)
+        self.assertEqual(len(seq_fail1_hist), 1)
 
-        # 3. Full Sequential Cycle: Initial Look (INCONCLUSIVE) -> Retry 1 (PASS at Stage 2, N=10000)
-        # Look 1: SE=0.0055 -> UCB = 1.000 + 4.294 * 0.0055 = 1.0236 > 1.020 (INCONCLUSIVE)
-        # Look 2: N=10000, SE = 0.0055 / sqrt(2) = 0.003889 -> UCB = 1.000 + 4.294 * 0.003889 = 1.0167 <= 1.020 (PASS)
+        # 3. Full Sequential Cycle: Initial Look (INCONCLUSIVE due to non-primary endpoint) -> Retry 1 (PASS at Stage 2, N=10000)
+        # Look 1: tau_drawdown has SE=0.0055 -> UCB = 1.000 + 4.294 * 0.0055 = 1.0236 > 1.020 (INCONCLUSIVE)
+        # Look 2: N=10000, tau_drawdown SE = 0.0055 / sqrt(2) = 0.003889 -> UCB = 1.000 + 4.294 * 0.003889 = 1.0167 <= 1.020 (PASS)
+        look_seq_retry1_k1 = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003), sybil_default=(0.0, 0.001), tail_p_hat=0.048, n_samples=5000,
+            portfolio_overrides={"tau_drawdown": (1.000, 0.0055)}
+        )
+        look_seq_retry1_k2 = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003 / math.sqrt(2)), sybil_default=(0.0, 0.001 / math.sqrt(2)),
+            tail_p_hat=0.048, n_samples=10000,
+            portfolio_overrides={"tau_drawdown": (1.000, 0.0055 / math.sqrt(2))}
+        )
         seq_retry1_verdict, seq_retry1_stage, seq_retry1_hist = evaluate_sequential_retry_classifier([
-            {"portfolio_mean": 1.000, "portfolio_se": 0.0055, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000},
-            {"portfolio_mean": 1.000, "portfolio_se": 0.0055 / math.sqrt(2), "sybil_mean": 0.0, "sybil_se": 0.001 / math.sqrt(2), "tail_p_hat": 0.048, "n_samples": 10000}
+            look_seq_retry1_k1, look_seq_retry1_k2
         ])
         self.assertEqual(seq_retry1_verdict, "PASS")
         self.assertEqual(seq_retry1_stage, 2)
@@ -1121,13 +1475,25 @@ class TestInvariantGraph(unittest.TestCase):
         self.assertEqual(seq_retry1_hist[1]['verdict'], "PASS")
 
         # 4. Full Sequential Cycle: Initial Look -> Retry 1 -> PASS at Retry 2 (Stage 3, N=20000)
-        # Look 1: SE=0.0075 -> UCB = 1.0322 > 1.020 (INCONCLUSIVE)
-        # Look 2: SE=0.0075 / sqrt(2) = 0.005303 -> UCB = 1.0227 > 1.020 (INCONCLUSIVE)
-        # Look 3: SE=0.0075 / 2 = 0.00375 -> UCB = 1.0161 <= 1.020 (PASS)
+        # Look 1: tau_theta_2.0 has SE=0.0075 -> UCB = 1.0322 > 1.020 (INCONCLUSIVE)
+        # Look 2: SE = 0.0075 / sqrt(2) = 0.005303 -> UCB = 1.0227 > 1.020 (INCONCLUSIVE)
+        # Look 3: SE = 0.0075 / 2.0 = 0.00375 -> UCB = 1.0161 <= 1.020 (PASS)
+        look_seq_retry2_k1 = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003), sybil_default=(0.0, 0.001), tail_p_hat=0.048, n_samples=5000,
+            portfolio_overrides={"tau_theta_2.0": (1.000, 0.0075)}
+        )
+        look_seq_retry2_k2 = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003 / math.sqrt(2)), sybil_default=(0.0, 0.001 / math.sqrt(2)),
+            tail_p_hat=0.048, n_samples=10000,
+            portfolio_overrides={"tau_theta_2.0": (1.000, 0.0075 / math.sqrt(2))}
+        )
+        look_seq_retry2_k3 = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003 / 2.0), sybil_default=(0.0, 0.001 / 2.0),
+            tail_p_hat=0.048, n_samples=20000,
+            portfolio_overrides={"tau_theta_2.0": (1.000, 0.0075 / 2.0)}
+        )
         seq_retry2_verdict, seq_retry2_stage, seq_retry2_hist = evaluate_sequential_retry_classifier([
-            {"portfolio_mean": 1.000, "portfolio_se": 0.0075, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000},
-            {"portfolio_mean": 1.000, "portfolio_se": 0.0075 / math.sqrt(2), "sybil_mean": 0.0, "sybil_se": 0.001 / math.sqrt(2), "tail_p_hat": 0.048, "n_samples": 10000},
-            {"portfolio_mean": 1.000, "portfolio_se": 0.0075 / 2.0, "sybil_mean": 0.0, "sybil_se": 0.001 / 2.0, "tail_p_hat": 0.048, "n_samples": 20000}
+            look_seq_retry2_k1, look_seq_retry2_k2, look_seq_retry2_k3
         ])
         self.assertEqual(seq_retry2_verdict, "PASS")
         self.assertEqual(seq_retry2_stage, 3)
@@ -1136,40 +1502,57 @@ class TestInvariantGraph(unittest.TestCase):
         self.assertEqual(seq_retry2_hist[2]['verdict'], "PASS")
 
         # 5. Full Sequential Cycle: Initial Look -> Retry 1 -> Retry 2 -> Exhaustion (INCONCLUSIVE_RETRY_BUDGET_EXHAUSTED)
+        look_seq_exhaust_k1 = make_19_endpoint_look(
+            portfolio_default=(1.015, 0.016), sybil_default=(0.0, 0.001), tail_p_hat=0.048, n_samples=5000
+        )
+        look_seq_exhaust_k2 = make_19_endpoint_look(
+            portfolio_default=(1.015, 0.016 / math.sqrt(2)), sybil_default=(0.0, 0.001 / math.sqrt(2)),
+            tail_p_hat=0.048, n_samples=10000
+        )
+        look_seq_exhaust_k3 = make_19_endpoint_look(
+            portfolio_default=(1.015, 0.008), sybil_default=(0.0, 0.001 / 2.0), tail_p_hat=0.048, n_samples=20000
+        )
         seq_exhaust_verdict, seq_exhaust_stage, seq_exhaust_hist = evaluate_sequential_retry_classifier([
-            {"portfolio_mean": 1.015, "portfolio_se": 0.016, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000},
-            {"portfolio_mean": 1.015, "portfolio_se": 0.016 / math.sqrt(2), "sybil_mean": 0.0, "sybil_se": 0.001 / math.sqrt(2), "tail_p_hat": 0.048, "n_samples": 10000},
-            {"portfolio_mean": 1.015, "portfolio_se": 0.008, "sybil_mean": 0.0, "sybil_se": 0.001 / 2.0, "tail_p_hat": 0.048, "n_samples": 20000}
+            look_seq_exhaust_k1, look_seq_exhaust_k2, look_seq_exhaust_k3
         ])
         self.assertEqual(seq_exhaust_verdict, "INCONCLUSIVE_RETRY_BUDGET_EXHAUSTED")
         self.assertEqual(seq_exhaust_stage, 3)
         self.assertEqual(len(seq_exhaust_hist), 3)
 
-        # 6. Full Sequential Cycle: Initial Look (INCONCLUSIVE) -> Retry 1 uncovers violation (FAIL at Stage 2)
-        # Look 1: mean=1.015, SE=0.004 -> LCB = 1.015 - 4.294 * 0.004 = 0.9978 <= 1.0 (INCONCLUSIVE)
-        # Look 2: N=10000, SE = 0.004 / sqrt(2) = 0.002828 -> LCB = 1.015 - 4.294 * 0.002828 = 1.00286 > 1.0 (FAIL)
+        # 6. Full Sequential Cycle: Initial Look (INCONCLUSIVE) -> Retry 1 uncovers violation on non-primary Sybil endpoint (FAIL at Stage 2)
+        # Look 1: tau_fixed_250 Sybil excess has mean=0.010, SE=0.003 -> UCB = 0.010 + 4.294 * 0.003 = 0.02288 > 0.020 (INCONCLUSIVE)
+        # Look 2: N=10000, tau_fixed_250 SE = 0.003 / sqrt(2) = 0.002121 -> LCB = 0.010 - 4.294 * 0.002121 = +0.000891 > 0.0 (FAIL)
+        look_seq_fail2_k1 = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003), sybil_default=(0.0, 0.001), tail_p_hat=0.048, n_samples=5000,
+            sybil_overrides={"tau_fixed_250": (0.010, 0.003)}
+        )
+        look_seq_fail2_k2 = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003 / math.sqrt(2)), sybil_default=(0.0, 0.001 / math.sqrt(2)),
+            tail_p_hat=0.048, n_samples=10000,
+            sybil_overrides={"tau_fixed_250": (0.010, 0.003 / math.sqrt(2))}
+        )
         seq_fail2_verdict, seq_fail2_stage, seq_fail2_hist = evaluate_sequential_retry_classifier([
-            {"portfolio_mean": 1.015, "portfolio_se": 0.004, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000},
-            {"portfolio_mean": 1.015, "portfolio_se": 0.004 / math.sqrt(2), "sybil_mean": 0.0, "sybil_se": 0.001 / math.sqrt(2), "tail_p_hat": 0.048, "n_samples": 10000}
+            look_seq_fail2_k1, look_seq_fail2_k2
         ])
         self.assertEqual(seq_fail2_verdict, "FAIL")
         self.assertEqual(seq_fail2_stage, 2)
         self.assertEqual(seq_fail2_hist[0]['verdict'], "INCONCLUSIVE")
         self.assertEqual(seq_fail2_hist[1]['verdict'], "FAIL")
 
-        # 7. Active Group-Sequential FWER Critical Value Sensitivity Test:
-        # With mean=1.000, SE=0.0048 at Look 1:
+        # 7. Active Group-Sequential FWER Critical Value Sensitivity Test on non-primary endpoint:
+        # With tau_drawdown mean=1.000, SE=0.0048 at Look 1:
         # Under single-look t=4.044: UCB = 1.000 + 4.044 * 0.0048 = 1.01941 <= 1.020 (erroneous PASS without sequential adjustment)
         # Under group-sequential Bonferroni FWER t=4.294 (M=57): UCB = 1.000 + 4.294 * 0.0048 = 1.02061 > 1.020 (INCONCLUSIVE)
         # Proves programmatically that t_FWER = 4.294 actively prevents premature acceptance during sequential looks
-        res_single_look_pass = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.0048,
-                                                           sybil_mean=0.0, sybil_se=0.001,
-                                                           tail_p_hat=0.048, t_crit=4.044)
-        res_seq_fwer_inconcl = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.0048,
-                                                           sybil_mean=0.0, sybil_se=0.001,
-                                                           tail_p_hat=0.048, t_crit=4.294)
-        self.assertEqual(res_single_look_pass, "PASS", "Single-look bound would accept marginally wide interval prematurely")
-        self.assertEqual(res_seq_fwer_inconcl, "INCONCLUSIVE", "Operative group-sequential FWER bound must classify marginally wide interval as INCONCLUSIVE")
+        look_sensitivity = make_19_endpoint_look(
+            portfolio_default=(1.000, 0.003), sybil_default=(0.0, 0.001), tail_p_hat=0.048, n_samples=5000,
+            portfolio_overrides={"tau_drawdown": (1.000, 0.0048)}
+        )
+        verdict_single_look_pass, _ = evaluate_ternary_look(look_sensitivity, t_crit=4.044)
+        verdict_seq_fwer_inconcl, _ = evaluate_ternary_look(look_sensitivity, t_crit=4.294)
+        self.assertEqual(verdict_single_look_pass, "PASS", "Single-look bound would accept marginally wide interval prematurely")
+        self.assertEqual(verdict_seq_fwer_inconcl, "INCONCLUSIVE", "Operative group-sequential FWER bound must classify marginally wide interval as INCONCLUSIVE")
+
 
     def test_excluded_data_documented_and_verified(self):
         """Verify excluded data contains at least 20 records and all match direct objects."""

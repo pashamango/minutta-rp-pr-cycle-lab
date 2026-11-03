@@ -248,6 +248,17 @@
           "confidence_level": 0.999,
           "critical_value_t_pointwise": 3.090,
           "stopping_family_size_K": 9,
+          "stopping_rule_ids": [
+            "tau_fixed_50",
+            "tau_fixed_100",
+            "tau_fixed_250",
+            "tau_fixed_500",
+            "tau_theta_1.5",
+            "tau_theta_2.0",
+            "tau_theta_5.0",
+            "tau_theta_10.0",
+            "tau_drawdown"
+          ],
           "endpoints_per_look": 19,
           "max_sequential_looks": 3,
           "multiplicity_family_size_M": 57,
