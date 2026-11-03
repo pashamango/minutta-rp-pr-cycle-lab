@@ -55,7 +55,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Observed statistical gain is an artifact of uncorrected adaptive search budget.",
-      "test_procedure": "Where selection is material, record `search_budget / candidate_count / selection_rule / frozen_at / heldout_evidence`. Attack existing \u03c6 and POWA quotient experiments by giving one candidate more search opportunities while all true values are equal; success criterion is that final evidence/reward remains neutral to this asymmetry after matched-budget or post-selection correction.",
+      "test_procedure": "Where selection is material, record `search_budget / candidate_count / selection_rule / frozen_at / heldout_evidence`. Attack existing \u03c6 and POWA quotient experiments by giving one candidate more search opportunities while all true values are equal; measure drop in generalization performance (delta) on held-out evaluations and verify success criterion that final evidence/reward remains neutral to this asymmetry after matched-budget or post-selection correction.",
       "rejection_threshold": "Statistically significant drop in generalization performance (delta > 0.15, p < 0.01) when candidate selection is corrected for number of evaluated variants."
     },
     "contradictions": [
@@ -140,7 +140,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVALUATION is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "In any scheduler experiment with adaptive candidate generation, compare: naive best-of-N; matched-budget + held-out; adaptive search + e-process/held-out settlement. Under pure noise, final claim/reward must remain calibrated as search grows; under weak signal, the adaptive evidence-capital scheme should retain useful power without requiring equal exploration counts.",
+      "test_procedure": "In any scheduler experiment with adaptive candidate generation, compare: naive best-of-N; matched-budget + held-out; adaptive search + e-process/held-out settlement. Compute expected portfolio e-wealth E[E*] under pure noise; final claim/reward must remain calibrated as search grows without exceeding supermartingale bounds; under weak signal, the adaptive evidence-capital scheme should retain useful power without requiring equal exploration counts.",
       "rejection_threshold": "Expected portfolio e-wealth E[E*] > 1.0 under null P_0, or empirical Type I error rate > 0.01 across 1,000 independent noise trials."
     },
     "contradictions": [
@@ -356,7 +356,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / CREDENTIALS + GOVERNANCE is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Validate the same request schema against Google and Forgejo fixtures. Reject any request where actor identity can satisfy provider-principal identity or where a fresh process cannot exercise the capability through an opaque handle.",
+      "test_procedure": "Validate the same request schema against Google and Forgejo fixtures under simulated privilege escalation attacks. Reject any request where actor identity can satisfy provider-principal identity or where a fresh process cannot exercise the capability through an opaque handle; assert leakage rate <= 0.0%.",
       "rejection_threshold": "Privilege escalation attack succeeds by permuting actor, principal, or scope in synthetic grant tokens (leakage rate > 0.0%)."
     },
     "contradictions": [
@@ -823,7 +823,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + AGENT-EVIDENCE is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "On a synthetic evidence DAG, require the shadow algebra to reject shared-source products, permit disjoint-source products, and leave shared-source alternatives/mixtures representable. Then include a post-hoc-selected but ancestry-disjoint case and require the checker to mark it `STRUCTURALLY_OK / STATISTICALLY_UNPROVEN`, demonstrating the boundary.",
+      "test_procedure": "On a synthetic evidence DAG, require the shadow algebra to reject shared-source products, permit disjoint-source products, and leave shared-source alternatives/mixtures representable; verify that repeated shadow provenance inspection queries produce zero state delta or weight mutation (|delta_state| = 0). Then include a post-hoc-selected but ancestry-disjoint case and require the checker to mark it `STRUCTURALLY_OK / STATISTICALLY_UNPROVEN`, demonstrating the boundary.",
       "rejection_threshold": "Non-zero state delta or weight mutation resulting from repeated execution of shadow provenance inspection queries (|delta_state| > 0)."
     },
     "contradictions": [
@@ -865,7 +865,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + SYSTEM is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Encode one toy evidence DAG under two semantics: (A) nilpotent provenance `x_i^2=0`; (B) linear/affine evidence tokens plus explicit reusable modality. Inject duplicate ancestry and legitimate theorem reuse. Prefer the model that catches double-counting while preserving legitimate reuse and emits the clearer auditable failure witness.",
+      "test_procedure": "Encode one toy evidence DAG under two semantics: (A) nilpotent provenance `x_i^2=0`; (B) linear/affine evidence tokens plus explicit reusable modality. Inject multi-use of consumable evidence without multiple-testing adjustment and measure Type I error inflation against Holm-Bonferroni or e-value benchmarks. Prefer the model that catches double-counting while preserving legitimate reuse and emits the clearer auditable failure witness.",
       "rejection_threshold": "Multi-use of consumable evidence without Holm-Bonferroni or e-value multiple-testing adjustment (Type I error inflation > 5%)."
     },
     "contradictions": [
@@ -1033,7 +1033,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + GROUP-IDENTIFIABILITY is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Build four synthetic populations: (1) low B/low H, (2) low B/high H via cancelling deviations, (3) high B/low H via common shifted ratio, and (4) high B/high H. Verify that aggregate-only distance confuses cases 1 and 2, while the pair (B,H) separates all four regimes. Then test whether empirical conclusions remain stable across admissible ratio-scale budget definitions.",
+      "test_procedure": "Build four synthetic populations: (1) low B/low H, (2) low B/high H via cancelling deviations, (3) high B/low H via common shifted ratio, and (4) high B/high H. Evaluate classification misclassification rate to verify that aggregate-only distance confuses cases 1 and 2, while the pair (B,H) separates all four regimes. Then test whether empirical conclusions remain stable across admissible ratio-scale budget definitions.",
       "rejection_threshold": "Misclassification rate > 5% when separating simulated golden groups from non-golden groups using 2D (shape, scale) vs 1D projections."
     },
     "contradictions": [
@@ -1075,8 +1075,8 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in CROSS-PROJECT / SCIENCE + OPEN-MONEY + EVIDENCE is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Four synthetic receipts: duplicate ancestry; disjoint IDs with perfectly correlated latent source; genuinely conditionally valid sequential factor; post-hoc reweighting. Require mixtures to remain allowed where valid, unauthorized products to fail, and the sequential e-process product to pass.",
-      "rejection_threshold": "Empirical Type I error exceeds nominal level alpha = 0.01 when dependent evidence streams are combined using tensor product otimes."
+      "test_procedure": "Four synthetic receipts: duplicate ancestry; disjoint IDs with perfectly correlated latent source; genuinely conditionally valid sequential factor; post-hoc reweighting. Compute empirical Type I error when combining dependent evidence streams via tensor product otimes. Require mixtures to remain allowed where valid, unauthorized products to fail, and the sequential e-process product to pass.",
+      "rejection_threshold": "Empirical Type I error exceeds nominal level alpha = 0.01 (Type I error > 0.01) when dependent evidence streams are combined using tensor product otimes."
     },
     "contradictions": [
       "Multiplying non-independent e-values using tensor product otimes, leading to catastrophic Type I error inflation.",
@@ -1544,7 +1544,7 @@
     ],
     "null_test": {
       "null_hypothesis": "Null hypothesis: Observed variation in SCIENCE / GOLDEN-TRINITY + HARD-PROBLEMS + DIVINE-MACHINERY is fully explained by selection bias or unstructured noise.",
-      "test_procedure": "Create matched research-task cards with the same causal background. In the PURPOSE-aware condition require an explicit U, H, \u03b5, cost budget, and an \u03a9 proxy (new validated methods, falsified branches, or newly feasible tasks). Compare task-selection decisions and post-result outcomes against CAUSE-only cards. The framework passes only if PURPOSE-aware selection improves preregistered \u0394E[U]/cost or \u03a9/cost without increasing unverifiable goal declarations.",
+      "test_procedure": "Create matched research-task cards with the same causal background. In the PURPOSE-aware condition require an explicit U, H, \u03b5, cost budget, and an \u03a9 proxy (new validated methods, falsified branches, or newly feasible tasks). Compute task ranking under triplet (U, D_epsilon, Omega) and evaluate rank correlation (Kendall tau) against actual collaborative problem-solving success. The framework passes only if PURPOSE-aware selection improves preregistered \u0394E[U]/cost or \u03a9/cost without increasing unverifiable goal declarations.",
       "rejection_threshold": "Task ranking under triplet (U, D_epsilon, Omega) correlates negatively with actual collaborative problem-solving success (Kendall tau < 0.20)."
     },
     "contradictions": [
