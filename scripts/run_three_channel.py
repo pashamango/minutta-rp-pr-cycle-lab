@@ -4,6 +4,14 @@
 import json
 import os
 import sys
+
+# Make the checkout runnable directly from a clean clone, without requiring an
+# editable install or an ambient PYTHONPATH.
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+os.chdir(ROOT)
 from amde_num.three_channel_experiment import ThreeChannelExperiment
 
 
