@@ -1,7 +1,7 @@
 # MIN-24 — Next Epoch conjecture and counterexample agenda
 
 Status: `CANDIDATE / NOT EXECUTION-AUTHORIZED`  
-Run: `run-ec77ad266175`
+Run: `run-f0f1bf881619`
 Scope: hypothesis generation from the emergent-attractor core; no claim about the Riemann Hypothesis.
 
 ## Outcome
@@ -12,7 +12,7 @@ Three bounded, falsifiable directions are ranked below. Each separates what is a
 
 ### P1 — Positive-kernel attractor contraction (rank 1)
 
-**Conjecture badge (`CONJECTURE`, not theorem):** Let `K` be a finite nonnegative matrix whose row sums are one, with a primitive support graph. On the zero-sum subspace, iterates of `K` contract in a weighted `l1` norm at a rate bounded by a computable Dobrushin coefficient `δ(K)<1`. The emergent attractor is unique modulo the conserved mass.
+**Conjecture badge (`CONJECTURE`, not theorem):** Let `K` be a finite nonnegative matrix whose row sums are one, with a primitive support graph. On the zero-sum subspace, iterates of `K` contract in the certified (unweighted) `l1` norm at a rate bounded by a computable Dobrushin coefficient `δ(K)<1`. A weighted `l1` variant is admissible only when its weighting and corresponding coefficient are supplied. The emergent attractor is unique modulo the conserved mass.
 
 **Theorem badges (`THEOREM-CONDITIONAL`):** Nonnegativity preserves the positive cone; row-stochasticity preserves total mass; `δ(K)<1` implies one-step contraction in the selected norm. The missing theorem is the bridge from the Lean core's positivity operator to a concrete `K` satisfying primitivity and the norm bound.
 
