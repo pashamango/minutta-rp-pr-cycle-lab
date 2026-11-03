@@ -949,16 +949,18 @@ class TestInvariantGraph(unittest.TestCase):
         self.assertIn("Priority 2: PASS", crit_dict['deterministic_priority_order'])
         self.assertIn("Priority 3: INCONCLUSIVE", crit_dict['deterministic_priority_order'])
 
-        # Verify Family-Wise Error Rate (FWER) Bonferroni Correction & Multiplicity Family M = 19
+        # Verify Group-Sequential Family-Wise Error Rate (FWER) Bonferroni Correction & Multiplicity Family M = 57
         self.assertIn("Bonferroni", crit_dict['statistical_guarantee_scope'])
         self.assertIn("pointwise", crit_dict['statistical_guarantee_scope'].lower())
         self.assertEqual(crit_dict['parameters']['stopping_family_size_K'], 9)
-        self.assertEqual(crit_dict['parameters']['multiplicity_family_size_M'], 19)
+        self.assertEqual(crit_dict['parameters']['endpoints_per_look'], 19)
+        self.assertEqual(crit_dict['parameters']['max_sequential_looks'], 3)
+        self.assertEqual(crit_dict['parameters']['multiplicity_family_size_M'], 57)
         self.assertEqual(crit_dict['parameters']['fwer_alpha'], 0.001)
-        self.assertAlmostEqual(crit_dict['parameters']['alpha_adjusted_bonferroni'], 0.001 / 19, places=7)
-        self.assertEqual(crit_dict['parameters']['critical_value_t_fwer_bonferroni'], 4.044)
+        self.assertAlmostEqual(crit_dict['parameters']['alpha_adjusted_bonferroni'], 0.001 / 57, places=7)
+        self.assertEqual(crit_dict['parameters']['critical_value_t_fwer_bonferroni'], 4.294)
         self.assertEqual(crit_dict['parameters']['critical_value_t_pointwise'], 3.090)
-        self.assertEqual(crit_dict['parameters']['ville_threshold_p_hat_max'], 0.0625)
+        self.assertEqual(crit_dict['parameters']['ville_threshold_p_hat_max'], 0.0632)
 
         # Verify Mutually Exclusive Pass & Fail Partitions under Operative FWER Bounds
         self.assertIn("LCB_FWER(E[E*_tau]) <= 1.0", pass_text, "Pass condition must require LCB_FWER <= 1.0 to eliminate overlap with Fail")
@@ -968,23 +970,22 @@ class TestInvariantGraph(unittest.TestCase):
         self.assertIn("<= 1.0 + epsilon_tol", pass_text, "Pass condition must bound portfolio wealth UCB <= 1.0 + epsilon_tol")
         self.assertIn("SE_max = 0.015", pass_text, "Pass condition must enforce maximum standard error constraint")
         self.assertIn("1e-12", pass_text, "Pass condition must verify machine-precision Sybil neutrality")
-        self.assertIn("0.0625", pass_text, "Pass condition must verify FWER-adjusted maximal tail threshold 0.0625")
+        self.assertIn("0.0632", pass_text, "Pass condition must verify FWER-adjusted maximal tail threshold 0.0632")
         self.assertIn("LCB_FWER", fail_text, "Fail condition must declare unambiguous rejection via lower confidence bound")
         self.assertIn("> 1.0", fail_text, "Fail condition must trigger when LCB_FWER > 1.0")
         self.assertIn("Delta E*", fail_text, "Fail condition must evaluate paired Sybil excess Delta E*")
-        self.assertIn("4.044", fail_text, "Fail condition must compute operative boundaries with t_FWER = 4.044")
+        self.assertIn("4.294", fail_text, "Fail condition must compute operative boundaries with t_FWER = 4.294")
         self.assertIn("retry_budget", str(crit_dict['parameters']), "Parameters must define retry budget")
         self.assertIn("B_max = 2 extensions", inconcl_text, "Inconclusive rule must specify finite retry budget B_max = 2")
         self.assertIn("INCONCLUSIVE_RETRY_BUDGET_EXHAUSTED", inconcl_text, "Inconclusive rule must define definitive termination status")
         self.assertIn("< 3.5 seconds", s1['cheapest_test'], "Cheapest test must be verifiable in < 3.5 seconds on CPU")
 
-        # Programmatic Ternary Classifier Evaluation: constructs decision boundaries directly from estimates & SEs
-        def evaluate_ternary_classifier(portfolio_mean, portfolio_se,
-                                        sybil_mean, sybil_se,
-                                        tail_p_hat, n_samples=5000,
-                                        t_crit=4.044,
-                                        epsilon_tol=0.02, se_max=0.015):
-            # Operative decision boundaries are constructed directly from estimates, standard errors, and critical value
+        # Programmatic Single-Look Ternary Classifier: constructs decision boundaries directly from estimates & SEs
+        def evaluate_ternary_look(portfolio_mean, portfolio_se,
+                                  sybil_mean, sybil_se,
+                                  tail_p_hat, n_samples=5000,
+                                  t_crit=4.294,
+                                  epsilon_tol=0.02, se_max=0.015):
             portfolio_lcb = portfolio_mean - t_crit * portfolio_se
             portfolio_ucb = portfolio_mean + t_crit * portfolio_se
             sybil_lcb = sybil_mean - t_crit * sybil_se
@@ -997,61 +998,178 @@ class TestInvariantGraph(unittest.TestCase):
 
             # Priority 1: FAIL check (triggers if ANY lower confidence bound exceeds null threshold)
             if portfolio_lcb > 1.0 or sybil_lcb > 0.0 or tail_lcb > 0.05:
-                return "FAIL"
+                return "FAIL", {
+                    "portfolio_lcb": portfolio_lcb, "portfolio_ucb": portfolio_ucb,
+                    "sybil_lcb": sybil_lcb, "sybil_ucb": sybil_ucb,
+                    "tail_lcb": tail_lcb, "tail_pass_threshold": tail_pass_threshold,
+                    "n_samples": n_samples
+                }
             # Priority 2: PASS check (requires ALL bounds within null threshold + tolerance)
             if (portfolio_lcb <= 1.0 and portfolio_ucb <= 1.0 + epsilon_tol and portfolio_se <= se_max and
                 sybil_lcb <= 0.0 and sybil_ucb <= epsilon_tol and sybil_se <= se_max and
                 tail_lcb <= 0.05 and tail_p_hat <= tail_pass_threshold):
-                return "PASS"
+                return "PASS", {
+                    "portfolio_lcb": portfolio_lcb, "portfolio_ucb": portfolio_ucb,
+                    "sybil_lcb": sybil_lcb, "sybil_ucb": sybil_ucb,
+                    "tail_lcb": tail_lcb, "tail_pass_threshold": tail_pass_threshold,
+                    "n_samples": n_samples
+                }
             # Priority 3: INCONCLUSIVE check
-            return "INCONCLUSIVE"
+            return "INCONCLUSIVE", {
+                "portfolio_lcb": portfolio_lcb, "portfolio_ucb": portfolio_ucb,
+                "sybil_lcb": sybil_lcb, "sybil_ucb": sybil_ucb,
+                "tail_lcb": tail_lcb, "tail_pass_threshold": tail_pass_threshold,
+                "n_samples": n_samples
+            }
 
-        # Counterexample 1: Portfolio wealth estimate where LCB_FWER > 1.0 (mean=1.025, SE=0.005 -> LCB = 1.00478 > 1.0)
+        # Programmatic Full Group-Sequential Retry Classifier: executes the full cycle initial look -> retry 1 -> retry 2
+        def evaluate_sequential_retry_classifier(stages_data, t_crit=4.294,
+                                                 epsilon_tol=0.02, se_max=0.015,
+                                                 max_extensions=2):
+            history = []
+            max_looks = 1 + max_extensions
+            for k, data in enumerate(stages_data, start=1):
+                if k > max_looks:
+                    break
+                n_samples = data.get('n_samples', 5000 * (2 ** (k - 1)))
+                verdict, details = evaluate_ternary_look(
+                    portfolio_mean=data['portfolio_mean'],
+                    portfolio_se=data['portfolio_se'],
+                    sybil_mean=data['sybil_mean'],
+                    sybil_se=data['sybil_se'],
+                    tail_p_hat=data['tail_p_hat'],
+                    n_samples=n_samples,
+                    t_crit=t_crit,
+                    epsilon_tol=epsilon_tol,
+                    se_max=se_max
+                )
+                history.append({"stage": k, "n_samples": n_samples, "verdict": verdict, "details": details})
+                if verdict in ("FAIL", "PASS"):
+                    return verdict, k, history
+            return "INCONCLUSIVE_RETRY_BUDGET_EXHAUSTED", len(history), history
+
+        # Backward compatibility alias
+        def evaluate_ternary_classifier(portfolio_mean, portfolio_se,
+                                        sybil_mean, sybil_se,
+                                        tail_p_hat, n_samples=5000,
+                                        t_crit=4.294,
+                                        epsilon_tol=0.02, se_max=0.015):
+            verdict, _ = evaluate_ternary_look(portfolio_mean, portfolio_se,
+                                               sybil_mean, sybil_se,
+                                               tail_p_hat, n_samples,
+                                               t_crit, epsilon_tol, se_max)
+            return verdict
+
+        # Counterexample 1: Portfolio wealth estimate where LCB_FWER > 1.0 (mean=1.025, SE=0.005 -> LCB = 1.0035 > 1.0)
         # Must evaluate unambiguously to FAIL, never PASS
         res_ce1 = evaluate_ternary_classifier(portfolio_mean=1.025, portfolio_se=0.005,
                                               sybil_mean=0.0, sybil_se=0.001,
                                               tail_p_hat=0.048)
         self.assertEqual(res_ce1, "FAIL", "Portfolio wealth with LCB_FWER > 1.0 must classify as FAIL")
 
-        # Counterexample 2: Sybil excess estimate where LCB_FWER > 0.0 (mean=0.012, SE=0.002 -> LCB = 0.00391 > 0.0)
+        # Counterexample 2: Sybil excess estimate where LCB_FWER > 0.0 (mean=0.012, SE=0.002 -> LCB = 0.00341 > 0.0)
         # Must evaluate unambiguously to FAIL, never PASS
         res_ce2 = evaluate_ternary_classifier(portfolio_mean=0.995, portfolio_se=0.003,
                                               sybil_mean=0.012, sybil_se=0.002,
                                               tail_p_hat=0.048)
         self.assertEqual(res_ce2, "FAIL", "Sybil excess with LCB_FWER > 0.0 must classify as FAIL")
 
-        # Counterexample 3: Maximal tail with P_hat_LCB_FWER > 0.05 (P_hat=0.065 -> LCB = 0.0509 > 0.05)
+        # Counterexample 3: Maximal tail with P_hat_LCB_FWER > 0.05 (P_hat=0.068 -> LCB = 0.0527 > 0.05)
         # Must evaluate unambiguously to FAIL, never PASS
         res_ce3 = evaluate_ternary_classifier(portfolio_mean=0.995, portfolio_se=0.003,
                                               sybil_mean=0.0, sybil_se=0.001,
-                                              tail_p_hat=0.065)
+                                              tail_p_hat=0.068)
         self.assertEqual(res_ce3, "FAIL", "Maximal tail with P_hat_LCB_FWER > 0.05 must classify as FAIL")
 
-        # Compliant Invariant Run: LCB <= 1.0, UCB <= 1.02, LCB(Delta) <= 0, UCB(Delta) <= 0.02, tail compliant
+        # Compliant Single-Look Run: LCB <= 1.0, UCB <= 1.02, LCB(Delta) <= 0, UCB(Delta) <= 0.02, tail compliant
         res_pass = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.003,
                                                sybil_mean=0.0, sybil_se=0.001,
                                                tail_p_hat=0.048)
         self.assertEqual(res_pass, "PASS", "Compliant supermartingale run must classify as PASS")
 
-        # Sampling Gap: LCB <= 1.0, but UCB_FWER > 1.02 (mean=1.000, SE=0.008 -> UCB = 1.0323 > 1.02)
+        # Sampling Gap: LCB <= 1.0, but UCB_FWER > 1.02 (mean=1.000, SE=0.008 -> UCB = 1.0344 > 1.02)
         res_inconcl = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.008,
                                                   sybil_mean=0.0, sybil_se=0.001,
                                                   tail_p_hat=0.048)
         self.assertEqual(res_inconcl, "INCONCLUSIVE", "Wide confidence interval spanning threshold must classify as INCONCLUSIVE")
 
-        # Active FWER Critical Value Sensitivity Test:
-        # With mean=1.000, SE=0.0055:
-        # Under unadjusted pointwise t=3.090: UCB = 1.000 + 3.090 * 0.0055 = 1.016995 <= 1.020 (PASS)
-        # Under Bonferroni FWER t=4.044: UCB = 1.000 + 4.044 * 0.0055 = 1.022242 > 1.020 (INCONCLUSIVE)
-        # Proves programmatically that t_FWER = 4.044 is actively operative in preventing false acceptance
-        res_pointwise_pass = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.0055,
-                                                         sybil_mean=0.0, sybil_se=0.001,
-                                                         tail_p_hat=0.048, t_crit=3.090)
-        res_fwer_inconcl = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.0055,
-                                                       sybil_mean=0.0, sybil_se=0.001,
-                                                       tail_p_hat=0.048, t_crit=4.044)
-        self.assertEqual(res_pointwise_pass, "PASS", "Unadjusted pointwise bound would accept marginally wide interval")
-        self.assertEqual(res_fwer_inconcl, "INCONCLUSIVE", "Operative Bonferroni FWER bound must classify marginally wide interval as INCONCLUSIVE")
+        # Full Sequential Cycle Tests:
+        # 1. Full Sequential PASS at Stage 1 (Initial Look, N=5000)
+        seq_pass1_verdict, seq_pass1_stage, seq_pass1_hist = evaluate_sequential_retry_classifier([
+            {"portfolio_mean": 1.000, "portfolio_se": 0.003, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000}
+        ])
+        self.assertEqual(seq_pass1_verdict, "PASS")
+        self.assertEqual(seq_pass1_stage, 1)
+
+        # 2. Full Sequential FAIL at Stage 1 (Definitive failure stops immediately without retry)
+        seq_fail1_verdict, seq_fail1_stage, seq_fail1_hist = evaluate_sequential_retry_classifier([
+            {"portfolio_mean": 1.025, "portfolio_se": 0.005, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000}
+        ])
+        self.assertEqual(seq_fail1_verdict, "FAIL")
+        self.assertEqual(seq_fail1_stage, 1)
+
+        # 3. Full Sequential Cycle: Initial Look (INCONCLUSIVE) -> Retry 1 (PASS at Stage 2, N=10000)
+        # Look 1: SE=0.0055 -> UCB = 1.000 + 4.294 * 0.0055 = 1.0236 > 1.020 (INCONCLUSIVE)
+        # Look 2: N=10000, SE = 0.0055 / sqrt(2) = 0.003889 -> UCB = 1.000 + 4.294 * 0.003889 = 1.0167 <= 1.020 (PASS)
+        seq_retry1_verdict, seq_retry1_stage, seq_retry1_hist = evaluate_sequential_retry_classifier([
+            {"portfolio_mean": 1.000, "portfolio_se": 0.0055, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000},
+            {"portfolio_mean": 1.000, "portfolio_se": 0.0055 / math.sqrt(2), "sybil_mean": 0.0, "sybil_se": 0.001 / math.sqrt(2), "tail_p_hat": 0.048, "n_samples": 10000}
+        ])
+        self.assertEqual(seq_retry1_verdict, "PASS")
+        self.assertEqual(seq_retry1_stage, 2)
+        self.assertEqual(seq_retry1_hist[0]['verdict'], "INCONCLUSIVE")
+        self.assertEqual(seq_retry1_hist[1]['verdict'], "PASS")
+
+        # 4. Full Sequential Cycle: Initial Look -> Retry 1 -> PASS at Retry 2 (Stage 3, N=20000)
+        # Look 1: SE=0.0075 -> UCB = 1.0322 > 1.020 (INCONCLUSIVE)
+        # Look 2: SE=0.0075 / sqrt(2) = 0.005303 -> UCB = 1.0227 > 1.020 (INCONCLUSIVE)
+        # Look 3: SE=0.0075 / 2 = 0.00375 -> UCB = 1.0161 <= 1.020 (PASS)
+        seq_retry2_verdict, seq_retry2_stage, seq_retry2_hist = evaluate_sequential_retry_classifier([
+            {"portfolio_mean": 1.000, "portfolio_se": 0.0075, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000},
+            {"portfolio_mean": 1.000, "portfolio_se": 0.0075 / math.sqrt(2), "sybil_mean": 0.0, "sybil_se": 0.001 / math.sqrt(2), "tail_p_hat": 0.048, "n_samples": 10000},
+            {"portfolio_mean": 1.000, "portfolio_se": 0.0075 / 2.0, "sybil_mean": 0.0, "sybil_se": 0.001 / 2.0, "tail_p_hat": 0.048, "n_samples": 20000}
+        ])
+        self.assertEqual(seq_retry2_verdict, "PASS")
+        self.assertEqual(seq_retry2_stage, 3)
+        self.assertEqual(seq_retry2_hist[0]['verdict'], "INCONCLUSIVE")
+        self.assertEqual(seq_retry2_hist[1]['verdict'], "INCONCLUSIVE")
+        self.assertEqual(seq_retry2_hist[2]['verdict'], "PASS")
+
+        # 5. Full Sequential Cycle: Initial Look -> Retry 1 -> Retry 2 -> Exhaustion (INCONCLUSIVE_RETRY_BUDGET_EXHAUSTED)
+        seq_exhaust_verdict, seq_exhaust_stage, seq_exhaust_hist = evaluate_sequential_retry_classifier([
+            {"portfolio_mean": 1.015, "portfolio_se": 0.016, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000},
+            {"portfolio_mean": 1.015, "portfolio_se": 0.016 / math.sqrt(2), "sybil_mean": 0.0, "sybil_se": 0.001 / math.sqrt(2), "tail_p_hat": 0.048, "n_samples": 10000},
+            {"portfolio_mean": 1.015, "portfolio_se": 0.008, "sybil_mean": 0.0, "sybil_se": 0.001 / 2.0, "tail_p_hat": 0.048, "n_samples": 20000}
+        ])
+        self.assertEqual(seq_exhaust_verdict, "INCONCLUSIVE_RETRY_BUDGET_EXHAUSTED")
+        self.assertEqual(seq_exhaust_stage, 3)
+        self.assertEqual(len(seq_exhaust_hist), 3)
+
+        # 6. Full Sequential Cycle: Initial Look (INCONCLUSIVE) -> Retry 1 uncovers violation (FAIL at Stage 2)
+        # Look 1: mean=1.015, SE=0.004 -> LCB = 1.015 - 4.294 * 0.004 = 0.9978 <= 1.0 (INCONCLUSIVE)
+        # Look 2: N=10000, SE = 0.004 / sqrt(2) = 0.002828 -> LCB = 1.015 - 4.294 * 0.002828 = 1.00286 > 1.0 (FAIL)
+        seq_fail2_verdict, seq_fail2_stage, seq_fail2_hist = evaluate_sequential_retry_classifier([
+            {"portfolio_mean": 1.015, "portfolio_se": 0.004, "sybil_mean": 0.0, "sybil_se": 0.001, "tail_p_hat": 0.048, "n_samples": 5000},
+            {"portfolio_mean": 1.015, "portfolio_se": 0.004 / math.sqrt(2), "sybil_mean": 0.0, "sybil_se": 0.001 / math.sqrt(2), "tail_p_hat": 0.048, "n_samples": 10000}
+        ])
+        self.assertEqual(seq_fail2_verdict, "FAIL")
+        self.assertEqual(seq_fail2_stage, 2)
+        self.assertEqual(seq_fail2_hist[0]['verdict'], "INCONCLUSIVE")
+        self.assertEqual(seq_fail2_hist[1]['verdict'], "FAIL")
+
+        # 7. Active Group-Sequential FWER Critical Value Sensitivity Test:
+        # With mean=1.000, SE=0.0048 at Look 1:
+        # Under single-look t=4.044: UCB = 1.000 + 4.044 * 0.0048 = 1.01941 <= 1.020 (erroneous PASS without sequential adjustment)
+        # Under group-sequential Bonferroni FWER t=4.294 (M=57): UCB = 1.000 + 4.294 * 0.0048 = 1.02061 > 1.020 (INCONCLUSIVE)
+        # Proves programmatically that t_FWER = 4.294 actively prevents premature acceptance during sequential looks
+        res_single_look_pass = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.0048,
+                                                           sybil_mean=0.0, sybil_se=0.001,
+                                                           tail_p_hat=0.048, t_crit=4.044)
+        res_seq_fwer_inconcl = evaluate_ternary_classifier(portfolio_mean=1.000, portfolio_se=0.0048,
+                                                           sybil_mean=0.0, sybil_se=0.001,
+                                                           tail_p_hat=0.048, t_crit=4.294)
+        self.assertEqual(res_single_look_pass, "PASS", "Single-look bound would accept marginally wide interval prematurely")
+        self.assertEqual(res_seq_fwer_inconcl, "INCONCLUSIVE", "Operative group-sequential FWER bound must classify marginally wide interval as INCONCLUSIVE")
 
     def test_excluded_data_documented_and_verified(self):
         """Verify excluded data contains at least 20 records and all match direct objects."""
