@@ -974,7 +974,9 @@ class TestInvariantGraph(unittest.TestCase):
         self.assertIn("epsilon_tol", pass_text, "Pass condition must evaluate tolerance budget epsilon_tol")
         self.assertIn("<= 1.0 + epsilon_tol", pass_text, "Pass condition must bound portfolio wealth UCB <= 1.0 + epsilon_tol")
         self.assertIn("SE_max = 0.015", pass_text, "Pass condition must enforce maximum standard error constraint")
-        self.assertIn("1e-12", pass_text, "Pass condition must verify machine-precision Sybil neutrality")
+        self.assertNotIn("1e-12", pass_text, "Authoritative PASS condition must not include pathwise 1e-12 condition")
+        self.assertIn("sole authoritative Sybil endpoint", pass_text,
+                      "Pass condition must explicitly designate FWER criterion for mean paired Sybil excess as the sole Sybil endpoint")
         self.assertIn("0.0632", pass_text, "Pass condition must verify FWER-adjusted maximal tail threshold 0.0632")
         self.assertIn("LCB_FWER", fail_text, "Fail condition must declare unambiguous rejection via lower confidence bound")
         self.assertIn("> 1.0", fail_text, "Fail condition must trigger when LCB_FWER > 1.0")
